@@ -25,7 +25,7 @@ public:
 	bool isWalking;
 	bool isDefend;
 	bool isBall;
-	
+	bool IsDie;
 	CKoopas();
 	virtual void SetState(int state);
 };

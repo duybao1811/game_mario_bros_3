@@ -198,7 +198,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		state = MARIO_STATE_RACCOON_ATTACK;
 	}
-
+	if (isKick)
+	{
+		state = MARIO_STATE_KICK;
+		if (isKick)
+		{
+			isKick = false;
+		}
+	}
 	// turn off collision when die 
 	if (state!=MARIO_STATE_DIE)
 		CalcPotentialCollisions(coObjects, coEvents);
@@ -302,22 +309,32 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			if (dynamic_cast<CKoopas*>(e->obj)) // 
 			{
-				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-
-				// jump on top >> kill Goomba and deflect a bit 
+				CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
 				if (e->ny < 0)
 				{
-					if (goomba->GetState() != KOOPAS_STATE_DIE)
+					if (koopas->GetState() == KOOPAS_STATE_WALKING)
 					{
-						goomba->SetState(GOOMBA_STATE_DIE);
+						koopas->SubHealth(1);
+						vy = -MARIO_JUMP_DEFLECT_SPEED;
+					}
+					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
+					{
+						koopas->SubHealth(1);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
-				else if (e->nx != 0)
+				if (e->nx == 1)
 				{
+					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
+					{
+						koopas->nx = -1;
+						koopas->SubHealth(1);
+						isKick = true;
+
+					}
 					if (untouchable == 0)
 					{
-						if (goomba->GetState() != GOOMBA_STATE_DIE)
+						if (koopas->GetState() ==KOOPAS_STATE_WALKING)
 						{
 							if (level > MARIO_LEVEL_SMALL)
 							{
@@ -329,6 +346,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 					}
 				}
+				if (e->nx == -1)
+				{
+					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
+					{
+						koopas->nx = 1;
+						koopas->SubHealth(1);
+						isKick = true;
+					}
+				}
+
 			} // if Koopas
 			else if (dynamic_cast<CPortal *>(e->obj))
 			{
@@ -451,6 +478,13 @@ void CMario::Render()
 					ani = MARIO_ANI_BIG_FALL_RIGHT;
 				else if (nx < 0)
 					ani = MARIO_ANI_BIG_FALL_LEFT;
+			}
+			if (state == MARIO_STATE_KICK)
+			{
+				if (nx > 0)
+					ani = MARIO_ANI_BIG_KICK_RIGHT;
+				else if (nx < 0)
+					ani = MARIO_ANI_BIG_KICK_LEFT;
 			}
 		}
 		else if (level == MARIO_LEVEL_RACCOON)

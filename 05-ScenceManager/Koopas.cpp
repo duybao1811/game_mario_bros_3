@@ -4,6 +4,7 @@ CKoopas::CKoopas()
 {
 	SetState(KOOPAS_STATE_WALKING);
 	SetHealth(3);
+	
 }
 
 void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -21,7 +22,12 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	CGameObject::Update(dt, coObjects);
-
+	if (Health <= 0)
+	{
+		IsDie = true;
+	}
+	if (IsDie)
+		return;
 	//
 	// TO-DO: make sure Koopas can interact with the world and to each of them too!
 	// 
@@ -49,6 +55,8 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		isBall = true;
 		isDefend = false;
+		if (state != KOOPAS_STATE_BALL)
+			state = KOOPAS_STATE_BALL;
 	}
 	if (isWalking)
 	{
@@ -150,7 +158,6 @@ void CKoopas::SetState(int state)
 		isWalking = true;
 		break;
 	case KOOPAS_STATE_DEFEND:
-		isWalking = false;
 		isDefend = true;
 		break;
 	case KOOPAS_STATE_BALL:

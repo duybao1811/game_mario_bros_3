@@ -84,6 +84,8 @@
 #define MARIO_ANI_FIRE_SIT_LEFT             50
 #define MARIO_ANI_RACCOON_ATTACK_RIGHT      51
 #define MARIO_ANI_RACCOON_ATTACK_LEFT       52
+#define MARIO_ANI_BIG_KICK_RIGHT            53
+#define MARIO_ANI_BIG_KICK_LEFT             54
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 #define MARIO_LEVEL_RACCOON 3
