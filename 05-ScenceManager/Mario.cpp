@@ -28,7 +28,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//set mario roi tu do va mario roi khi bay va nhay
 
 
-	vy += MARIO_GRAVITY * dt;//dang len 
+	vy += MARIO_GRAVITY * dt;
 
 
 	if (isJumping || isFlying)
@@ -62,7 +62,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							vx = MARIO_WALKING_MAXSPEED;
 						}
 						else if (isRunning) {
-							if (vx >= 0.2f)
+							if (vx >= MARIO_RUNNING_MAXSPEED)
 							{
 								vx = MARIO_RUNNING_MAXSPEED;
 								state = MARIO_STATE_RUN_MAXSPEED;
@@ -112,9 +112,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 						else if (isRunning)
 						{
-							if (vx <= -0.2f)
+							if (vx <= -MARIO_RUNNING_MAXSPEED)
 							{
-								vx = -0.2f;
+								vx = -MARIO_RUNNING_MAXSPEED;
 								state = MARIO_STATE_RUN_MAXSPEED;
 							}
 							else
@@ -174,6 +174,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (isSitting)
 			state = MARIO_STATE_SIT;
 	}
+	if (isKick)
+	{
+		state = MARIO_STATE_KICK;
+
+	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -190,6 +195,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
 	}
+	if (Now - Kick > 300 && isKick)
+	{
+		isKick = false;
+		state = MARIO_STATE_IDLE;
+	}
 	if (isAttack && level == MARIO_LEVEL_FIRE)
 	{
 		state = MARIO_STATE_FIRE;
@@ -197,14 +207,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else if (isAttack && level == MARIO_LEVEL_RACCOON)
 	{
 		state = MARIO_STATE_RACCOON_ATTACK;
-	}
-	if (isKick)
-	{
-		state = MARIO_STATE_KICK;
-		if (isKick)
-		{
-			isKick = false;
-		}
 	}
 	// turn off collision when die 
 	if (state!=MARIO_STATE_DIE)
@@ -315,44 +317,34 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (koopas->GetState() == KOOPAS_STATE_WALKING)
 					{
 						koopas->SubHealth(1);
-						vy = -MARIO_JUMP_DEFLECT_SPEED;
+						vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
 					}
 					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
 					{
+						koopas->nx = 1;
 						koopas->SubHealth(1);
-						vy = -MARIO_JUMP_DEFLECT_SPEED;
+						vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
 					}
 				}
-				if (e->nx == 1)
+				if (e->nx > 0)
 				{
 					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
 					{
 						koopas->nx = -1;
 						koopas->SubHealth(1);
 						isKick = true;
+						Kick = GetTickCount();
 
 					}
-					if (untouchable == 0)
-					{
-						if (koopas->GetState() ==KOOPAS_STATE_WALKING)
-						{
-							if (level > MARIO_LEVEL_SMALL)
-							{
-								level = MARIO_LEVEL_SMALL;
-								StartUntouchable();
-							}
-							else
-								SetState(MARIO_STATE_DIE);
-						}
-					}
 				}
-				if (e->nx == -1)
+				else if (e->nx < 0 )
 				{
 					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
 					{
 						koopas->nx = 1;
 						koopas->SubHealth(1);
 						isKick = true;
+						Kick = GetTickCount();
 					}
 				}
 
@@ -686,14 +678,7 @@ void CMario::SetState(int state)
 			}
 		}
 	
-	break;
-
-	case MARIO_STATE_KICK:
-		if (isKick)
-		{
-			isKick = false;
-		}
-		
+	break;	
 	}
 
 

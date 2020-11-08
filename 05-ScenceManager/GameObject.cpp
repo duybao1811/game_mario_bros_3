@@ -131,6 +131,14 @@ void CGameObject::RenderBoundingBox()
 
 	CGame::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 32);
 }
+void CGameObject::SetHealth(int h)
+{
+	Health = h;
+}
+int CGameObject::GetHealth()
+{
+	return Health;
+}
 void CGameObject::SubHealth(int subh)
 {
 	Health -= subh;

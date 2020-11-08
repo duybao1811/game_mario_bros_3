@@ -3,11 +3,12 @@
 
 #define MARIO_WALKING_SPEED		0.15f 
 //0.1f
-#define MARIO_JUMP_SPEED_Y		0.5f
+#define MARIO_JUMP_SPEED_Y		0.6f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
 #define MARIO_JUMP_SPEED_RUUNING_MAXSPEED 0.8f
 #define MARIO_GRAVITY			0.002f
 #define MARIO_DIE_DEFLECT_SPEED	 0.5f
+#define MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION 0.5f
 #define MARIO_WALKING_MAXSPEED 0.1f
 #define MARIO_RUNNING_MAXSPEED 0.2f
 #define PULL_UP_MARIO_AFTER_SIT 10.0f
@@ -111,6 +112,7 @@ public:
 	DWORD Time;
 	DWORD StartFly;
 	DWORD Attack;
+	DWORD Kick;
 	int level;
 	void Sit();
 	void Jump();

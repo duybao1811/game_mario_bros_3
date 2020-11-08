@@ -70,10 +70,8 @@ public:
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
 	void GetPosition(float &x, float &y) { x = this->x; y = this->y; }
 	void GetSpeed(float &vx, float &vy) { vx = this->vx; vy = this->vy; }
-	void SetHealth(int h) {
-		Health=h;
-	}
-	int GetHealth() { return Health; }
+	void SetHealth(int h);
+	int GetHealth();
 	void SubHealth(int subh);
 	int GetState() { return this->state; }
 

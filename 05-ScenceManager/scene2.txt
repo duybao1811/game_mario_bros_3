@@ -377,9 +377,12 @@ Resources\Tilemap\world1-1.txt
 #die
 599	10099	100
 #big kick right
-1001	11000	200
+1001	11000	300
 #big kick left 
-1002	11001	200
+1002	11001	300
+	
+
+
 
 # ==== BRICK =========
 601	20001	100
@@ -398,7 +401,7 @@ Resources\Tilemap\world1-1.txt
 #walk left
 804	50005	100	50006	100
 #walk right
-802	50007	100	50008	100'
+802	50007	100	50008	100
 #die
 803	50031	100
 

@@ -3,7 +3,7 @@
 CKoopas::CKoopas()
 {
 	SetState(KOOPAS_STATE_WALKING);
-	SetHealth(3);
+	SetHealth(2);
 	
 }
 
@@ -13,14 +13,18 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	top = y;
 	right = x + KOOPAS_BBOX_WIDTH;
 
-	if (state == KOOPAS_STATE_BALL || state==KOOPAS_STATE_DEFEND)
+	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND)
+	{
+		SetPosition(x, 400);
 		bottom = y + KOOPAS_BBOX_HEIGHT_DIE;
+	}
 	else
 		bottom = y + KOOPAS_BBOX_HEIGHT;
 }
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	
 	CGameObject::Update(dt, coObjects);
 	if (Health <= 0)
 	{
@@ -32,46 +36,21 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	// TO-DO: make sure Koopas can interact with the world and to each of them too!
 	// 
 
-	x += dx;
-	y += dy;
 
-	if (vx < 0 && x < 0) {
-		x = 0; vx = -vx;
-	}
-
-	if (vx > 0 && x > 290) {
-		x = 290; vx = -vx;
-	}
 	if (Health == 3)   //Koopas
 	{
-
+		state = KOOPAS_STATE_WALKING;
 	}
 	if (Health == 2)
 	{
-		isWalking = false;
 		SetState(KOOPAS_STATE_DEFEND);
 	}
 	if (Health == 1)
 	{
-		isBall = true;
-		isDefend = false;
 		if (state != KOOPAS_STATE_BALL)
-			state = KOOPAS_STATE_BALL;
+			SetState(KOOPAS_STATE_BALL);
 	}
-	if (isWalking)
-	{
-		state == KOOPAS_STATE_WALKING;
-	}
-	if (isDefend)
-	{
-		state = KOOPAS_STATE_DEFEND;
-		vx = 0;
-	}
-	if (isBall)
-	{
-		state = KOOPAS_STATE_BALL;
-		vx = nx * KOOPAS_BALL_SPEED;
-	}
+
 	CGameObject::Update(dt, coObjects);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -96,7 +75,6 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
-		//if (nx != 0) vx = 0;
 		if (ny != 0) vy = 0;
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
@@ -155,13 +133,13 @@ void CKoopas::SetState(int state)
 	switch (state)
 	{
 	case KOOPAS_STATE_WALKING:
-		isWalking = true;
+		vx = KOOPAS_WALKING_SPEED;
 		break;
 	case KOOPAS_STATE_DEFEND:
-		isDefend = true;
+		vx = 0;
 		break;
 	case KOOPAS_STATE_BALL:
-		isBall = true;
+		vx =  nx*KOOPAS_BALL_SPEED;
 		break;
 	}
 
