@@ -164,7 +164,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		DebugOut(L"[INFO] Player object created!\n");
 		break;
 	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(); break;
-	case OBJECT_TYPE_BRICK: obj = new CBrick(); break;
+	case OBJECT_TYPE_BRICK: {
+		float w = atof(tokens[4].c_str());
+		float h = atof(tokens[5].c_str());
+		obj = new CBrick(w,h); 
+		break;
+	}
 	case OBJECT_TYPE_KOOPAS: obj = new CKoopas(); break;
 	case OBJECT_TYPE_PORTAL:
 		{	
@@ -264,7 +269,7 @@ void CPlayScene::Load()
 
 	f.close();
 
-	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
+	//CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
@@ -354,7 +359,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 
-	case DIK_R: 
+	case DIK_R:
 		mario->Reset();
 		break;
 	case DIK_1:
@@ -371,7 +376,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_Z:
 	{
-		if (mario->level==MARIO_LEVEL_RACCOON)
+		if (mario->level == MARIO_LEVEL_RACCOON)
 		{
 			mario->SetState(MARIO_STATE_RACCOON_ATTACK);
 			mario->Attack = GetTickCount64();
@@ -382,12 +387,17 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		{
 			mario->SetState(MARIO_STATE_FIRE);
 		}
+
+		break;
 	}
 	case DIK_X:
+	{
 		mario->SetState(MARIO_STATE_UP);
 		break;
-
 	}
+	}
+	
+
 }
 
 void CPlayScenceKeyHandler::KeyState(BYTE *states)
@@ -409,7 +419,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	}
 	if (game->IsKeyDown(DIK_DOWN))
 	{
-		if ((!mario->isWalkingR)||(!mario->isWalkingL) || (!mario->isRunning)) {
+		if (!mario->isWalking || !mario->isRunning) {
 			mario->SetState(MARIO_STATE_SIT);
 		}
 	}
@@ -420,6 +430,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 			mario->SetState(MARIO_STATE_RUNNING);
 		}
 	}
+
 }
 void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 {

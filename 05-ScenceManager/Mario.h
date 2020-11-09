@@ -3,17 +3,17 @@
 
 #define MARIO_WALKING_SPEED		0.15f 
 //0.1f
-#define MARIO_JUMP_SPEED_Y		0.6f
+#define MARIO_JUMP_SPEED_Y		0.35f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
-#define MARIO_JUMP_SPEED_RUUNING_MAXSPEED 0.8f
-#define MARIO_GRAVITY			0.002f
+#define MARIO_JUMP_SPEED_RUNING_MAXSPEED 0.8f
+#define MARIO_GRAVITY			0.001f
 #define MARIO_DIE_DEFLECT_SPEED	 0.5f
-#define MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION 0.5f
+#define MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION 0.4f
 #define MARIO_WALKING_MAXSPEED 0.1f
 #define MARIO_RUNNING_MAXSPEED 0.2f
 #define PULL_UP_MARIO_AFTER_SIT 10.0f
-#define turn 0.006f                  //vân tốc quay đầu
-#define a 0.004f                     //gia tốc
+#define turn 0.006f                //vân tốc quay đầu
+#define a 0.004f                  //gia tốc
 #define MARIO_STATE_IDLE			0
 #define MARIO_STATE_WALKING_RIGHT	100
 #define MARIO_STATE_WALKING_LEFT	200
@@ -87,6 +87,14 @@
 #define MARIO_ANI_RACCOON_ATTACK_LEFT       52
 #define MARIO_ANI_BIG_KICK_RIGHT            53
 #define MARIO_ANI_BIG_KICK_LEFT             54
+#define MARIO_ANI_RACCOON_FALL_RIGHT        55
+#define MARIO_ANI_RACCOON_FALL_LEFT         56
+#define MARIO_ANI_RACCOON_KICK_RIGHT        57
+#define MARIO_ANI_RACCOON_KICK_LEFT         58
+#define MARIO_ANI_FIRE_FALL_RIGHT           59
+#define MARIO_ANI_FIRE_FALL_LEFT            60
+#define MARIO_ANI_FIRE_KICK_RIGHT           61
+#define MARIO_ANI_FIRE_KICK_LEFT            62
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 #define MARIO_LEVEL_RACCOON 3

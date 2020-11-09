@@ -3,7 +3,7 @@
 CKoopas::CKoopas()
 {
 	SetState(KOOPAS_STATE_WALKING);
-	SetHealth(2);
+	SetHealth(3);
 	
 }
 
