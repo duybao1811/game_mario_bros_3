@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Sprites.h"
+#include "define.h"
 #include "Animations.h"
 
 
@@ -43,6 +44,7 @@ struct CCollisionEvent
 class CGameObject
 {
 public:
+	Type type;
 	int Health;
 	float x; 
 	float y;

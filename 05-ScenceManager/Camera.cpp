@@ -70,6 +70,14 @@ void Camera::RestorePosition()
 	BorderLeft = BorderLeftBackup;
 	BorderRight = BorderRightBackup;
 }
+bool Camera::checkObjectInCamera(float x, float y, float w, float h)
+{
+	if (x + w < xCam || xCam + width < x)
+		return false;
+	if (y + h < yCam || yCam + height < y)
+		return false;
+	return true;
+}
 D3DXVECTOR2 Camera::Transform(float xWorld,float yWorld)
 {
 	return D3DXVECTOR2(xWorld - xCam, yWorld - yCam);

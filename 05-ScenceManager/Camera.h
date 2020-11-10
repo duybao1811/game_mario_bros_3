@@ -31,5 +31,6 @@ public:
 	void SetBorderBackup(float LEFT, float RIGHT);
 	void RestoreBorder();
 	void RestorePosition();
+	bool checkObjectInCamera(float x, float y, float w, float h);
 };
 
