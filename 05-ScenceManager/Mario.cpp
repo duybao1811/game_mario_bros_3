@@ -273,19 +273,21 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				// jump on top >> kill Goomba and deflect a bit 
 				if (e->ny < 0)
 				{
-					if (goomba->GetState()!= GOOMBA_STATE_DIE)
+					if (goomba->GetHealth()==1)
 					{
 						goomba->SetState(GOOMBA_STATE_DIE);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
+						goomba->SubHealth(1);
 					}
 				}
 				else if (e->nx != 0)
 				{
 					if (level == MARIO_LEVEL_RACCOON && isAttack)
 					{
-						goomba->SetState(GOOMBA_STATE_DIE);
+						goomba->SetState(GOOMBA_STATE_ATTACKED);
+
 					}
-					if (untouchable==0)
+					if (untouchable==0 &&!isAttack)
 					{
 						if (goomba->GetState()!=GOOMBA_STATE_DIE)
 						{
@@ -795,7 +797,7 @@ void CMario::SetState(int state)
 					{
 					//	MarioGravity = 0.0004f;
 						isFlyup = false;
-						isFallSlow = true;
+				//		isFallSlow = true;
 
 					}
 				}

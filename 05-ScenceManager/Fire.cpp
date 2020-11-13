@@ -2,20 +2,26 @@
 #include "define.h"
 #include "Camera.h"
 #include "Brick.h"
+#include "Goomba.h"
 Fire::Fire()
 {
 	// load animation từ txt
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(4);
 	SetAnimationSet(ani_set);
+	SetHealth(1);
 }
 void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//set chuyển động của fire 
-	vx = nx * FIRE_SPEED;
-	CGameObject::Update(dt);
+		vy += FIRE_GRAVITY * dt;
+		vx = direction*FIRE_SPEED;
 
-	vy += FIRE_GRAVITY * dt;
+	if (Health == 0)
+	{
+		isFinish = true;
+	}
+	CGameObject::Update(dt);
 	//nảy lên khi va chạm đất
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -49,15 +55,23 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
 				if (nx != 0)
 				{
-					x += dx;
-					return;
+					SubHealth(1);
 				}
 				if (ny != 0)
 				{
 					this->vy = -FIRE_BOUNCE;
 				}
 			}
+			if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
+			{
+				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 
+				if (e->nx != 0)
+				{
+					goomba->SetState(GOOMBA_STATE_ATTACKED);
+					SubHealth(1);
+				}
+			}
 		}
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -65,6 +79,12 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void Fire::Render()
 {
 	int ani = SHOOT_FIRE_LEFT;
+	if (isFinish)
+		return;
+	if (direction > 0)
+	{
+		ani = SHOOT_FIRE_RIGHT;
+	}
 
 	animation_set->at(ani)->Render(x, y);
 	//RenderBoundingBox();
@@ -75,5 +95,4 @@ void Fire::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 	top = y;
 	right = left + FIRE_BBOX_WIDTH;
 	bottom = top + FIRE_BBOX_HEIGHT;
-
 }

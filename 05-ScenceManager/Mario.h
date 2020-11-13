@@ -152,15 +152,11 @@ public:
 	void GoRight();
 	void GoLeft();
 	void Falling();
-	bool isTurnLeft;
-	bool isTurnRight;
 	bool isJumping;
 	bool isOnGround;
 	bool isWalking;
 	bool isFalling;
 	bool isSitting;
-	bool isLeft;
-	bool isRight;
 	bool isDie;
 	bool isFlying;
 	bool isWalkingR;

@@ -5,6 +5,7 @@
 10	textures\enemies.png	3	26	110
 30	textures\mario1.png	255	255	255
 40	textures\enemies-2.png	0	128	128
+70	textures\enemies3.png	3	26	110
 60	Resources\Tilemap\world1-1_bank.png	0	0	90
 [TILEMAP]
 Resources\Tilemap\world1-1.txt
@@ -205,7 +206,8 @@ Resources\Tilemap\world1-1.txt
 30002	25	14	41	29	10
 #die
 30003	45	21	61	29	10
-
+#attacked 
+30004	5	870	21	886	70
 #brick with question mark animation
 40001	300	117	316	133	20
 40002	318	117	334	133	20
@@ -417,7 +419,8 @@ Resources\Tilemap\world1-1.txt
 701	30001	100	30002	100
 # die
 702	30003	100
-
+#attacked
+703	30004	100
 # ==== KOOPAS  =========
 #walk left
 804	50005	100	50006	100
@@ -441,7 +444,7 @@ Resources\Tilemap\world1-1.txt
 # BRICK 
 2	601
 # GOOMBA
-3	701	702
+3	701	702	703
 #FIRE
 4	805	806
 # QUESTION MARK BRICK 
@@ -453,9 +456,9 @@ Resources\Tilemap\world1-1.txt
 # type: 0 = Mario , 1 = Brick, 2 = Goomba
 # MARIO
 0	80	300	1
-3	300	390	6
+3	400	390	6
 #GOOMBA
-6	550	300	6
+2	250	400	3
 # BRICK 
 # --- platform (hint: I created the list using Excel!) ----
 1	0	417	2	624	16
@@ -474,7 +477,4 @@ Resources\Tilemap\world1-1.txt
 1	1680	384	2	16	32
 1	1696	401	2	16	16
 1	2257	417	2	560	16
-
-
-
-
+1	352	368	2	32	48

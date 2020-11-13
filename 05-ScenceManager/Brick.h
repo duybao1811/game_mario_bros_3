@@ -6,8 +6,8 @@
 
 class CBrick : public CGameObject
 {
+	
 	float width, height;
-
 public:
 	CBrick(float w,float h);
 	virtual void Render();
