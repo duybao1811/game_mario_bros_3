@@ -32,6 +32,7 @@
 #define MARIO_STATE_KICK            1
 #define MARIO_STATE_FLY_UP          2
 #define MARIO_RACCOON_STATE_FALL_SLOW 3
+#define MARIO_STATE_FALL_FLY         4
 #define MARIO_ANI_BIG_IDLE_RIGHT		0    //400
 #define MARIO_ANI_BIG_IDLE_LEFT			1   //401
 #define MARIO_ANI_SMALL_IDLE_RIGHT		2   //402
@@ -113,6 +114,8 @@
 #define MARIO_ANI_FIRE_FLY_LEFT             76
 #define MARIO_ANI_RACCOON_FLY_RIGHT         77
 #define MARIO_ANI_RACCOON_FLY_LEFT          78
+#define MARIO_ANI_RACCOON_FALL_FLY_RIGHT    79
+#define MARIO_ANI_RACCOON_FALL_FLY_LEFT     80
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 #define MARIO_LEVEL_RACCOON 3
@@ -127,6 +130,7 @@
 #define MARIO_GRAVITY_JUMPING 0.0001f
 #define PULL_UP_MARIO_AFTER_SIT 10.0f
 #define MARIO_FALL_SLOW 0.04f
+#define MARIO_FLY_SPEED_Y 0.15f
 class CMario : public CGameObject
 {
 	int untouchable;

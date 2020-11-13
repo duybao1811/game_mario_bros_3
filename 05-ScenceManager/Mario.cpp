@@ -33,7 +33,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		if (vy > 0)
 		{
-			MarioGravity += 0.0001f;
+			//MarioGravity += 0.0001f;
 			vy += MarioGravity * dt;
 		}
 	}
@@ -180,15 +180,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		state = MARIO_STATE_FLY_UP;
 	}
-	if (isFallFly)
-	{
-		vx = MARIO_RUNNING_MAXSPEED;
-		state = MARIO_STATE_FLY_UP;
-	}
 	if (isFallSlow)
 	{
 		state = MARIO_RACCOON_STATE_FALL_SLOW;
 	}
+
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -217,6 +213,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else if (isAttack && level == MARIO_LEVEL_RACCOON)
 	{
 		state = MARIO_STATE_RACCOON_ATTACK;
+	}
+	if (isFalling && level == MARIO_LEVEL_RACCOON)
+	{
+		if (isFlying)
+		{
+			state = MARIO_STATE_FALL_FLY;
+		}
 	}
 	// turn off collision when die 
 	if (state!=MARIO_STATE_DIE)
@@ -618,6 +621,13 @@ void CMario::Render()
 				else if (nx < 0)
 					ani = MARIO_ANI_RACCOON_FLY_LEFT;
 			}
+			if (state == MARIO_STATE_FALL_FLY)
+			{
+				if (nx > 0)
+					ani = MARIO_ANI_RACCOON_FALL_FLY_RIGHT;
+				else if (nx < 0)
+					ani = MARIO_ANI_RACCOON_FALL_FLY_LEFT;
+			}
 
 		}
 
@@ -757,6 +767,7 @@ void CMario::SetState(int state)
 		isAttack = true;
 		break;
 	case MARIO_STATE_JUMP:
+		StartFly = GetTickCount64();
 		if (isOnGround) {
 			vy = -MARIO_JUMP_SPEED_Y;
 			isJumping = true;
@@ -767,15 +778,28 @@ void CMario::SetState(int state)
 				isOnGround = false;
 				vy = -MARIO_JUMP_SPEED_RUNING_MAXSPEED;
 			}
-			if (level == MARIO_LEVEL_RACCOON)
-			{
-				isOnAir = true;
-			}
+
 		}
 		else {
 			if (level == MARIO_LEVEL_RACCOON)
 			{
 				isOnAir = true;
+				if (isFlying)
+				{
+					if (Time <= 1200)
+					{
+						isFalling = false;
+						isFlyup = true;
+					}
+					else
+					{
+					//	MarioGravity = 0.0004f;
+						isFlyup = false;
+						isFallSlow = true;
+
+					}
+				}
+
 			}
 		}
 		break;

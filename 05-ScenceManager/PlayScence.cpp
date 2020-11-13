@@ -455,13 +455,23 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 				if (!mario->isFlying && mario->vy>=0)
 				{
 						mario->SetSpeed(cVx, -MARIO_FALL_SLOW);
-						mario->isFallSlow = true;					
+						mario->isFallSlow = true;
+						break;
+				}
+				if (mario->isFlying)
+				{
+					if (mario->isFlyup)
+					{
+						mario->SetSpeed(cVx,-MARIO_FLY_SPEED_Y);
+						mario->isFallFly = true;						
+					}
+					break;
 				}
 			}
-		}
-		if (mario->isOnGround)
-		{
-			mario->isFallSlow = false;
+			else if (mario->isOnGround)
+			{
+				mario->isFallSlow = false;
+			}
 		}
 	}
 }
