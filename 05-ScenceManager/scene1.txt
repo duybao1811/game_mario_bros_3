@@ -81,9 +81,6 @@ Resources\Tilemap\world1-1.txt
 701	30001	100	30002	100
 # die
 702	30003	100
-
-
-
 #
 # id	ani1	ani2	ani3
 #
