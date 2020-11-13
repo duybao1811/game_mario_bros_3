@@ -2,6 +2,7 @@
 #include "Brick.h"
 CKoopas::CKoopas()
 {
+	type = Type::KOOPAS;
 	SetState(KOOPAS_STATE_WALKING);
 	SetHealth(3);
 	
@@ -32,14 +33,9 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	if (IsDie)
 		return;
-	//
-	// TO-DO: make sure Koopas can interact with the world and to each of them too!
-	// 
-
-
 	if (Health == 3)   //Koopas
 	{
-		state = KOOPAS_STATE_WALKING;
+		SetState(KOOPAS_STATE_WALKING);
 	}
 	if (Health == 2)
 	{
@@ -116,11 +112,20 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 void CKoopas::Render()
 {
 	int ani = KOOPAS_ANI_WALKING_LEFT;
-	if (state == KOOPAS_STATE_DEFEND || state==KOOPAS_STATE_BALL) {
-		ani = KOOPAS_ANI_DIE;
+	if (state == KOOPAS_STATE_BALL)
+	{
+		ani = KOOPAS_ANI_BALL;
 	}
-	else if (vx > 0) ani = KOOPAS_ANI_WALKING_RIGHT;
-	else if (vx <= 0) ani = KOOPAS_ANI_WALKING_LEFT;
+	if (state == KOOPAS_STATE_DEFEND) {
+		ani = KOOPAS_ANI_DEFEND;
+	}
+	if (state == KOOPAS_STATE_WALKING)
+	{
+		if (nx > 0)
+			ani = KOOPAS_ANI_WALKING_RIGHT;
+		else if (nx < 0)
+			ani = KOOPAS_ANI_WALKING_LEFT;
+	}
 
 	animation_set->at(ani)->Render(x, y);
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <Windows.h>
 #include <d3dx9.h>
@@ -54,7 +54,7 @@ public:
 
 	float vx;
 	float vy;
-
+	int direction; // -1: hướng trái, 1: hướng phải
 	int nx;	 
 
 	int state;
@@ -75,8 +75,10 @@ public:
 	void SetHealth(int h);
 	int GetHealth();
 	void SubHealth(int subh);
+	void SetDirection(int d);
+	int GetDirection();
 	int GetState() { return this->state; }
-
+	Type GetType() { return this->type; }
 	void RenderBoundingBox();
 
 	void SetAnimationSet(LPANIMATION_SET ani_set) { animation_set = ani_set; }

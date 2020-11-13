@@ -1,12 +1,12 @@
 #include "Brick.h"
 CBrick::CBrick(float w,float h)
 {
+	type = Type::BRICK;
 	this->width = w;
 	this->height = h;
 }
 void CBrick::Render()
 {
-	//animation_set->at(0)->Render(x, y);
 	RenderBoundingBox();
 }
 
@@ -17,4 +17,3 @@ void CBrick::GetBoundingBox(float &l, float &t, float &r, float &b)
 	r = x + width;
 	b = y + height;
 }
-CBrick::~CBrick() {}

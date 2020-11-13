@@ -5,7 +5,7 @@
 //0.1f
 #define MARIO_JUMP_SPEED_Y		0.35f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
-#define MARIO_JUMP_SPEED_RUNING_MAXSPEED 0.8f
+#define MARIO_JUMP_SPEED_RUNING_MAXSPEED 0.45f
 #define MARIO_GRAVITY			0.001f
 #define MARIO_DIE_DEFLECT_SPEED	 0.5f
 #define MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION 0.4f
@@ -25,11 +25,13 @@
 #define MARIO_STATE_RUNNING         700
 #define MARIO_STATE_TURN            800
 #define MARIO_STATE_RACCOON_ATTACK  900
-#define MARIO_STATE_FIRE            901
+#define MARIO_STATE_SHOOT_FIRE      901
 #define MARIO_STATE_FALLING         301
 #define MARIO_STATE_UP              1000
+#define MARIO_STATE_FLY             301
 #define MARIO_STATE_KICK            1
-
+#define MARIO_STATE_FLY_UP          2
+#define MARIO_RACCOON_STATE_FALL_SLOW 3
 #define MARIO_ANI_BIG_IDLE_RIGHT		0    //400
 #define MARIO_ANI_BIG_IDLE_LEFT			1   //401
 #define MARIO_ANI_SMALL_IDLE_RIGHT		2   //402
@@ -95,6 +97,22 @@
 #define MARIO_ANI_FIRE_FALL_LEFT            60
 #define MARIO_ANI_FIRE_KICK_RIGHT           61
 #define MARIO_ANI_FIRE_KICK_LEFT            62
+#define MARIO_ANI_BIG_FLY_RIGHT             63
+#define MARIO_ANI_BIG_FLY_LEFT              64
+#define MARIO_ANI_FIRE_SHOOT_RIGHT          65
+#define MARIO_ANI_FIRE_SHOOT_LEFT           66
+#define MARIO_ANI_FALL_SLOW_RIGHT               67
+#define MARIO_ANI_FALL_SLOW_LEFT                68
+#define MARIO_ANI_RACCOON_RUN_RIGHT         69
+#define MARIO_ANI_RACCOON_RUN_LEFT          70
+#define MARIO_ANI_RACCOON_RUNMAXSPEED_RIGHT 71
+#define MARIO_ANI_RACCOON_RUNMAXSPEED_LEFT  72
+#define MARIO_ANI_FIRE_RUNMAXSPEED_RIGHT    73
+#define MARIO_ANI_FIRE_RUNMAXSPEED_LEFT     74
+#define MARIO_ANI_FIRE_FLY_RIGHT            75
+#define MARIO_ANI_FIRE_FLY_LEFT             76
+#define MARIO_ANI_RACCOON_FLY_RIGHT         77
+#define MARIO_ANI_RACCOON_FLY_LEFT          78
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 #define MARIO_LEVEL_RACCOON 3
@@ -108,6 +126,7 @@
 #define MARIO_UNTOUCHABLE_TIME 5000
 #define MARIO_GRAVITY_JUMPING 0.0001f
 #define PULL_UP_MARIO_AFTER_SIT 10.0f
+#define MARIO_FALL_SLOW 0.04f
 class CMario : public CGameObject
 {
 	int untouchable;
@@ -117,6 +136,7 @@ class CMario : public CGameObject
 	float start_y; 
 	float MarioGravity;
 public: 
+	Camera* camera;
 	DWORD Time;
 	DWORD StartFly;
 	DWORD Attack;
@@ -146,7 +166,11 @@ public:
 	bool isFallSlow;
 	bool isAttack;
 	bool isKick;
+	bool isFallFly;
+	bool isOnAir;
+	bool isReadyToFly;
 	void ResetSit();
+	vector<LPGAMEOBJECT> ListFire;
 	CMario(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	virtual void Render();

@@ -131,6 +131,14 @@ void CGameObject::RenderBoundingBox()
 
 	CGame::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 32);
 }
+void CGameObject::SetDirection(int d)
+{
+	direction = d;
+}
+int CGameObject::GetDirection()
+{
+	return direction;
+}
 void CGameObject::SetHealth(int h)
 {
 	Health = h;

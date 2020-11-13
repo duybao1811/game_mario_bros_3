@@ -12,17 +12,12 @@
 #include "Scence.h"
 #include <string>
 #include <cstring>
+#include "Fire.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 	CScene(id, filePath)
 {
-	//camera->Set_Position(0, 0);
-	//camera->Set_Border(0.0f, (float)(map->GetMapWidth() - camera->Get_Width()));
-	//camera->Set_Border_Backup(camera->Get_Border_Left(), camera->Get_Border_Right());
-//	map = new Map();
-	//map->SetMap();
-	//map->ReadMap();
 	key_handler = new CPlayScenceKeyHandler(this);
 }
 
@@ -42,7 +37,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 #define OBJECT_TYPE_BRICK	1
 #define OBJECT_TYPE_GOOMBA	2
 #define OBJECT_TYPE_KOOPAS	3
-
+#define OBJECT_TYPE_FIRE     4
 #define OBJECT_TYPE_PORTAL	50
 
 #define MAX_SCENE_LINE 1024
@@ -135,7 +130,6 @@ void CPlayScene::_ParseSection_ANIMATION_SETS(string line)
 void CPlayScene::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
-
 	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
 
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
@@ -179,6 +173,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			obj = new CPortal(x, y, r, b, scene_id);
 		}
 		break;
+
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -212,10 +207,6 @@ void CPlayScene::_ParseSection_TILEMAP(string line)
 	map = new Map(ID, rowmap, columnmap, rowtile, columntile, totaltile);
 	map->GetSpriteTile();
 	map->SetMap(tilemapdata);
-//	camera = new Camera(500,500);
-	//camera->Set_Position(0, 0);
-	//camera->Set_Border(0.0f, (float)(map->GetMapWidth() - camera->Get_Width()));
-	//camera->Set_Border_Backup(camera->Get_Border_Left(), camera->Get_Border_Right());
 }
 void CPlayScene::Load()
 {
@@ -223,9 +214,6 @@ void CPlayScene::Load()
 
 	ifstream f;
 	f.open(sceneFilePath);
-	//camera = new Camera(320, 240);
-	//TileMap = new Map();
-	// current resource section flag
 	int section = SCENE_SECTION_UNKNOWN;					
 
 	char str[MAX_SCENE_LINE];
@@ -269,7 +257,7 @@ void CPlayScene::Load()
 
 	f.close();
 
-	//CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
+	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
@@ -385,14 +373,15 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		}
 		else if (mario->level == MARIO_LEVEL_FIRE)
 		{
-			mario->SetState(MARIO_STATE_FIRE);
+			mario->SetState(MARIO_STATE_SHOOT_FIRE);
+			mario->Attack = GetTickCount64();
 		}
-
 		break;
 	}
 	case DIK_X:
 	{
-		mario->SetState(MARIO_STATE_UP);
+		mario->SetState(MARIO_STATE_JUMP);
+		mario->isFallSlow = false;
 		break;
 	}
 	}
@@ -419,7 +408,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE *states)
 	}
 	if (game->IsKeyDown(DIK_DOWN))
 	{
-		if (!mario->isWalking || !mario->isRunning) {
+		if ((!mario->isWalking) || !mario->isRunning) {
 			mario->SetState(MARIO_STATE_SIT);
 		}
 	}
@@ -454,9 +443,25 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			mario->ResetSit();
 			float sx, sy;
 			mario->GetPosition(sx, sy);
-			
 			mario->SetState(MARIO_STATE_IDLE);
 			break;
+		}
+	case DIK_X:
+		float cVx, cVy;
+		mario->GetSpeed(cVx, cVy);
+		if (mario->level == MARIO_LEVEL_RACCOON) {
+			if (mario->isOnAir)
+			{
+				if (!mario->isFlying && mario->vy>=0)
+				{
+						mario->SetSpeed(cVx, -MARIO_FALL_SLOW);
+						mario->isFallSlow = true;					
+				}
+			}
+		}
+		if (mario->isOnGround)
+		{
+			mario->isFallSlow = false;
 		}
 	}
 }
