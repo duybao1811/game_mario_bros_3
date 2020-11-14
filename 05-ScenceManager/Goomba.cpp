@@ -6,6 +6,7 @@ CGoomba::CGoomba()
 	SetState(GOOMBA_STATE_WALKING);
 	SetHealth(1);
 	time = 0;
+	nx = -1;
 }
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -34,7 +35,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	vy += 0.001f * dt;
 	if (Health == 1)
 	{
-		vx = -GOOMBA_WALKING_SPEED;
+		vx = nx*GOOMBA_WALKING_SPEED;
 	}
 	if (Health <= 0)
 	{
@@ -55,10 +56,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			isFinish = true;
 		}
 	}
-	if (isAttacked)
-	{
-		state = GOOMBA_STATE_ATTACKED;
-	}
+
 
 
 	if (vx < 0 && x < 0) {
@@ -106,6 +104,10 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (e->obj->GetState()==GOOMBA_STATE_ATTACKED && ny<0)
 				{
 					y += 10;
+				}
+				if (nx != 0)
+				{
+					this->nx = -this->nx;
 				}
 			}
 

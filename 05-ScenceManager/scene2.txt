@@ -239,7 +239,9 @@ Resources\Tilemap\world1-1.txt
 #ball
 50032	256	202	272	218	40
 50033	273	202	289	218	40
-50034	290	202	306	218	40					
+50034	290	202	306	218	40
+#attacked
+50035	152	202	168	218	40					
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 
@@ -430,6 +432,8 @@ Resources\Tilemap\world1-1.txt
 803	50030	100
 #koopas ball
 900	50030	100	50032	100	50033	100	50034	100
+#koopas attacked
+901	50035	100
 #========FIRE=========
 #SHOOT fire right
 805	1	100	2	100	3	100	4	100
@@ -450,7 +454,8 @@ Resources\Tilemap\world1-1.txt
 # QUESTION MARK BRICK 
 22	602
 #KOOPAS
-6	804	802	803	900
+6	804	802	803	900	901
+
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba

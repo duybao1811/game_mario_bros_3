@@ -361,10 +361,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						Kick = GetTickCount64();
 
 					}
-					if (level == MARIO_LEVEL_RACCOON && isAttack)
-					{
-						koopas->SubHealth(1);
-					}
 				}
 				else if (e->nx < 0 )
 				{
@@ -376,13 +372,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						Kick = GetTickCount64();
 					}
 				}
-				if (level == MARIO_LEVEL_RACCOON && isAttack)
+				if(level==MARIO_LEVEL_RACCOON && isAttack)
 				{
-					if (e->nx < 0 || e->nx>0) {
-						if (koopas->GetState() == KOOPAS_STATE_WALKING)
-						{
-							koopas->SubHealth(1);
-						}
+					if (nx != 0) {
+						koopas->SetState(KOOPAS_STATE_ATTACKED);
 					}
 				}
 			} 

@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Brick.h"
 #include "Goomba.h"
+#include "Koopas.h"
 Fire::Fire()
 {
 	// load animation từ txt
@@ -72,6 +73,20 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					SubHealth(1);
 				}
 			}
+			else 
+				if (dynamic_cast<CKoopas*>(e->obj)) // if e->obj is Goomba 
+				{
+					CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
+
+					if (e->nx != 0)
+					{
+						if (koopas->GetState() == KOOPAS_STATE_WALKING) {
+							//koopas->SetState(GOOMBA_STATE_ATTACKED);
+							koopas->SubHealth(1);
+							SubHealth(1);
+						}
+					}
+				}
 		}
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];

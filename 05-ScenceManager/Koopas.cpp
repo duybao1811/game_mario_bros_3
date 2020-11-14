@@ -25,7 +25,7 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	
+	vy += 0.001f * dt;
 	CGameObject::Update(dt, coObjects);
 	if (Health <= 0)
 	{
@@ -45,6 +45,14 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		if (state != KOOPAS_STATE_BALL)
 			SetState(KOOPAS_STATE_BALL);
+	}
+	if (isDefend)
+	{
+
+	}
+	if (isAttacked)
+	{
+		state = KOOPAS_STATE_ATTACKED;
 	}
 
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -99,6 +107,10 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					else {
 						x += dx;
 					}
+					if (state == KOOPAS_STATE_ATTACKED)
+					{
+						this->vx = 0;
+					}
 				}
 			}
 
@@ -125,6 +137,10 @@ void CKoopas::Render()
 		else if (nx < 0)
 			ani = KOOPAS_ANI_WALKING_LEFT;
 	}
+	if (state == KOOPAS_STATE_ATTACKED)
+	{
+		ani = KOOPAS_ANI_ATTACKED;
+	}
 
 	animation_set->at(ani)->Render(x, y);
 
@@ -141,10 +157,16 @@ void CKoopas::SetState(int state)
 		break;
 	case KOOPAS_STATE_DEFEND:
 		vx = 0;
+		isDefend = true;
 		break;
 	case KOOPAS_STATE_BALL:
 		vx =  nx*KOOPAS_BALL_SPEED;
 		break;
+	case KOOPAS_STATE_ATTACKED:
+		vy = -0.35f;
+		isAttacked = true;
+		break;
+
 	}
 
 }

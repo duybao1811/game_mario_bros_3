@@ -11,10 +11,12 @@
 #define KOOPAS_STATE_DIE 200
 #define KOOPAS_STATE_DEFEND 300
 #define KOOPAS_STATE_BALL  400
+#define KOOPAS_STATE_ATTACKED 500
 #define KOOPAS_ANI_WALKING_LEFT 0
 #define KOOPAS_ANI_WALKING_RIGHT 1
 #define KOOPAS_ANI_DEFEND 2
 #define KOOPAS_ANI_BALL 3
+#define KOOPAS_ANI_ATTACKED 4
 #define KOOPAS_GRAVITY 0.1f
 class CKoopas : public CGameObject
 {
@@ -27,6 +29,7 @@ public:
 	bool isDefend;
 	bool isBall;
 	bool IsDie;
+	bool isAttacked;
 	CKoopas();
 	virtual void SetState(int state);
 };
