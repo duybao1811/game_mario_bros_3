@@ -8,13 +8,16 @@
 #define FIRE_BBOX_HEIGHT 8
 #define SHOOT_FIRE_RIGHT 0
 #define SHOOT_FIRE_LEFT 1
+#define EFFECT_FIRE_DESTOY 2
 class Fire : public CGameObject
 {
-	bool isFinish;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 public:
+	bool isFinish;
+	int destroy;
+	bool isDestroy;
 	Fire();
 	~Fire() {}
 };

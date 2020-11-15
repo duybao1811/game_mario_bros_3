@@ -189,19 +189,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
-	DWORD Now = GetTickCount64();
-	Time = Now - StartFly;
-	if (level == MARIO_LEVEL_RACCOON && Now - Attack > 450 && isAttack)
+	Time = GetTickCount64() - StartFly;
+	if (level == MARIO_LEVEL_RACCOON && GetTickCount64() - Attack > 450 && isAttack)
 	{
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
 	}
-	if (level == MARIO_LEVEL_FIRE && Now - Attack > 240 && isAttack)
+	if (level == MARIO_LEVEL_FIRE && GetTickCount64() - Attack > 240 && isAttack)
 	{
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
 	}
-	if (Now - Kick > 230 && isKick)
+	if (GetTickCount64() - Kick > 230 && isKick)
 	{
 		isKick = false;
 		state = MARIO_STATE_IDLE;
@@ -284,6 +283,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (level == MARIO_LEVEL_RACCOON && isAttack)
 					{
+						goomba->SetDirection(-nx);
 						goomba->SetState(GOOMBA_STATE_ATTACKED);
 
 					}
@@ -302,7 +302,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 			} // if Goomba
-			if (e->obj->GetType()==BRICK) // if e->obj is Goomba 
+			if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba 
 			{
 				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
 
@@ -346,16 +346,20 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
 					{
-						koopas->nx = 1;
+						koopas->direction = 1;
 						koopas->SubHealth(1);
 						vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
+					}
+					if (koopas->GetState() == KOOPAS_STATE_BALL)
+					{
+						koopas->SetHealth(2);
 					}
 				}
 				if (e->nx > 0)
 				{
 					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
 					{
-						koopas->nx = -1;
+						koopas->direction = -1;
 						koopas->SubHealth(1);
 						isKick = true;
 						Kick = GetTickCount64();
@@ -366,7 +370,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
 					{
-						koopas->nx = 1;
+						koopas->direction = 1;
 						koopas->SubHealth(1);
 						isKick = true;
 						Kick = GetTickCount64();
@@ -375,6 +379,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if(level==MARIO_LEVEL_RACCOON && isAttack)
 				{
 					if (nx != 0) {
+						koopas->SetDirection(-nx);
 						koopas->SetState(KOOPAS_STATE_ATTACKED);
 					}
 				}
@@ -773,7 +778,6 @@ void CMario::SetState(int state)
 				isOnGround = false;
 				vy = -MARIO_JUMP_SPEED_RUNING_MAXSPEED;
 			}
-
 		}
 		else {
 			if (level == MARIO_LEVEL_RACCOON)
@@ -781,18 +785,8 @@ void CMario::SetState(int state)
 				isOnAir = true;
 				if (isFlying)
 				{
-					if (Time <= 1200)
-					{
 						isFalling = false;
 						isFlyup = true;
-					}
-					else
-					{
-					//	MarioGravity = 0.0004f;
-						isFlyup = false;
-				//		isFallSlow = true;
-
-					}
 				}
 
 			}

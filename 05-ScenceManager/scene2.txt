@@ -224,7 +224,10 @@ Resources\Tilemap\world1-1.txt
 6	180	553	188	562	0
 7	180	574	188	582	0
 8	198	573	206	582	0
-
+#effect fire destroy 
+9	527	20	543	36	20
+10	546	22	558	34	20
+11	576	23	587	33	20
 #KOOPAS
 #walk left
 50005	205	191	221	217	40
@@ -439,6 +442,8 @@ Resources\Tilemap\world1-1.txt
 805	1	100	2	100	3	100	4	100
 #SHOOT fire left 
 806	5	100	6	100	7	100	8	100
+#effect fire destroy
+807	9	100	10	100	11	100
 #
 # id	ani1	ani2	ani3
 #
@@ -450,7 +455,7 @@ Resources\Tilemap\world1-1.txt
 # GOOMBA
 3	701	702	703
 #FIRE
-4	805	806
+4	805	806	807
 # QUESTION MARK BRICK 
 22	602
 #KOOPAS

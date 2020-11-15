@@ -5,6 +5,7 @@ CKoopas::CKoopas()
 	type = Type::KOOPAS;
 	SetState(KOOPAS_STATE_WALKING);
 	SetHealth(3);
+	direction = 1;
 	
 }
 
@@ -14,13 +15,13 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	top = y;
 	right = x + KOOPAS_BBOX_WIDTH;
 
-	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND)
+	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND || state==KOOPAS_STATE_ATTACKED )
 	{
-		SetPosition(x, 400);
 		bottom = y + KOOPAS_BBOX_HEIGHT_DIE;
 	}
 	else
 		bottom = y + KOOPAS_BBOX_HEIGHT;
+	
 }
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
@@ -48,13 +49,14 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	if (isDefend)
 	{
-
+		
 	}
 	if (isAttacked)
 	{
+		vx = direction * 0.1f;
 		state = KOOPAS_STATE_ATTACKED;
-	}
 
+	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -82,35 +84,25 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (state == KOOPAS_STATE_WALKING)
+			if (dynamic_cast<CBrick*>(e->obj))
 			{
+				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+				if (state == KOOPAS_STATE_WALKING)
+				{
 
-				if (dynamic_cast<CBrick*>(e->obj)) {
-					if (e->nx != 0)
+					if ( nx != 0)
 					{
-						this->nx = -this->nx;
-						vx = this->nx * KOOPAS_WALKING_SPEED;
+						this->direction = -this->direction;
+						vx = this->direction * KOOPAS_WALKING_SPEED;
 					}
 				}
-				else {
-					x += dx;
-				}
-			}
-			if (state == KOOPAS_STATE_BALL)
-			{
-				if (dynamic_cast<CBrick*>(e->obj)) {
-					if (e->nx != 0)
-					{
-						this->nx = -this->nx;
-						vx = this->nx * KOOPAS_BALL_SPEED;
-					}
-					else {
-						x += dx;
-					}
-					if (state == KOOPAS_STATE_ATTACKED)
-					{
-						this->vx = 0;
-					}
+				if (state == KOOPAS_STATE_BALL)
+				{
+						if (nx != 0)
+						{
+							this->direction = -this->direction;
+							vx = this->direction * KOOPAS_BALL_SPEED;
+						}					
 				}
 			}
 
@@ -132,9 +124,9 @@ void CKoopas::Render()
 	}
 	if (state == KOOPAS_STATE_WALKING)
 	{
-		if (nx > 0)
+		if (direction > 0)
 			ani = KOOPAS_ANI_WALKING_RIGHT;
-		else if (nx < 0)
+		else if (direction < 0)
 			ani = KOOPAS_ANI_WALKING_LEFT;
 	}
 	if (state == KOOPAS_STATE_ATTACKED)
@@ -153,18 +145,18 @@ void CKoopas::SetState(int state)
 	switch (state)
 	{
 	case KOOPAS_STATE_WALKING:
-		vx = KOOPAS_WALKING_SPEED;
+		vx = direction*KOOPAS_WALKING_SPEED;
 		break;
 	case KOOPAS_STATE_DEFEND:
 		vx = 0;
 		isDefend = true;
 		break;
 	case KOOPAS_STATE_BALL:
-		vx =  nx*KOOPAS_BALL_SPEED;
+		vx =  direction*KOOPAS_BALL_SPEED;
 		break;
-	case KOOPAS_STATE_ATTACKED:
-		vy = -0.35f;
+	case KOOPAS_STATE_ATTACKED:	
 		isAttacked = true;
+		vy = -0.4f;
 		break;
 
 	}

@@ -10,7 +10,8 @@ Fire::Fire()
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(4);
 	SetAnimationSet(ani_set);
-	SetHealth(1);
+	isFinish = false;
+	destroy = 0;
 }
 void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -18,10 +19,20 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy += FIRE_GRAVITY * dt;
 		vx = direction*FIRE_SPEED;
 
-	if (Health == 0)
-	{
-		isFinish = true;
-	}
+	//phá hủy fire
+		if (destroy) {
+			if (destroy < 20)
+			{
+				destroy++;
+				isDestroy = true;
+			}
+			else
+			{
+				isFinish = true;
+				destroy = 0;
+			}
+
+		}
 	CGameObject::Update(dt);
 	//nảy lên khi va chạm đất
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -54,13 +65,17 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<CBrick*>(e->obj)) {
 				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-				if (nx != 0)
+				if (destroy == 0)
 				{
-					SubHealth(1);
-				}
-				if (ny != 0)
-				{
-					this->vy = -FIRE_BOUNCE;
+					if (nx != 0)
+					{
+						isDestroy = true;
+						destroy = 1;
+					}
+					if (ny != 0)
+					{
+						this->vy = -FIRE_BOUNCE;
+					}
 				}
 			}
 			if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
@@ -69,8 +84,10 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 				if (e->nx != 0)
 				{
+					//effect_destroy = GetTickCount64();
 					goomba->SetState(GOOMBA_STATE_ATTACKED);
-					SubHealth(1);
+					destroy = 1;
+					isDestroy = true;
 				}
 			}
 			else 
@@ -83,7 +100,8 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						if (koopas->GetState() == KOOPAS_STATE_WALKING) {
 							//koopas->SetState(GOOMBA_STATE_ATTACKED);
 							koopas->SubHealth(1);
-							SubHealth(1);
+							isDestroy = true;
+							destroy = 1;
 						}
 					}
 				}
@@ -94,13 +112,16 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void Fire::Render()
 {
 	int ani = SHOOT_FIRE_LEFT;
-	if (isFinish)
-		return;
 	if (direction > 0)
 	{
 		ani = SHOOT_FIRE_RIGHT;
 	}
-
+	if (isDestroy)
+	{
+		ani = EFFECT_FIRE_DESTOY;
+	}
+	if (isFinish)
+		return;
 	animation_set->at(ani)->Render(x, y);
 	//RenderBoundingBox();
 }

@@ -6,7 +6,8 @@ CGoomba::CGoomba()
 	SetState(GOOMBA_STATE_WALKING);
 	SetHealth(1);
 	time = 0;
-	nx = -1;
+	//nx = 1;
+	direction = 1;
 }
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -35,7 +36,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	vy += 0.001f * dt;
 	if (Health == 1)
 	{
-		vx = nx*GOOMBA_WALKING_SPEED;
+		vx = direction*GOOMBA_WALKING_SPEED;
 	}
 	if (Health <= 0)
 	{
@@ -55,16 +56,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			isFinish = true;
 		}
-	}
-
-
-
-	if (vx < 0 && x < 0) {
-		x = 0; vx = -vx;
-	}
-
-	if (vx > 0 && x > 290) {
-		x = 290; vx = -vx;
 	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -93,21 +84,12 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CGoomba*>(e->obj))
-			{
-				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-				x += dx;
-				y += dy;
-			}
-			else if (dynamic_cast<CBrick*>(e->obj)) {
+			 if (dynamic_cast<CBrick*>(e->obj)) {
 				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-				if (e->obj->GetState()==GOOMBA_STATE_ATTACKED && ny<0)
-				{
-					y += 10;
-				}
 				if (nx != 0)
 				{
-					this->nx = -this->nx;
+					this->direction = -this->direction;
+					vx = this->direction * GOOMBA_WALKING_SPEED;
 				}
 			}
 
@@ -147,9 +129,11 @@ void CGoomba::SetState(int state)
 			isDie = true;
 			break;
 		case GOOMBA_STATE_WALKING:
+			Health == 1;
+			//isWalking = true;
 			break;
 		case GOOMBA_STATE_ATTACKED:
-			//vx = 0.1f;
+			vx = direction*1.0f;
 			vy = -0.35f;
 			isAttacked = true;
 			break;
