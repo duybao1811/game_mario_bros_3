@@ -22,6 +22,7 @@ CMario::CMario(float x, float y) : CGameObject()
 	start_y = y; 
 	this->x = x; 
 	this->y = y; 
+	TimeFly = 0;
 }
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -212,6 +213,21 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else if (isAttack && level == MARIO_LEVEL_RACCOON)
 	{
 		state = MARIO_STATE_RACCOON_ATTACK;
+	}
+	if (isOnAir)
+	{
+		if (TimeFly < 130)
+		{
+			TimeFly++;
+		}
+		else
+		{
+			isFlying = false;
+			//isFalling = true;
+			//isFlyup = false;
+			//isOnAir = false;
+			//isFallSlow = true;
+		}
 	}
 	if (isFalling && level == MARIO_LEVEL_RACCOON)
 	{

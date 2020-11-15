@@ -145,6 +145,7 @@ public:
 	DWORD StartFly;
 	DWORD Attack;
 	DWORD Kick;
+	int TimeFly;
 	int level;
 	void Sit();
 	void Jump();

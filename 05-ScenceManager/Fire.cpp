@@ -20,16 +20,14 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vx = direction*FIRE_SPEED;
 
 	//phá hủy fire
-		if (destroy) {
+		if (isDestroy) {
 			if (destroy < 20)
 			{
 				destroy++;
-				isDestroy = true;
 			}
 			else
 			{
 				isFinish = true;
-				destroy = 0;
 			}
 
 		}
@@ -70,7 +68,6 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (nx != 0)
 					{
 						isDestroy = true;
-						destroy = 1;
 					}
 					if (ny != 0)
 					{
@@ -86,7 +83,6 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					//effect_destroy = GetTickCount64();
 					goomba->SetState(GOOMBA_STATE_ATTACKED);
-					destroy = 1;
 					isDestroy = true;
 				}
 			}
@@ -101,7 +97,6 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							//koopas->SetState(GOOMBA_STATE_ATTACKED);
 							koopas->SubHealth(1);
 							isDestroy = true;
-							destroy = 1;
 						}
 					}
 				}
