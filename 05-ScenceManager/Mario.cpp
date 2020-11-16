@@ -13,6 +13,7 @@
 #include "Brick.h"
 #include "Koopas.h"
 #include "Fire.h"
+#include "BlockColor.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
 	level = MARIO_LEVEL_BIG;
@@ -214,6 +215,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		state = MARIO_STATE_RACCOON_ATTACK;
 	}
+
+	if (isFalling && level == MARIO_LEVEL_RACCOON)
+	{
+		if (isFlying)
+		{
+			state = MARIO_STATE_FALL_FLY;
+		}
+	}
 	if (isOnAir)
 	{
 		if (TimeFly < 130)
@@ -223,17 +232,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else
 		{
 			isFlying = false;
-			//isFalling = true;
-			//isFlyup = false;
-			//isOnAir = false;
-			//isFallSlow = true;
-		}
-	}
-	if (isFalling && level == MARIO_LEVEL_RACCOON)
-	{
-		if (isFlying)
-		{
-			state = MARIO_STATE_FALL_FLY;
 		}
 	}
 	// turn off collision when die 
@@ -369,6 +367,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (koopas->GetState() == KOOPAS_STATE_BALL)
 					{
 						koopas->SetHealth(2);
+						vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
 					}
 				}
 				if (e->nx > 0)
@@ -400,6 +399,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 			} 
+			if (e->obj->GetType() == BLOCK_COLOR)
+			{
+				CBlockColor* bc = dynamic_cast<CBlockColor*>(e->obj);
+				if (e->ny > 0)
+				{
+					state = MARIO_STATE_IDLE;
+				}
+
+			}
 			else if (dynamic_cast<CPortal *>(e->obj))
 			{
 				CPortal *p = dynamic_cast<CPortal *>(e->obj);
@@ -783,7 +791,6 @@ void CMario::SetState(int state)
 		isAttack = true;
 		break;
 	case MARIO_STATE_JUMP:
-		StartFly = GetTickCount64();
 		if (isOnGround) {
 			vy = -MARIO_JUMP_SPEED_Y;
 			isJumping = true;

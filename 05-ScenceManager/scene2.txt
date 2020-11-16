@@ -142,8 +142,8 @@ Resources\Tilemap\world1-1.txt
 10167	330	603	356	631	30
 #FALL IN FLY LEFT
 10168	51	603	76	631	30
-
-
+#EFFECT MARIO RACCOON ATTACK ENEMY
+10169	561	22	558	34	20
 # MARIO WHITE 
 # idle right
 10201	246	393	260	422	0
@@ -213,6 +213,9 @@ Resources\Tilemap\world1-1.txt
 40002	318	117	334	133	20
 40003	336	117	352	133	20
 40004	355	117	370	133	20
+
+#questionbrick unbox
+40005	372	117	388	113	20
 
 #FIRE right
 1	240	554	248	562	0
@@ -412,12 +415,15 @@ Resources\Tilemap\world1-1.txt
 1005	11004	300
 #fire kick left 
 1006	11005	300
+#EFFECT MARIO RACCOON ATTACK ENEMY
+1007	9	100	10	100	10169	100	11	100
 # ==== BRICK =========
 601	20001	100
 
 # ==== QUESTION MARK BRICK =========
 602	40001	1000	40001	100	40002	100	40003	100	40004	100
-
+#QUSTION BRICK UNBOX
+603	40005	100
 
 # ==== GOOMBA  =========
 # walk
@@ -457,15 +463,16 @@ Resources\Tilemap\world1-1.txt
 #FIRE
 4	805	806	807
 # QUESTION MARK BRICK 
-22	602
+22	602	603
 #KOOPAS
 6	804	802	803	900	901
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3=KOOPAS, 4=QUESTION BRICK
 # MARIO
 0	80	300	1
+#KOOPAS
 3	400	390	6
 #GOOMBA
 2	250	400	3
@@ -488,3 +495,5 @@ Resources\Tilemap\world1-1.txt
 1	1696	401	2	16	16
 1	2257	417	2	560	16
 1	352	368	2	32	48
+
+#QUESTION BRICK 

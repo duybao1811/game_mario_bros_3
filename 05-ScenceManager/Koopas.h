@@ -4,6 +4,7 @@
 
 #define KOOPAS_WALKING_SPEED 0.02f;
 #define KOOPAS_BALL_SPEED    0.1f;
+#define KOOPAS_SPEED_Y_AFTER_ATTACKED 0.4f
 #define KOOPAS_BBOX_WIDTH 16
 #define KOOPAS_BBOX_HEIGHT 26
 #define KOOPAS_BBOX_HEIGHT_DIE 16
@@ -17,7 +18,8 @@
 #define KOOPAS_ANI_DEFEND 2
 #define KOOPAS_ANI_BALL 3
 #define KOOPAS_ANI_ATTACKED 4
-#define KOOPAS_GRAVITY 0.1f
+#define KOOPAS_GRAVITY 0.001f
+#define KOOPAS_BOUNCE_AFTER_LANDFALL 0.1f
 class CKoopas : public CGameObject
 {
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
@@ -25,11 +27,13 @@ class CKoopas : public CGameObject
 	virtual void Render();
 
 public:
+	float KoopasGravity;
 	bool isWalking;
 	bool isDefend;
 	bool isBall;
 	bool IsDie;
 	bool isAttacked;
+	bool isUpside;
 	CKoopas();
 	virtual void SetState(int state);
 };

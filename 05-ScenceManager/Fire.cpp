@@ -8,7 +8,7 @@ Fire::Fire()
 {
 	// load animation từ txt
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(4);
+	LPANIMATION_SET ani_set = animation_sets->Get(LOAD_FIRE_FROM_TXT);
 	SetAnimationSet(ani_set);
 	isFinish = false;
 	destroy = 0;
@@ -19,9 +19,9 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy += FIRE_GRAVITY * dt;
 		vx = direction*FIRE_SPEED;
 
-	//phá hủy fire
+	//phá hủy fire khi va chạm
 		if (isDestroy) {
-			if (destroy < 20)
+			if (destroy < TIME_EFFECT_DESTROY_FIRE)
 			{
 				destroy++;
 			}
@@ -71,7 +71,7 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 					if (ny != 0)
 					{
-						this->vy = -FIRE_BOUNCE;
+						this->vy = -FIRE_BOUNCE_SPEED_Y;
 					}
 				}
 			}

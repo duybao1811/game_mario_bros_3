@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 
 #include "PlayScence.h"
@@ -189,6 +189,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 }
 void CPlayScene::_ParseSection_TILEMAP(string line)
 { 
+	//đọc Map từ file txt
 	int ID, rowmap, columnmap, rowtile, columntile, totaltile;
 	LPCWSTR path = ToLPCWSTR(line);
 	ifstream f;

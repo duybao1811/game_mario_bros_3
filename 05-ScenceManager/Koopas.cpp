@@ -1,4 +1,4 @@
-#include "Koopas.h"
+﻿#include "Koopas.h"
 #include "Brick.h"
 CKoopas::CKoopas()
 {
@@ -15,7 +15,7 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	top = y;
 	right = x + KOOPAS_BBOX_WIDTH;
 
-	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND || state==KOOPAS_STATE_ATTACKED )
+	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND || state==KOOPAS_STATE_ATTACKED || isUpside )
 	{
 		bottom = y + KOOPAS_BBOX_HEIGHT_DIE;
 	}
@@ -26,7 +26,7 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	vy += 0.001f * dt;
+	vy += KOOPAS_GRAVITY * dt;
 	CGameObject::Update(dt, coObjects);
 	if (Health <= 0)
 	{
@@ -47,15 +47,15 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		if (state != KOOPAS_STATE_BALL)
 			SetState(KOOPAS_STATE_BALL);
 	}
-	if (isDefend)
+	//bị lật ngược thì nằm im
+	if (isUpside)
 	{
-		
+		vx = 0;
 	}
 	if (isAttacked)
 	{
-		vx = direction * 0.1f;
 		state = KOOPAS_STATE_ATTACKED;
-
+		vx = direction * 0.1f;
 	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -104,6 +104,15 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							vx = this->direction * KOOPAS_BALL_SPEED;
 						}					
 				}
+				if (state == KOOPAS_STATE_ATTACKED)
+				{
+					if (ny != 0)
+					{
+						vy = -KOOPAS_BOUNCE_AFTER_LANDFALL;
+						isAttacked = false;
+						isUpside = true;
+					}
+				}
 			}
 
 		}
@@ -133,7 +142,10 @@ void CKoopas::Render()
 	{
 		ani = KOOPAS_ANI_ATTACKED;
 	}
-
+	if (isUpside)
+	{
+		ani = KOOPAS_ANI_ATTACKED;
+	}
 	animation_set->at(ani)->Render(x, y);
 
 	RenderBoundingBox();
@@ -156,7 +168,7 @@ void CKoopas::SetState(int state)
 		break;
 	case KOOPAS_STATE_ATTACKED:	
 		isAttacked = true;
-		vy = -0.4f;
+		vy = -KOOPAS_SPEED_Y_AFTER_ATTACKED;
 		break;
 
 	}

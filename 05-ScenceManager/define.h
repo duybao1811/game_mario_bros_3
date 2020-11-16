@@ -24,6 +24,7 @@ enum Type {
 	QUESTION_BRICK = 22,
 	PORTAL = 23, 
 	PORAL_SWITCH = 24,
+	BLOCK_COLOR = 25,
 	
 	//ENEMY 
 	GOOMBA = 30,
