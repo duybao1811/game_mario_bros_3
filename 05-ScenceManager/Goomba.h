@@ -13,6 +13,8 @@
 #define GOOMBA_ANI_WALKING 0
 #define GOOMBA_ANI_DIE 1
 #define GOOMBA_ANI_ATTACKED 2
+#define GOOMBA_ATTACKED_SPEED_X 0.1f
+#define GOOMBA_ATTACKED_SPEED_Y 0.35f
 class CGoomba : public CGameObject
 {
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);

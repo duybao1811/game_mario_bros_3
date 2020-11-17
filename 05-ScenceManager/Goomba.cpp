@@ -6,7 +6,6 @@ CGoomba::CGoomba()
 	SetState(GOOMBA_STATE_WALKING);
 	SetHealth(1);
 	time = 0;
-	//nx = 1;
 	direction = 1;
 }
 
@@ -30,7 +29,7 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	CGameObject::Update(dt, coObjects);
+	CGameObject::Update(dt);
 
 
 	vy += 0.001f * dt;
@@ -57,12 +56,21 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			isFinish = true;
 		}
 	}
+	vector<LPGAMEOBJECT> ListBrick;
+	ListBrick.clear();
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		if (coObjects->at(i)->GetType() == Type::BRICK)
+		{
+			ListBrick.push_back(coObjects->at(i));
+		}
+	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
 
-	CalcPotentialCollisions(coObjects, coEvents);
+	CalcPotentialCollisions(&ListBrick, coEvents);
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -81,18 +89,25 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
 		if (ny != 0) vy = 0;
+		if (nx != 0)
+		{
+			vx *= -1;
+			direction *= -1;
+		}
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			 if (dynamic_cast<CBrick*>(e->obj)) {
+			if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba 
+			{
 				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-				if (nx != 0)
+				if (brick->GetModel() == 1)
 				{
-					this->direction = -this->direction;
-					vx = this->direction * GOOMBA_WALKING_SPEED;
+					if (e->nx != 0)
+					{
+						return;
+					}
 				}
 			}
-
 		}
 	}
 
@@ -133,8 +148,8 @@ void CGoomba::SetState(int state)
 			//isWalking = true;
 			break;
 		case GOOMBA_STATE_ATTACKED:
-			vx = direction*1.0f;
-			vy = -0.35f;
+			vx = direction*GOOMBA_ATTACKED_SPEED_X;
+			vy = -GOOMBA_ATTACKED_SPEED_Y;
 			isAttacked = true;
 			break;
 	}

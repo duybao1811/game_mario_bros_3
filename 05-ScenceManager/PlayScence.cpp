@@ -13,6 +13,7 @@
 #include <string>
 #include <cstring>
 #include "Fire.h"
+#include "Coin.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -37,7 +38,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 #define OBJECT_TYPE_BRICK	1
 #define OBJECT_TYPE_GOOMBA	2
 #define OBJECT_TYPE_KOOPAS	3
-#define OBJECT_TYPE_FIRE     4
+#define OBJECT_TYPE_COIN 4
 #define OBJECT_TYPE_PORTAL	50
 
 #define MAX_SCENE_LINE 1024
@@ -161,7 +162,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BRICK: {
 		float w = atof(tokens[4].c_str());
 		float h = atof(tokens[5].c_str());
-		obj = new CBrick(w,h); 
+		int BType = atof(tokens[6].c_str());
+		obj = new CBrick(w, h, BType);
 		break;
 	}
 	case OBJECT_TYPE_KOOPAS: obj = new CKoopas(); break;
@@ -173,7 +175,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			obj = new CPortal(x, y, r, b, scene_id);
 		}
 		break;
-
+	case OBJECT_TYPE_COIN:
+	{
+		obj = new CCoin();
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;

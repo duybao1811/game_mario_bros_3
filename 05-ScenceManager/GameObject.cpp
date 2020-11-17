@@ -153,7 +153,26 @@ void CGameObject::SubHealth(int subh)
 	if (Health < 0)
 		Health = 0;
 }
+bool CGameObject::isCollisionObjectWithObject(CGameObject* obj)
+{
+	if(checkAABB(obj))
+		return true;
+	LPCOLLISIONEVENT e = SweptAABBEx(obj);
+	bool res = e->t > 0 && e->t <= 1.0f;
+	
+	return res;
 
+}
+bool CGameObject::checkAABB(CGameObject* obj)
+{
+	float l, t, r, b;
+	float l1, t1, r1, b1;
+	this->GetBoundingBox(l, t, r, b);
+	obj->GetBoundingBox(l1, t1, r1, b1);
+	if(CGame::GetInstance()->checkAABB(l,t,r,b,l1,t1,r1,b1))
+		return true;
+	return false;
+}
 CGameObject::~CGameObject()
 {
 

@@ -14,15 +14,16 @@
 #include "Koopas.h"
 #include "Fire.h"
 #include "BlockColor.h"
+#include "Coin.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
 	level = MARIO_LEVEL_BIG;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
-	start_x = x; 
-	start_y = y; 
-	this->x = x; 
-	this->y = y; 
+	start_x = x;
+	start_y = y;
+	this->x = x;
+	this->y = y;
 	TimeFly = 0;
 }
 
@@ -39,7 +40,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			vy += MarioGravity * dt;
 		}
 	}
-	else 
+	else
 		vy += MARIO_GRAVITY * dt;
 	if (isWalking) {
 		if (vx == 0)
@@ -53,24 +54,24 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else
 			if (vx > 0)
 			{
-				if (isWalkingR) 
+				if (isWalkingR)
 				{
 					vx += a;
 					state = MARIO_STATE_WALKING_RIGHT;
-						if (!isRunning && abs(vx) >= MARIO_WALKING_MAXSPEED)
+					if (!isRunning && abs(vx) >= MARIO_WALKING_MAXSPEED)
+					{
+						vx = MARIO_WALKING_MAXSPEED;
+					}
+					else if (isRunning) {
+						if (vx >= MARIO_RUNNING_MAXSPEED)
 						{
-							vx = MARIO_WALKING_MAXSPEED;
+							vx = MARIO_RUNNING_MAXSPEED;
+							state = MARIO_STATE_RUN_MAXSPEED;
+							isReadyToFly = true;
 						}
-						else if (isRunning) {
-							if (vx >= MARIO_RUNNING_MAXSPEED)
-							{
-								vx = MARIO_RUNNING_MAXSPEED;
-								state = MARIO_STATE_RUN_MAXSPEED;
-								isReadyToFly = true;
-							}
-							else
-								state = MARIO_STATE_RUNNING;
-						}
+						else
+							state = MARIO_STATE_RUNNING;
+					}
 
 				}
 				else {
@@ -100,54 +101,54 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 
 			}
-			else 
+			else
 			{
-					if (isWalkingL)
+				if (isWalkingL)
+				{
+					vx -= a;
+					state = MARIO_STATE_WALKING_LEFT;
+					if (!isRunning && abs(vx) >= MARIO_WALKING_MAXSPEED)
 					{
-						vx -= a;
-						state = MARIO_STATE_WALKING_LEFT;
-						if (!isRunning && abs(vx) >= MARIO_WALKING_MAXSPEED)
+						vx = -MARIO_WALKING_MAXSPEED;
+					}
+					else if (isRunning)
+					{
+						if (abs(vx) >= MARIO_RUNNING_MAXSPEED)
 						{
-							vx = -MARIO_WALKING_MAXSPEED;
+							vx = -MARIO_RUNNING_MAXSPEED;
+							state = MARIO_STATE_RUN_MAXSPEED;
+							isReadyToFly = true;
 						}
-						else if (isRunning)
+						else
+							state = MARIO_STATE_RUNNING;
+					}
+				}
+				else {
+					if (isWalkingR) {
+						vx += turn;
+						if (vx <= 0)
 						{
-							if (abs(vx) >= MARIO_RUNNING_MAXSPEED)
-							{
-								vx = -MARIO_RUNNING_MAXSPEED;
-								state = MARIO_STATE_RUN_MAXSPEED;
-								isReadyToFly = true;
-							}
-							else
-								state = MARIO_STATE_RUNNING;
+							state = MARIO_STATE_TURN;
+						}
+						else {
+							vx = 0;
 						}
 					}
-					else {
-						if (isWalkingR) {
-							vx += turn;
-							if (vx <= 0)
-							{
-								state = MARIO_STATE_TURN;
-							}
-							else {
-								vx = 0;
-							}
-						}
-						else if (isOnGround)
+					else if (isOnGround)
+					{
+						vx += a;
+						if (vx >= 0)
 						{
-							vx += a;
-							if (vx >= 0)
+							vx = 0;
+							isWalking = false;
+							if (!isSitting)
 							{
-								vx = 0;
-								isWalking = false;
-								if (!isSitting)
-								{
-									state = MARIO_STATE_IDLE;
-								}
+								state = MARIO_STATE_IDLE;
 							}
 						}
 					}
-			
+				}
+
 			}
 	}
 	if (isJumping)
@@ -164,7 +165,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (isSitting)
 	{
-			state = MARIO_STATE_SIT;
+		state = MARIO_STATE_SIT;
 	}
 	if (isFalling && level != MARIO_LEVEL_RACCOON)
 	{
@@ -235,26 +236,26 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 	// turn off collision when die 
-	if (state!=MARIO_STATE_DIE)
+	if (state != MARIO_STATE_DIE)
 		CalcPotentialCollisions(coObjects, coEvents);
 
 	// reset untouchable timer if untouchable time has passed
-	if ( GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) 
+	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
 		untouchable_start = 0;
 		untouchable = 0;
 	}
 
 	// No collision occured, proceed normally
-	if (coEvents.size()==0)
+	if (coEvents.size() == 0)
 	{
-		x += dx; 
+		x += dx;
 		y += dy;
 	}
 	else
 	{
 		float min_tx, min_ty, nx = 0, ny;
-		float rdx = 0; 
+		float rdx = 0;
 		float rdy = 0;
 
 		// TODO: This is a very ugly designed function!!!!
@@ -263,13 +264,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		// how to push back Mario if collides with a moving objects, what if Mario is pushed this way into another object?
 		//if (rdx != 0 && rdx!=dx)
 		//	x += nx*abs(rdx); 
-		
+
 		// block every object first!
-		x += min_tx*dx + nx*0.4f;
-		y += min_ty*dy + ny*0.4f;
+		x += min_tx * dx + nx * 0.4f;
+		y += min_ty * dy + ny * 0.4f;
 
 		if (nx != 0) vx = 0;
-		if (ny!=0) vy = 0;
+		if (ny != 0) vy = 0;
 
 
 		//
@@ -279,14 +280,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 
-			if (dynamic_cast<CGoomba *>(e->obj)) // if e->obj is Goomba 
+			if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
 			{
-				CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
+				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 
 				// jump on top >> kill Goomba and deflect a bit 
 				if (e->ny < 0)
 				{
-					if (goomba->GetHealth()==1)
+					if (goomba->GetHealth() == 1)
 					{
 						goomba->SetState(GOOMBA_STATE_DIE);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
@@ -301,16 +302,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						goomba->SetState(GOOMBA_STATE_ATTACKED);
 
 					}
-					if (untouchable==0 &&!isAttack)
+					if (untouchable == 0 && !isAttack)
 					{
-						if (goomba->GetState()!=GOOMBA_STATE_DIE)
+						if (goomba->GetState() != GOOMBA_STATE_DIE)
 						{
 							if (level > MARIO_LEVEL_SMALL)
 							{
 								level = MARIO_LEVEL_SMALL;
 								StartUntouchable();
 							}
-							else 
+							else
 								SetState(MARIO_STATE_DIE);
 						}
 					}
@@ -337,7 +338,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							if (vx > 0)
 								state = MARIO_STATE_WALKING_RIGHT;
 						}
-						else 
+						else
 							if (!isSitting)
 							{
 								state = MARIO_STATE_IDLE;
@@ -347,8 +348,27 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else {
 					isOnGround = false;
 				}
+				if(brick->BType!=0 || brick->BType!=1)
+				{
+					if (e->ny > 0)
+					{
+						if (brick->GetState() != QB_STATE_EMPTY)
+						{
+							brick->SetState(QB_STATE_UNBOX);
+							brick->SubHealth(1);
+						}
+					}
+				}
+				if (brick->BType == 1)
+				{
+					if (e->nx != 0)
+					{
+						x += dx;
+					}
+				}
+
 			}
-			if (e->obj->GetType()==KOOPAS) 
+			if (e->obj->GetType() == KOOPAS)
 			{
 				CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
 				if (e->ny < 0)
@@ -370,50 +390,40 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
 					}
 				}
-				if (e->nx > 0)
+				if (e->nx != 0)
 				{
 					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
 					{
-						koopas->direction = -1;
+						koopas->SetDirection(this->nx);
 						koopas->SubHealth(1);
 						isKick = true;
 						Kick = GetTickCount64();
 
 					}
 				}
-				else if (e->nx < 0 )
-				{
-					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
-					{
-						koopas->direction = 1;
-						koopas->SubHealth(1);
-						isKick = true;
-						Kick = GetTickCount64();
-					}
-				}
-				if(level==MARIO_LEVEL_RACCOON && isAttack)
+				if (level == MARIO_LEVEL_RACCOON && isAttack)
 				{
 					if (nx != 0) {
 						koopas->SetDirection(-nx);
 						koopas->SetState(KOOPAS_STATE_ATTACKED);
 					}
 				}
-			} 
-			if (e->obj->GetType() == BLOCK_COLOR)
+			}
+			if (e->obj->GetType() == COIN)
 			{
-				CBlockColor* bc = dynamic_cast<CBlockColor*>(e->obj);
-				if (e->ny > 0)
+				if (e->nx != 0 || e->ny != 0)
 				{
-					state = MARIO_STATE_IDLE;
+					CCoin* coin = dynamic_cast<CCoin*>(e->obj);
+					coin->isFinish = true;
 				}
 
 			}
-			else if (dynamic_cast<CPortal *>(e->obj))
+			else if (dynamic_cast<CPortal*>(e->obj))
 			{
-				CPortal *p = dynamic_cast<CPortal *>(e->obj);
+				CPortal* p = dynamic_cast<CPortal*>(e->obj);
 				CGame::GetInstance()->SwitchScene(p->GetSceneId());
 			}
-			
+
 		}
 	}
 	for (int i = 0; i < ListFire.size(); i++)
@@ -430,7 +440,7 @@ void CMario::Render()
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
 	else
-		 
+
 		//MARIO SMALL
 		if (level == MARIO_LEVEL_SMALL)
 		{
@@ -438,7 +448,7 @@ void CMario::Render()
 				ani = MARIO_ANI_SMALL_IDLE_RIGHT;
 			else
 				ani = MARIO_ANI_SMALL_IDLE_LEFT;
-			
+
 			if (state == MARIO_STATE_WALKING_RIGHT)
 				ani = MARIO_ANI_SMALL_WALKING_RIGHT;
 			if (state == MARIO_STATE_WALKING_LEFT)
@@ -454,8 +464,8 @@ void CMario::Render()
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_SMALL_TURN_RIGHT;
-				
-				 if(nx<0){
+
+				if (nx < 0) {
 					ani = MARIO_ANI_SMALL_TURN_LEFT;
 				}
 			}
@@ -482,7 +492,7 @@ void CMario::Render()
 			}
 		}
 
-//       MARIO BIG
+	//       MARIO BIG
 		else if (level == MARIO_LEVEL_BIG)
 		{
 			if (nx > 0)
@@ -545,7 +555,7 @@ void CMario::Render()
 				else if (nx < 0)
 					ani = MARIO_ANI_BIG_KICK_LEFT;
 			}
-	    	if (state == MARIO_STATE_FLY_UP)
+			if (state == MARIO_STATE_FLY_UP)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_BIG_FLY_RIGHT;
@@ -554,7 +564,7 @@ void CMario::Render()
 			}
 		}
 
-		//MARIO RACCOON
+	//MARIO RACCOON
 		else if (level == MARIO_LEVEL_RACCOON)
 		{
 			if (nx > 0)
@@ -623,7 +633,7 @@ void CMario::Render()
 					ani = MARIO_ANI_FALL_SLOW_RIGHT;
 				else if (nx < 0)
 					ani = MARIO_ANI_FALL_SLOW_LEFT;
-			}	
+			}
 			if (state == MARIO_STATE_RUNNING)
 			{
 				if (nx > 0)
@@ -655,83 +665,83 @@ void CMario::Render()
 
 		}
 
-		//MARIO FIRE
+	//MARIO FIRE
 		else if (level == MARIO_LEVEL_FIRE)
 		{
-		if (nx > 0)
-			ani = MARIO_ANI_FIRE_IDLE_RIGHT;
-		else
-			ani = MARIO_ANI_FIRE_IDLE_LEFT;
-		if (state == MARIO_STATE_WALKING_RIGHT)
-			ani = MARIO_ANI_FIRE_WALKING_RIGHT;
-		if (state == MARIO_STATE_WALKING_LEFT)
-			ani = MARIO_ANI_FIRE_WALKING_LEFT;
-		if (state == MARIO_STATE_JUMP)
-		{
 			if (nx > 0)
-				ani = MARIO_ANI_FIRE_JUMP_RIGHT;
-			else if (nx < 0)
-				ani = MARIO_ANI_FIRE_JUMP_LEFT;
-		}
-		if (state == MARIO_STATE_TURN)
-		{
-			if (nx < 0)
-				ani = MARIO_ANI_FIRE_TURN_LEFT;
+				ani = MARIO_ANI_FIRE_IDLE_RIGHT;
+			else
+				ani = MARIO_ANI_FIRE_IDLE_LEFT;
+			if (state == MARIO_STATE_WALKING_RIGHT)
+				ani = MARIO_ANI_FIRE_WALKING_RIGHT;
+			if (state == MARIO_STATE_WALKING_LEFT)
+				ani = MARIO_ANI_FIRE_WALKING_LEFT;
+			if (state == MARIO_STATE_JUMP)
+			{
+				if (nx > 0)
+					ani = MARIO_ANI_FIRE_JUMP_RIGHT;
+				else if (nx < 0)
+					ani = MARIO_ANI_FIRE_JUMP_LEFT;
+			}
+			if (state == MARIO_STATE_TURN)
+			{
+				if (nx < 0)
+					ani = MARIO_ANI_FIRE_TURN_LEFT;
 
-			if (nx > 0) {
-				ani = MARIO_ANI_FIRE_TURN_RIGHT;
+				if (nx > 0) {
+					ani = MARIO_ANI_FIRE_TURN_RIGHT;
+				}
+			}
+			if (state == MARIO_STATE_RUNNING)
+			{
+				if (nx > 0)
+					ani = MARIO_ANI_FIRE_RUN_RIGHT;
+				else if (nx < 0)
+					ani = MARIO_ANI_FIRE_RUN_LEFT;
+			}
+			if (state == MARIO_STATE_SIT)
+			{
+				if (nx > 0)
+					ani = MARIO_ANI_FIRE_SIT_RIGHT;
+				else if (nx < 0)
+					ani = MARIO_ANI_FIRE_SIT_LEFT;
+			}
+			if (state == MARIO_STATE_FALLING)
+			{
+				if (nx > 0)
+					ani = MARIO_ANI_FIRE_FALL_RIGHT;
+				else if (nx < 0)
+					ani = MARIO_ANI_FIRE_FALL_LEFT;
+			}
+			if (state == MARIO_STATE_KICK)
+			{
+				if (nx > 0)
+					ani = MARIO_ANI_FIRE_KICK_RIGHT;
+				else if (nx < 0)
+					ani = MARIO_ANI_FIRE_KICK_LEFT;
+			}
+			if (state == MARIO_STATE_SHOOT_FIRE)
+			{
+				if (nx > 0)
+					ani = MARIO_ANI_FIRE_SHOOT_RIGHT;
+				else if (nx < 0)
+					ani = MARIO_ANI_FIRE_SHOOT_LEFT;
+			}
+			if (state == MARIO_STATE_RUN_MAXSPEED)
+			{
+				if (nx > 0)
+					ani = MARIO_ANI_FIRE_RUNMAXSPEED_RIGHT;
+				else if (nx < 0)
+					ani = MARIO_ANI_FIRE_RUNMAXSPEED_LEFT;
+			}
+			if (state == MARIO_STATE_FLY_UP)
+			{
+				if (nx > 0)
+					ani = MARIO_ANI_FIRE_FLY_RIGHT;
+				else if (nx < 0)
+					ani = MARIO_ANI_FIRE_FLY_LEFT;
 			}
 		}
-		if (state == MARIO_STATE_RUNNING)
-		{
-			if (nx > 0)
-				ani = MARIO_ANI_FIRE_RUN_RIGHT;
-			else if (nx < 0)
-				ani = MARIO_ANI_FIRE_RUN_LEFT;
-		}
-		if (state == MARIO_STATE_SIT)
-		{
-			if (nx > 0)
-				ani = MARIO_ANI_FIRE_SIT_RIGHT;
-			else if (nx < 0)
-				ani = MARIO_ANI_FIRE_SIT_LEFT;
-		}
-		if (state == MARIO_STATE_FALLING)
-		{
-			if (nx > 0)
-				ani = MARIO_ANI_FIRE_FALL_RIGHT;
-			else if (nx < 0)
-				ani = MARIO_ANI_FIRE_FALL_LEFT;
-		}
-		if (state == MARIO_STATE_KICK)
-		{
-			if (nx > 0)
-				ani = MARIO_ANI_FIRE_KICK_RIGHT;
-			else if (nx < 0)
-				ani = MARIO_ANI_FIRE_KICK_LEFT;
-		}
-		if (state == MARIO_STATE_SHOOT_FIRE)
-		{
-			if (nx > 0)
-				ani = MARIO_ANI_FIRE_SHOOT_RIGHT;
-			else if (nx < 0)
-				ani = MARIO_ANI_FIRE_SHOOT_LEFT;
-		}
-		if (state == MARIO_STATE_RUN_MAXSPEED)
-		{
-			if (nx > 0)
-				ani = MARIO_ANI_FIRE_RUNMAXSPEED_RIGHT;
-			else if (nx < 0)
-				ani = MARIO_ANI_FIRE_RUNMAXSPEED_LEFT;
-		}
-		if (state == MARIO_STATE_FLY_UP)
-		{
-			if (nx > 0)
-				ani = MARIO_ANI_FIRE_FLY_RIGHT;
-			else if (nx < 0)
-				ani = MARIO_ANI_FIRE_FLY_LEFT;
-		}
- }
 
 	int alpha = 255;
 	if (untouchable) alpha = 128;
@@ -808,8 +818,8 @@ void CMario::SetState(int state)
 				isOnAir = true;
 				if (isFlying)
 				{
-						isFalling = false;
-						isFlyup = true;
+					isFalling = false;
+					isFlyup = true;
 				}
 
 			}
@@ -840,11 +850,11 @@ void CMario::ResetSit()
 		y = y - PULL_UP_MARIO_AFTER_SIT;
 	}
 }
-void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom)
+void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 
- 
-	if (level==MARIO_LEVEL_BIG||level==MARIO_LEVEL_FIRE||level==MARIO_LEVEL_RACCOON)
+
+	if (level == MARIO_LEVEL_BIG || level == MARIO_LEVEL_FIRE || level == MARIO_LEVEL_RACCOON)
 	{
 		left = x;
 		top = y;
@@ -863,15 +873,14 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 		right = x + MARIO_SMALL_BBOX_WIDTH;
 		bottom = y + MARIO_SMALL_BBOX_HEIGHT;
 	}
-	if (level == MARIO_LEVEL_RACCOON && nx > 0 ) //Raccoon khi quay qua phai sai bounding box
+	if (level == MARIO_LEVEL_RACCOON && nx > 0) //Raccoon khi quay qua phai sai bounding box
 	{
-		right = x + MARIO_BIG_BBOX_WIDTH + 5 ;
+		right = x + MARIO_BIG_BBOX_WIDTH + 5;
 		bottom = y + MARIO_BIG_BBOX_HEIGHT;
-	//	left = right - MARIO_BIG_BBOX_WIDTH;
-			if (isAttack) {
-					right = x + MARIO_BIG_BBOX_WIDTH + 15;
-			}
-	
+		//	left = right - MARIO_BIG_BBOX_WIDTH;
+		if (isAttack) {
+			right = x + MARIO_BIG_BBOX_WIDTH + 15;
+		}
 	}
 }
 

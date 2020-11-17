@@ -6,7 +6,6 @@ CKoopas::CKoopas()
 	SetState(KOOPAS_STATE_WALKING);
 	SetHealth(3);
 	direction = 1;
-	
 }
 
 void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -27,7 +26,7 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	vy += KOOPAS_GRAVITY * dt;
-	CGameObject::Update(dt, coObjects);
+	CGameObject::Update(dt);
 	if (Health <= 0)
 	{
 		IsDie = true;
@@ -57,12 +56,21 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		state = KOOPAS_STATE_ATTACKED;
 		vx = direction * 0.1f;
 	}
+	vector<LPGAMEOBJECT> ListBrick;
+	ListBrick.clear();
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		if (coObjects->at(i)->GetType() == Type::BRICK)
+		{
+			ListBrick.push_back(coObjects->at(i));
+		}
+	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
 
-	CalcPotentialCollisions(coObjects, coEvents);
+	CalcPotentialCollisions(&ListBrick, coEvents);
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -80,41 +88,37 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
-		if (ny != 0) vy = 0;
+		if (ny != 0) {
+			vy = 0;
+		}
+		if (nx != 0)
+		{
+			vx *= -1;
+			direction *= -1;
+		}
+		if (state == KOOPAS_STATE_ATTACKED)
+		{
+			if (ny != 0)
+			{
+				vy = -KOOPAS_BOUNCE_AFTER_LANDFALL;
+				isAttacked = false;
+				isUpside = true;
+			}
+		}
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CBrick*>(e->obj))
+			if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba 
 			{
 				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-				if (state == KOOPAS_STATE_WALKING)
+				if (brick->GetModel() == 1)
 				{
-
-					if ( nx != 0)
+					if (e->nx != 0)
 					{
-						this->direction = -this->direction;
-						vx = this->direction * KOOPAS_WALKING_SPEED;
-					}
-				}
-				if (state == KOOPAS_STATE_BALL)
-				{
-						if (nx != 0)
-						{
-							this->direction = -this->direction;
-							vx = this->direction * KOOPAS_BALL_SPEED;
-						}					
-				}
-				if (state == KOOPAS_STATE_ATTACKED)
-				{
-					if (ny != 0)
-					{
-						vy = -KOOPAS_BOUNCE_AFTER_LANDFALL;
-						isAttacked = false;
-						isUpside = true;
+						x += dx;
 					}
 				}
 			}
-
 		}
 	}
 

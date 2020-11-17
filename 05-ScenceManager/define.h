@@ -38,7 +38,8 @@ enum Type {
 	//ITEM
 	MUSHROOM = 50,
 	MUSHROOM_BLUE =51,
-	LEAF = 52
+	LEAF = 52,
+	COIN = 53
 
 };
 #define GAMEOVER_SELECT_CONTINUE 0

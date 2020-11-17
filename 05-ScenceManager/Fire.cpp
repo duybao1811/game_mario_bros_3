@@ -28,6 +28,7 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else
 			{
 				isFinish = true;
+				destroy = 0;
 			}
 
 		}

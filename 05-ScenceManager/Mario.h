@@ -170,6 +170,7 @@ public:
 	bool isFallFly;
 	bool isOnAir;
 	bool isReadyToFly;
+	bool isHurting;
 	void ResetSit();
 	vector<LPGAMEOBJECT> ListFire;
 	CMario(float x = 0.0f, float y = 0.0f);
@@ -179,8 +180,9 @@ public:
 	void SetState(int state);
 	void SetLevel(int l) { level = l; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
-
+	void SetHurt(LPCOLLISIONEVENT e);
 	void Reset();
-
+//	void CollisionWithBrick(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	//void CollisionWithEnemy(vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 };
