@@ -132,9 +132,11 @@
     <ClCompile Include="define.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Fire.cpp" />
+    <ClCompile Include="FirePiranhaPlant.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="PiranhaPlant.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -156,9 +158,11 @@
     <ClInclude Include="define.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Fire.h" />
+    <ClInclude Include="FirePiranhaPlant.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="PiranhaPlant.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Game.h" />

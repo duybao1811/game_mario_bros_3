@@ -7,6 +7,7 @@
 40	textures\enemies-2.png	0	128	128
 70	textures\enemies3.png	3	26	110
 60	Resources\Tilemap\world1-1_bank.png	0	0	90
+80	textures\enemies4.png	255	255	255
 [TILEMAP]
 Resources\Tilemap\world1-1.txt
 # id	left	top	right	bottom	texture_id
@@ -249,7 +250,25 @@ Resources\Tilemap\world1-1.txt
 50033	273	202	289	218	40
 50034	290	202	306	218	40
 #attacked
-50035	152	202	168	218	40					
+50035	152	202	168	218	40	
+
+#################FIRE PLANT###################
+#left top
+12	165	545	181	578	80
+#attack left top
+13	65	545	81	578	80
+#left bottom 
+14	115	545	131	578	80
+#attack left bottom 				
+15	15	545	31	578	80
+#right top
+16	215	545	231	578	80
+#attack right top
+17	315	545	331	578	80
+#right bottom
+18	265	545	281	578	80
+#attack left bottom
+19	365	545	381	578	80
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 
@@ -453,6 +472,22 @@ Resources\Tilemap\world1-1.txt
 806	5	100	6	100	7	100	8	100
 #effect fire destroy
 807	9	100	10	100	11	100
+#Fire plant cap cap left top
+808	12	100	13	100
+#Fire plant cap cap left bottom
+809	14	100	15	100
+#Fire plant cap cap right top
+810	16	100	17	100
+#Fire plant cap cap right bottom 
+811	18	100	19	100
+#Shoot fire left top 
+812	13	100
+#Shoot fire left bottom
+813	15	100
+#Shoot fire right top
+814	17	100
+#Shoot fire right bottom 
+815	17	100
 #
 # id	ani1	ani2	ani3
 #
@@ -469,6 +504,8 @@ Resources\Tilemap\world1-1.txt
 6	804	802	803	900	901
 #COIN
 5	604
+#Fire Plant 
+7	808	809	810	811	812	813	814	815
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3=KOOPAS, 4=COIN, 
@@ -497,10 +534,10 @@ Resources\Tilemap\world1-1.txt
 1	352	368	2	32	48	0
 1	1472	368	2	16	16	2
 1	416	320	2	16	16	2
-1	176	353	2	16	16	2
-1	192	353	2	16	16	2
-1	224	314	2	16	16	2
-1	240	314	2	16	16	2
+1	176	352	2	16	16	2
+1	192	352	2	16	16	2
+1	224	304	2	16	16	2
+1	240	304	2	16	16	2
 1	656	385	2	16	16	2
 1	704	350	2	16	16	2
 1	1792	384	2	32	32	0

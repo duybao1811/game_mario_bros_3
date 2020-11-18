@@ -415,6 +415,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					CCoin* coin = dynamic_cast<CCoin*>(e->obj);
 					coin->isFinish = true;
+					x += dx;
+					y += dy;
 				}
 
 			}

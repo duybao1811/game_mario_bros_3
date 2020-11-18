@@ -12,8 +12,8 @@
 #define MARIO_WALKING_MAXSPEED 0.1f
 #define MARIO_RUNNING_MAXSPEED 0.2f
 #define PULL_UP_MARIO_AFTER_SIT 10.0f
-#define turn 0.006f                //vân tốc quay đầu
-#define a 0.004f                  //gia tốc
+#define turn 0.007f                //vân tốc quay đầu
+#define a 0.007f                  //gia tốc
 #define MARIO_STATE_IDLE			0
 #define MARIO_STATE_WALKING_RIGHT	100
 #define MARIO_STATE_WALKING_LEFT	200
@@ -60,8 +60,6 @@
 #define MARIO_ANI_SMALL_TURN_LEFT           23   //516
 #define MARIO_ANI_SMALL_RUN_RIGHT           25   //564
 #define MARIO_ANI_SMALL_RUN_LEFT            26
-//#define MARIO_ANI_SMALL_RUNMAXSPEED_RIGHT   26
-//#define MARIO_ANI_SMALL_RUNMAXSPEED_LEFT    27
 #define MARIO_ANI_RACCOON_IDLE_RIGHT        27   //508
 #define MARIO_ANI_RACCOON_IDLE_LEFT         28   //509
 #define MARIO_ANI_RACCOON_WALKING_RIGHT     29
