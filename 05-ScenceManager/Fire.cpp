@@ -4,36 +4,27 @@
 #include "Brick.h"
 #include "Goomba.h"
 #include "Koopas.h"
-Fire::Fire()
+#include "Game.h"
+Fire::Fire(float X,float Y)
 {
-	// load animation từ txt
-	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(LOAD_FIRE_FROM_TXT);
-	SetAnimationSet(ani_set);
+	this->x = X;
+	this->y = Y;
+	eType = Type::FIRE;
+	SetAnimationSet(CAnimationSets::GetInstance()->Get(LOAD_FIRE_FROM_TXT));
 	isFinish = false;
-	destroy = 0;
 }
 void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//set chuyển động của fire 
 		vy += FIRE_GRAVITY * dt;
-		vx = direction*FIRE_SPEED;
+		vx = direction*FIRE_SPEED*dt;
 
-	//phá hủy fire khi va chạm
-		if (isDestroy) {
-			if (destroy < TIME_EFFECT_DESTROY_FIRE)
-			{
-				destroy++;
-			}
-			else
-			{
-				isFinish = true;
-				destroy = 0;
-			}
-
-		}
-	CGameObject::Update(dt);
+	// ra khỏi camera thì kết thúc
+	if (!(checkObjInCamera(this)))
+		SetFinish(true);
+	CGameObject::Update(dt, coObjects);
 	//nảy lên khi va chạm đất
+	// chạm vào object thì kết thúc
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -64,17 +55,15 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<CBrick*>(e->obj)) {
 				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-				if (destroy == 0)
+				if (nx != 0)
 				{
-					if (nx != 0)
-					{
-						isDestroy = true;
-					}
-					if (ny != 0)
-					{
-						this->vy = -FIRE_BOUNCE_SPEED_Y;
-					}
+					SetFinish(true);
 				}
+				if (ny != 0)
+				{
+					this->vy = -FIRE_BOUNCE_SPEED_Y;
+				}
+
 			}
 			if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
 			{
@@ -82,9 +71,7 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 				if (e->nx != 0)
 				{
-					//effect_destroy = GetTickCount64();
 					goomba->SetState(GOOMBA_STATE_ATTACKED);
-					isDestroy = true;
 				}
 			}
 			else 
@@ -97,7 +84,6 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						if (koopas->GetState() == KOOPAS_STATE_WALKING) {
 							//koopas->SetState(GOOMBA_STATE_ATTACKED);
 							koopas->SubHealth(1);
-							isDestroy = true;
 						}
 					}
 				}
@@ -112,14 +98,7 @@ void Fire::Render()
 	{
 		ani = SHOOT_FIRE_RIGHT;
 	}
-	if (isDestroy)
-	{
-		ani = EFFECT_FIRE_DESTOY;
-	}
-	if (isFinish)
-		return;
 	animation_set->at(ani)->Render(x, y);
-	//RenderBoundingBox();
 }
 void Fire::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {

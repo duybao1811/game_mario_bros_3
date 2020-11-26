@@ -12,7 +12,7 @@ Map::Map(int TexID, int RowMap, int ColumnMap, int RowTile, int ColumnTile, int 
 	this->TotalTile = TotalTile;
 	CamX = CamY = 0;
 }
-Map::~Map(){}
+Map::~Map() {}
 void Map::SetMap(int** tilemap)
 {
 	TileMap = tilemap;
@@ -22,7 +22,7 @@ void Map::DrawMap()
 	int FirstColumn = floor(CamX / TILE_WIDTH);
 	int LastColumn = ceil((CamX + CGame::GetInstance()->GetScreenWidth()) / TILE_WIDTH);
 	if (LastColumn >= RowMap)
-		LastColumn = ColumnMap- 1;
+		LastColumn = ColumnMap - 1;
 	for (int CurrentRow = 0; CurrentRow < RowMap; CurrentRow++)
 		for (int CurrentColumn = 0; CurrentColumn <= LastColumn; CurrentColumn++)
 		{

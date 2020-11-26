@@ -13,153 +13,243 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Board">
+      <UniqueIdentifier>{a9f4a5dd-9989-487c-b9e4-7a5f9a0d3226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item">
+      <UniqueIdentifier>{37cdaa7a-8f23-4b87-87b5-74571580084b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemy">
+      <UniqueIdentifier>{5bcbcbbe-bd40-47a0-a0a0-73cb9cd4e51c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork">
+      <UniqueIdentifier>{3500c118-bb8a-4c23-b17e-7b1fe71a6aae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{24812020-9470-48b2-962b-3cdeb67b3793}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect">
+      <UniqueIdentifier>{e827c87e-75bb-4fdf-9ea2-5c5b7b509a29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{cc63e0f8-0f95-4dfe-85f5-30338e6be60d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{da82ecca-6277-47af-8c4e-f626a296bc8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scence">
+      <UniqueIdentifier>{7484dc2c-d7aa-48cc-b592-227870e944bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{83b6fc6c-2ef5-4e0e-88a8-1c54ebc376e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Brick.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Board.cpp">
+      <Filter>Board</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Goomba.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mario.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sprites.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Textures.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Scence.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayScence.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Animations.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Koopas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Portal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="define.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Font.cpp">
+      <Filter>Board</Filter>
     </ClCompile>
     <ClCompile Include="Fire.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Animations.cpp">
+      <Filter>FrameWork</Filter>
     </ClCompile>
     <ClCompile Include="BlockColor.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Brick.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="Coin.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Item</Filter>
     </ClCompile>
-    <ClCompile Include="PiranhaPlant.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Effect.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="CoinEffect.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectDisappear.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
     <ClCompile Include="FirePiranhaPlant.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="FirePlant.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Goomba.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="PiranhaPlant.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="MushRoom.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Leaf.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Koopas.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipe.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="define.cpp">
+      <Filter>FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="Portal.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Scence.cpp">
+      <Filter>Scence</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayScence.cpp">
+      <Filter>Scence</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="Mario.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprites.cpp">
+      <Filter>FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures.cpp">
+      <Filter>FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="PointEffect.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Brick.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Font.h">
+      <Filter>Board</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Goomba.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mario.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprites.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Textures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scence.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayScence.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Animations.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyEventHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Koopas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Portal.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Board.h">
+      <Filter>Board</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
-      <Filter>Header Files</Filter>
+      <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Animations.h">
+      <Filter>FrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="define.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Utils.h">
+      <Filter>FrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="Fire.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Textures.h">
+      <Filter>FrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Sprites.h">
+      <Filter>FrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="BlockColor.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Scence.h">
+      <Filter>Scence</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Portal.h">
+      <Filter>Object</Filter>
     </ClInclude>
-    <ClInclude Include="Coin.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Pipe.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Leaf.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Mario.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayScence.h">
+      <Filter>FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="PiranhaPlant.h">
-      <Filter>Header Files</Filter>
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="MushRoom.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Koopas.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyEventHandler.h">
+      <Filter>FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Goomba.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="FirePlant.h">
+      <Filter>Enemy</Filter>
     </ClInclude>
     <ClInclude Include="FirePiranhaPlant.h">
-      <Filter>Header Files</Filter>
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Fire.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectDisappear.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="CoinEffect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Brick.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockColor.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Coin.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="PointEffect.h">
+      <Filter>Effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

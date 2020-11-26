@@ -1,22 +1,33 @@
 #include "Goomba.h"
 #include "Brick.h"
 #include "Fire.h"
-CGoomba::CGoomba()
+CGoomba::CGoomba(int Model, int d)
 {
+	model = Model;
+	eType = Type::GOOMBA;
 	SetState(GOOMBA_STATE_WALKING);
-	SetHealth(1);
-	time = 0;
-	direction = 1;
+	direction = d;
+	TimeWalk = 0;
+	TimeDisappear = 0;
+	JumpCount = 0;
+	switch (Model)
+	{
+	case GOOMBA_BASE:
+		SetHealth(1);
+		break;
+	case GOOMBA_RED_PARA:
+		SetHealth(2);
+		break;
+	}
 }
-
-void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
+void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
 	right = x + GOOMBA_BBOX_WIDTH;
 	if (state == GOOMBA_STATE_DIE)
 		bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
-	else 	
+	else
 		bottom = y + GOOMBA_BBOX_HEIGHT;
 	if (isFinish || isAttacked)
 	{
@@ -25,21 +36,28 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 		right = 0;
 		bottom = 0;
 	}
-}
 
+}
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	CGameObject::Update(dt);
-
-
+	CGameObject::Update(dt, coObjects);
 	vy += 0.001f * dt;
+	if(model == GOOMBA_RED_PARA && Health == 2 && isOnGround)
+	{
+
+
+	}
+	if(isOnGround==false)
+	{
+		TimeWalk = 0;
+	}
 	if (Health == 1)
 	{
-		vx = direction*GOOMBA_WALKING_SPEED;
+		SetState(GOOMBA_STATE_WALKING);
 	}
-	if (Health <= 0)
+	if (Health == 0)
 	{
-		state = GOOMBA_STATE_DIE;
+		state=GOOMBA_STATE_DIE;
 		vx = 0;
 		vy = 0;
 	}
@@ -47,9 +65,9 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		vx = 0;
 		state = GOOMBA_STATE_DIE;
-		if (time <= 30)
+		if (TimeDisappear <= 30)
 		{
-			time++;
+			TimeDisappear+=dt;
 		}
 		else
 		{
@@ -69,7 +87,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
-
+	CalcPotentialCollisions(coObjects, coEvents);
 	CalcPotentialCollisions(&ListBrick, coEvents);
 
 	// No collision occured, proceed normally
@@ -86,9 +104,17 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-		x += min_tx * dx + nx * 0.4f;
+		x += min_tx * dx + nx * 0.1f;
 		y += min_ty * dy + ny * 0.4f;
-		if (ny != 0) vy = 0;
+		if (ny < 0)
+		{
+			isOnGround = true;
+			vy = 0;
+		}
+		if (ny > 0)
+		{
+			isOnGround = false;
+		}
 		if (nx != 0)
 		{
 			vx *= -1;
@@ -104,7 +130,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (e->nx != 0)
 					{
-						return;
+						x += dx;
 					}
 				}
 			}
@@ -116,17 +142,42 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 void CGoomba::Render()
 {
+	int ani = GOOMBA_ANI_WALKING;
 	if (isFinish)
 	{
 		return;
 	}
-	int ani = GOOMBA_ANI_WALKING;
-	if (state == GOOMBA_STATE_DIE) {
-		ani = GOOMBA_ANI_DIE;
+	if (model == GOOMBA_BASE) {
+		if (state == GOOMBA_STATE_DIE) {
+			ani = GOOMBA_ANI_DIE;
+		}
+		if (state == GOOMBA_STATE_ATTACKED)
+		{
+			ani = GOOMBA_ANI_ATTACKED;
+		}
 	}
-	if (state == GOOMBA_STATE_ATTACKED)
+	if (model == GOOMBA_RED_PARA)
 	{
-		ani = GOOMBA_ANI_ATTACKED;
+		if (state == GOOMBA_RED_PARA_STATE_WALKING)
+		{
+			ani = GOOMBA_RED_PARA_ANI_WALKING;
+		}
+		if (state == GOOMBA_STATE_JUMP)
+		{
+			ani = GOOMBA_RED_PARA_ANI_JUMP;
+		}
+		if (state == GOOMBA_RED_PARA_STATE_FALLING)
+		{
+			ani = GOOMBA_RED_PARA_ANI_FALL;
+		}
+		if (state == GOOMBA_STATE_WALKING)
+		{
+			ani = GOOMBA_RED_ANI_WALKING;
+		}
+		if (state == GOOMBA_STATE_DIE)
+		{
+			ani = GOOMBA_RED_PARA_ANI_DIE;
+		}
 	}
 
 	animation_set->at(ani)->Render(x,y);
@@ -144,13 +195,24 @@ void CGoomba::SetState(int state)
 			isDie = true;
 			break;
 		case GOOMBA_STATE_WALKING:
-			Health == 1;
-			//isWalking = true;
+			vx = direction * GOOMBA_WALKING_SPEED;
 			break;
 		case GOOMBA_STATE_ATTACKED:
 			vx = direction*GOOMBA_ATTACKED_SPEED_X;
 			vy = -GOOMBA_ATTACKED_SPEED_Y;
 			isAttacked = true;
+			break;
+		case GOOMBA_STATE_JUMP:
+			isOnGround = false;
+			vy = -GOOMBA_JUMP_SPEED_Y;
+			break;
+		case GOOMBA_RED_PARA_STATE_WALKING:
+			vx = direction*GOOMBA_RED_WALKING_SPEED;
+			break;
+		case GOOMBA_RED_PARA_STATE_FALLING:
+			break;
+		case GOOMBA_RED_STATE_WALKING:
+			vx = direction * GOOMBA_RED_WALKING_SPEED;
 			break;
 	}
 }

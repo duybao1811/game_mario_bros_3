@@ -1,32 +1,29 @@
-#pragma once
-#include "GameObject.h"
-#define FPLANTWIDTH 16
-#define FPLANTHEIGHT 23
-#define	FPLANT_ANI_LEFT_TOP 0
-#define FPLANT_ANI_LEFT_BOTTOM 1
-#define FPLANT_ANI_RIGHT_TOP 2
-#define FPLANT_ANI_RIGHT_BOTTOM 3
-#define FPLANT_ANI_ATTACK_LEFT_TOP 4
-#define FPLANT_ANI_ATTACK_LEFT_BOTTOM 5
-#define FPLANT_ANI_ATTACK_RIGHT_TOP 6
-#define FPLANT_ANI_ATTACK_RIGHT_BOTTOM 7
-class CFirePiranhaPlant: public CGameObject
+﻿#pragma once
+#include "Enemy.h"
+#include "Mario.h"
+#include "PlayScence.h"
+class CFirePiranhaPlant: public Enemy
 {
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 
 public:
-	bool isFinish;
-	bool isAttackLeftTop;
-	bool isAttackRightTop;
-	bool isAttackLeftBottom;
-	bool isAttackRightBottom;
-	bool isLeftTop;
-	bool isRightTop;
-	bool isLeftBottom;
-	bool isRightBottom;
-	CFirePiranhaPlant();
+	float maxY;
+	float minY;
+	vector<LPGAMEOBJECT> ListFireEnemy;
+	Range marioRange;
+	CMario* mario;
+	DWORD TimeAttackDelay;
+	DWORD TimeHidding;
+	DWORD TimeAttack;
+	bool isHidding;
+	bool isGrowUp;
+	int model;
+	void CreateFire();
+	Range GetMarioRangeCurrent(); //lấy vị trí hiện tại của mario để set đạn bay, set ani của plant
+	bool GetSafeZone(); // mario ở vùng an toàn thì không bắn
+	CFirePiranhaPlant(float X,float Y,int Model);
 	virtual void SetState(int state);
 };
 

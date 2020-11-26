@@ -1,16 +1,20 @@
 ﻿#pragma once
 #include "GameObject.h"
-
-#define MARIO_WALKING_SPEED		0.15f 
+#include "Item.h"
+#include "define.h"
+#define MARIO_WALKING_SPEED		0.0002f 
+#define MARIO_RUNNING_SPEED     0.00015f
 //0.1f
-#define MARIO_JUMP_SPEED_Y		0.35f
+#define MARIO_DECELERATE_SPEED 0.0005f
+#define MARIO_JUMP_SLOW_SPEED_Y 0.25f
+#define MARIO_JUMP_SPEED_Y		0.37f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
-#define MARIO_JUMP_SPEED_RUNING_MAXSPEED 0.45f
+#define MARIO_JUMP_SPEED_RUNNING_MAXSPEED 0.45f
 #define MARIO_GRAVITY			0.001f
 #define MARIO_DIE_DEFLECT_SPEED	 0.5f
 #define MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION 0.3f
-#define MARIO_WALKING_MAXSPEED 0.1f
-#define MARIO_RUNNING_MAXSPEED 0.2f
+#define MARIO_WALKING_MAXSPEED 0.12f
+#define MARIO_RUNNING_MAXSPEED 0.23f
 #define PULL_UP_MARIO_AFTER_SIT 10.0f
 #define turn 0.007f                //vân tốc quay đầu
 #define a 0.007f                  //gia tốc
@@ -22,7 +26,8 @@
 #define MARIO_STATE_DIE				400
 #define MARIO_STATE_SIT             500
 #define MARIO_STATE_RUN_MAXSPEED    600
-#define MARIO_STATE_RUNNING         700
+#define MARIO_STATE_RUN_LEFT        700
+#define MARIO_STATE_RUN_RIGHT       750
 #define MARIO_STATE_TURN            800
 #define MARIO_STATE_RACCOON_ATTACK  900
 #define MARIO_STATE_SHOOT_FIRE      901
@@ -131,26 +136,15 @@
 #define MARIO_FLY_SPEED_Y 0.15f
 class CMario : public CGameObject
 {
-	int untouchable;
-	DWORD untouchable_start;
 
 	float start_x;			// initial position of Mario at scene
-	float start_y; 
+	float start_y;
 	float MarioGravity;
-public: 
-	Camera* camera;
-	DWORD Time;
-	DWORD StartFly;
-	DWORD Attack;
-	DWORD Kick;
+	int CoinCollect;
+	int score;
+public:
 	int TimeFly;
 	int level;
-	void Sit();
-	void Jump();
-	void Stop();
-	void GoRight();
-	void GoLeft();
-	void Falling();
 	bool isJumping;
 	bool isOnGround;
 	bool isWalking;
@@ -158,8 +152,6 @@ public:
 	bool isSitting;
 	bool isDie;
 	bool isFlying;
-	bool isWalkingR;
-	bool isWalkingL;
 	bool isRunning;
 	bool isFlyup;
 	bool isFallSlow;
@@ -169,18 +161,51 @@ public:
 	bool isOnAir;
 	bool isReadyToFly;
 	bool isHurting;
+
+	bool isWagging;
+
+	float last_vy;
+	float last_vx;
+public:
+	bool untouchable;
+	DWORD untouchable_start;
+	DWORD Time;
+	DWORD StartFly;
+	DWORD TimeAttack;
+	DWORD Kick;
+
 	void ResetSit();
 	vector<LPGAMEOBJECT> ListFire;
+	vector<LPGAMEOBJECT> ListEffect;
 	CMario(float x = 0.0f, float y = 0.0f);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
+	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	virtual void Render();
-
+	
 	void SetState(int state);
 	void SetLevel(int l) { level = l; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
+	
+
+	void Decelerate();
+	void Idle();
+	void Sit();
+	void Fly();
+	void WalkRight();
+	void WalkLeft();
+	void JumpSlow();
+	void JumpHight();
+
+
+
 	void SetHurt(LPCOLLISIONEVENT e);
 	void Reset();
-//	void CollisionWithBrick(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
-	//void CollisionWithEnemy(vector<LPGAMEOBJECT>* coObjects = NULL);
-	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
+	int GetLevel();
+	bool isCollisionWithItem(Item* objItem);
+	void ShootFire();
+
+	void SetCoinCollect(int c);
+	int GetCoinCollect();
+	void SetScore(int s);
+	int GetScore();
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 };

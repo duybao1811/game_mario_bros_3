@@ -399,3 +399,11 @@ void CGame::SwitchScene(int scene_id)
 	CGame::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
 	s->Load();	
 }
+float CGame::GetCamX()
+{
+	return cam_x;
+}
+float CGame::GetCamY()
+{
+	return cam_y;
+}

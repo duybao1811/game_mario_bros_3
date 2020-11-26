@@ -14,6 +14,8 @@
 #include <cstring>
 #include "Fire.h"
 #include "Coin.h"
+#include "Pipe.h"
+#include "PiranhaPlant.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -39,6 +41,9 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 #define OBJECT_TYPE_GOOMBA	2
 #define OBJECT_TYPE_KOOPAS	3
 #define OBJECT_TYPE_COIN 4
+#define OBJECT_TYPE_FIRE_PLANT 5
+#define OBJECT_TYPE_PIPE    7
+#define OBJECT_TYPE_PLANT 8
 #define OBJECT_TYPE_PORTAL	50
 
 #define MAX_SCENE_LINE 1024
@@ -158,26 +163,56 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object created!\n");
 		break;
-	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(); break;
+	case OBJECT_TYPE_GOOMBA:
+	{
+		int model = atof(tokens[4].c_str());
+		int d = atof(tokens[5].c_str());
+		obj = new CGoomba(model, d);
+		break;
+	}
 	case OBJECT_TYPE_BRICK: {
 		float w = atof(tokens[4].c_str());
 		float h = atof(tokens[5].c_str());
 		int BType = atof(tokens[6].c_str());
-		obj = new CBrick(w, h, BType);
+		obj = new CBrick(x,y,w, h, BType);
 		break;
 	}
-	case OBJECT_TYPE_KOOPAS: obj = new CKoopas(); break;
+	case OBJECT_TYPE_KOOPAS: 
+	{
+		int model = atof(tokens[4].c_str());
+		int d = atof(tokens[5].c_str());
+		obj = new CKoopas(model,d); 
+		break;
+	}
 	case OBJECT_TYPE_PORTAL:
 		{	
 			float r = atof(tokens[4].c_str());
 			float b = atof(tokens[5].c_str());
 			int scene_id = atoi(tokens[6].c_str());
 			obj = new CPortal(x, y, r, b, scene_id);
+			break;
 		}
-		break;
 	case OBJECT_TYPE_COIN:
 	{
 		obj = new CCoin();
+		break;
+	}
+	case OBJECT_TYPE_FIRE_PLANT:
+	{
+		int model = atof(tokens[4].c_str());
+		obj = new CFirePiranhaPlant(x,y,model);
+		break;
+	}
+	case OBJECT_TYPE_PIPE:
+	{
+		int model = atof(tokens[4].c_str());
+		obj = new Pipe(model);
+		break;
+	}
+	case OBJECT_TYPE_PLANT:
+	{
+		int model = atof(tokens[4].c_str());
+		obj = new CPiranhaPlant(x,y,model);
 		break;
 	}
 	default:
@@ -187,7 +222,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	// General object setup
 	obj->SetPosition(x, y);
-
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 
 	obj->SetAnimationSet(ani_set);
@@ -343,12 +377,82 @@ void CPlayScene::Unload()
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
+void CPlayScene::CheckCollision()
+{
+	CheckCollistionMarioWithItem();
+	CheckCollisionMarioWithEnemy();
+}
+void CPlayScene::CheckCollistionMarioWithItem()
+{
+	for (UINT i = 0; i < ListItem.size(); i++)
+	{
+		if (ListItem[i]->GetFinish() == false)
+		{
+			if (mario->isCollisionWithItem(ListItem[i])==true)
+			{
+				switch (ListItem[i]->GetType())
+				{
+				case Type::MUSHROOM_POWER:
+				{
+					mario->SetLevel(MARIO_LEVEL_BIG);
+					mario->SetHealth(2);
+					break;
+				}
+				case Type::MUSHROOM_1_UP:
+				{
+					break;
+				}
+				case Type::LEAF:
+				{
+					mario->SetLevel(MARIO_LEVEL_RACCOON);
+					mario->SetHealth(3);
+					if (mario->GetLevel() == MARIO_LEVEL_RACCOON)
+					{
 
+					}
+					break;
+				}
+				}
+			}
+		}
+	}
+}
+void CPlayScene::CheckCollisionMarioWithEnemy()
+{
+	if (GetTickCount64() - mario->untouchable_start > MARIO_UNTOUCHABLE_TIME)
+	{
+		mario->untouchable_start = 0;
+		mario->untouchable = false;
+	}
+	if (mario->untouchable == false)
+	{
+		for (UINT i = 0; i < ListEnemy.size(); i++)
+		{
+			CGameObject* gameobj = dynamic_cast<CGameObject*>(ListEnemy[i]);
+			if (gameobj->GetHealth() > 0)
+			{
+				LPCOLLISIONEVENT e = mario->SweptAABBEx(gameobj);
+				bool isCollision = false;
+				if (e->nx != 0)
+				{
+					mario->SetHurt(e);
+					isCollision = true;
+				}
+				if (isCollision == false && mario->checkAABB(gameobj) == true)
+				{
+					//LPCOLLISIONEVENT e = new CollisionEvent()
+					mario->SetHurt(e);
+					isCollision = true;
+				}
+			}
+		}
+	}
+}
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 
-	CMario *mario = ((CPlayScene*)scence)->GetPlayer();
+	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
 	if (mario->GetState() == MARIO_STATE_DIE)
 		return;
 	switch (KeyCode)
@@ -374,57 +478,79 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		if (mario->level == MARIO_LEVEL_RACCOON)
 		{
 			mario->SetState(MARIO_STATE_RACCOON_ATTACK);
-			mario->Attack = GetTickCount64();
+			mario->TimeAttack = GetTickCount64();
 			break;
 
 		}
 		else if (mario->level == MARIO_LEVEL_FIRE)
 		{
 			mario->SetState(MARIO_STATE_SHOOT_FIRE);
-			mario->Attack = GetTickCount64();
+			mario->TimeAttack = GetTickCount64();
 		}
 		break;
 	}
-	case DIK_X:
+	case DIK_S:
 	{
-		mario->SetState(MARIO_STATE_JUMP);
-		mario->isFallSlow = false;
-		break;
+		if (mario->isOnGround)
+		{
+			mario->JumpHight();
+			mario->SetState(MARIO_STATE_JUMP);
+		}
 	}
 	}
-	
+
 
 }
 
-void CPlayScenceKeyHandler::KeyState(BYTE *states)
+void CPlayScenceKeyHandler::KeyState(BYTE* states)
 {
-	CGame *game = CGame::GetInstance();
-	CMario *mario = ((CPlayScene*)scence)->GetPlayer();
+	CGame* game = CGame::GetInstance();
+	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
 	// disable control key when Mario die 
 	if (mario->GetState() == MARIO_STATE_DIE) return;
-	if (game->IsKeyDown(DIK_RIGHT))
+	else if (game->IsKeyDown(DIK_Z) && game->IsKeyDown(DIK_RIGHT))
 	{
-		mario->nx = 1;
+		mario->isRunning = true;
+		mario->SetState(MARIO_STATE_RUN_RIGHT);
+	}
+	else if (game->IsKeyDown(DIK_Z) && game->IsKeyDown(DIK_LEFT))
+	{
+		mario->isRunning = true;
+		mario->SetState(MARIO_STATE_RUN_LEFT);
+	}
+	else if (game->IsKeyDown(DIK_RIGHT) || (game->IsKeyDown(DIK_DOWN)&& game->IsKeyDown(DIK_RIGHT)))
+	{
 		mario->SetState(MARIO_STATE_WALKING_RIGHT);
-	}
-	if (game->IsKeyDown(DIK_LEFT))
-	{
-		mario->nx = -1;
-		mario->SetState(MARIO_STATE_WALKING_LEFT);
-
-	}
-	if (game->IsKeyDown(DIK_DOWN))
-	{
-		if ((!mario->isWalking) || !mario->isRunning) {
-			mario->SetState(MARIO_STATE_SIT);
-		}
-	}
-	if (game->IsKeyDown(DIK_Z))
-	{
-		if (mario->isWalking)
+		if (mario->vx < 0)
 		{
-			mario->SetState(MARIO_STATE_RUNNING);
+			mario->SetState(MARIO_STATE_TURN);
 		}
+		mario->WalkRight();
+	}
+	else if (game->IsKeyDown(DIK_LEFT) || (game->IsKeyDown(DIK_DOWN) && game->IsKeyDown(DIK_LEFT)))
+	{
+		mario->SetState(MARIO_STATE_WALKING_LEFT);
+		if (mario->vx > 0)
+		{
+			mario->SetState(MARIO_STATE_TURN);
+		}
+		mario->WalkLeft();
+	}
+	else if (game->IsKeyDown(DIK_DOWN) && mario->GetLevel()!=MARIO_LEVEL_SMALL)
+	{
+			mario->Sit();
+	}
+
+	else if (game->IsKeyDown(DIK_X))
+	{
+		mario->JumpSlow();
+		mario->SetState(MARIO_STATE_JUMP);
+	}
+
+	else
+	{
+		if (mario->isOnGround)
+			mario->Idle();
 	}
 
 }
@@ -435,14 +561,8 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
 	switch (KeyCode)
 	{
-	case DIK_RIGHT:
-		mario->isWalkingR = false;
-		break;
-	case DIK_LEFT:
-		mario->isWalkingL = false;
-		break;
 	case DIK_Z:
-		mario->isRunning = false;
+		mario->Idle();
 		break;
 	case DIK_DOWN:
 		if (mario->isSitting)
@@ -459,18 +579,18 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		if (mario->level == MARIO_LEVEL_RACCOON) {
 			if (mario->isOnAir)
 			{
-				if (!mario->isFlying && mario->vy>=0)
+				if (!mario->isFlying && mario->vy >= 0)
 				{
-						mario->SetSpeed(cVx, -MARIO_FALL_SLOW);
-						mario->isFallSlow = true;
-						break;
+					mario->SetSpeed(cVx, -MARIO_FALL_SLOW);
+					mario->isFallSlow = true;
+					break;
 				}
 				if (mario->isFlying)
 				{
 					if (mario->isFlyup)
 					{
-						mario->SetSpeed(cVx,-MARIO_FLY_SPEED_Y);
-						mario->isFallFly = true;						
+						mario->SetSpeed(cVx, -MARIO_FLY_SPEED_Y);
+						mario->isFallFly = true;
 					}
 					break;
 				}

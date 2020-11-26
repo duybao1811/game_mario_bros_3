@@ -19,7 +19,7 @@ class Map
 	float CamX, CamY;
 
 public: 
-	Map(int TexID, int RowMap, int ColumnMap, int RowTile, int ColumnTile, int TotalTile) ;
+	Map(int TexID, int RowMap, int ColumnMap, int RowTile, int ColumnTile, int TotalTile);
 	~Map() ;
 	void SetMap(int** tilemap);
 	void GetSpriteTile();

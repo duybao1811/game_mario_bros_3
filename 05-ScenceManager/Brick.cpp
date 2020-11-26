@@ -1,40 +1,47 @@
 ﻿#include "Brick.h"
 #include "Mario.h"
-CBrick::CBrick(float w,float h, int Btype)
+#include "PlayScence.h"
+#include "Game.h"
+#include "Item.h"
+#include "Leaf.h"
+#include "CoinEffect.h"
+#include "PointEffect.h"
+CBrick::CBrick(float X,float Y,float w,float h, int Btype)
 {
-
-	this->BType = Btype;
+	this->x = X;
+	this->y = Y;
+	this->bType = Btype;
 	this->width = w;
 	this->height = h;
+	starty = Y;
 	//Btype = 0 : nền
 	//Loại khối có màu
-	if (Btype == 1)
+	switch (bType)
 	{
-
-	}
-	if (Btype == 2)
-	{
+	case GROUND:
+		break;
+	case BLOCK_COLOR:
+		break;
+	case BRICK_MODEL_COIN:
 		SetHealth(1);
-	}
-	// loại question brick ra nấm 
-	if (Btype == 3)
-	{
+		break;
+	case BRICK_MODEL_POWER_UP:
 		SetHealth(1);
+		break;
 	}
-	//loại question brick ra nhiều tiền
-	if (Btype == 4)
-	{
-
-	}
-	type = Type::BRICK;
+	eType = Type::BRICK;
 
 }
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
-
+	y += dy;
+	CoinEffect* coineffect;
+	coineffect = new CoinEffect(x, y);
 	//MARIO ĐỤNG TRÚNG QUESTION BRICK THÌ QUESTION BRICK NẢY LÊN RƠI RA ĐỒNG XU HOẶC ITEM
 
+	if (bType == 0 || bType == 1)
+		return;
 	if (Health == 1)
 	{
 		state = QB_STATE_BASE;
@@ -43,21 +50,77 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		state = QB_STATE_EMPTY;
 	}
-	if (vy == 0)
-	{
-		 starty = y;
-	}
 	if (starty - y >= QB_UP)
 	{
-		vy = QB_SPEED_UP;
+		vy = QB_SPEED_DOWN;
+		switch (bType)
+		{
+		case BRICK_MODEL_COIN:
+			ListEffect.push_back(coineffect);
+			break;
+		}
 	}
 	if (starty - y < 0)
 	{
 		y = starty;
 		SetState(QB_STATE_EMPTY);
-	}
-	y += dy;
+		LPSCENE scence = CGame::GetInstance()->GetCurrentScene();
+		CMario* mario = ((CPlayScene*)scence)->GetPlayer();
+		Item* item;
 
+		switch (bType)
+		{
+		case BRICK_MODEL_POWER_UP:
+		{
+			if (mario->GetLevel() == MARIO_LEVEL_SMALL)
+			{
+				ListItem.push_back(new CMushRoom(MUSHROOM_RED,this->x,this->y));
+				break;
+			}
+			else
+			{
+				ListItem.push_back(new Leaf(this->x, this->y));
+				break;
+			}
+			
+		}
+		case BRICK_MODE_1_UP:
+			ListItem.push_back(new CMushRoom(MUSHROOM_GREEN, this->x, this->y));
+			break;
+
+
+		}
+	}
+#pragma region Update Item and effect
+
+	for (int i = 0; i < ListItem.size(); i++)
+	{
+		ListItem[i]->Update(dt, coObjects);
+	}
+	for (int i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->Update(dt, coObjects);
+	}
+	for (int i = 0; i < ListEffect.size(); i++)
+	{
+		if (ListEffect[i]->isFinish)
+		{
+			ListEffect.erase(ListEffect.begin() + i);
+			ListPointEffect.push_back(new PointEffect(coineffect->x, coineffect->y, POINT_TYPE_ONE_HUNDRED));
+		}
+	}
+	for (int i = 0; i < ListPointEffect.size(); i++)
+	{
+		ListPointEffect[i]->Update(dt, coObjects);
+	}
+	for (int i = 0; i < ListPointEffect.size(); i++)
+	{
+		if (ListPointEffect[i]->isFinish)
+		{
+			ListPointEffect.erase(ListPointEffect.begin() + i);
+		}
+	}
+#pragma endregion
 
 }
 void CBrick::Render()
@@ -71,13 +134,25 @@ void CBrick::Render()
 	{
 		ani = QB_ANI_EMPTY;
 	}
-	if (BType == 0 || BType == 1)
+	if (bType == 0 || bType == 1)
 	{
 		return;
 	}
 	else {
 		animation_set->at(ani)->Render(x, y);
 		RenderBoundingBox();
+	}
+	for (int i = 0; i < ListItem.size(); i++)
+	{
+		ListItem[i]->Render();
+	}
+	for (int i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->Render();
+	}
+	for (int i = 0; i < ListPointEffect.size(); i++)
+	{
+		ListPointEffect[i]->Render();
 	}
 }
 void CBrick::SetState(int state)
@@ -94,7 +169,7 @@ void CBrick::SetState(int state)
 }
 int CBrick::GetModel()
 {
-	return BType;
+	return bType;
 }
 void CBrick::GetBoundingBox(float &l, float &t, float &r, float &b)
 {

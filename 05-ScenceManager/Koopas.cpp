@@ -1,11 +1,25 @@
 ﻿#include "Koopas.h"
 #include "Brick.h"
-CKoopas::CKoopas()
+#include "Goomba.h"
+CKoopas::CKoopas(int Model, int d)
 {
-	type = Type::KOOPAS;
+	model = Model;
+	eType = Type::KOOPAS;
 	SetState(KOOPAS_STATE_WALKING);
 	SetHealth(3);
-	direction = 1;
+	direction = d;
+	switch (Model)
+	{
+	case KOOPAS_BASE:
+		SetHealth(3);
+		break;
+	case KOOPAS_RED:
+		SetHealth(3);
+		break;
+	case KOOPAS_FLY:
+		SetHealth(4);
+		break;
+	}
 }
 
 void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -27,12 +41,17 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	vy += KOOPAS_GRAVITY * dt;
 	CGameObject::Update(dt);
+	// ra khỏi camera thì kết thúc
+	if (!(checkObjInCamera(this)))
+		SetFinish(true);
+	if (model == KOOPAS_FLY && Health == 4 && isOnGround)
+	{
+		SetState(KOOPAS_STATE_FLY);
+	}
 	if (Health <= 0)
 	{
-		IsDie = true;
+		SetFinish(true);
 	}
-	if (IsDie)
-		return;
 	if (Health == 3)   //Koopas
 	{
 		SetState(KOOPAS_STATE_WALKING);
@@ -69,7 +88,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
-
+	CalcPotentialCollisions(coObjects, coEvents);
 	CalcPotentialCollisions(&ListBrick, coEvents);
 
 	// No collision occured, proceed normally
@@ -88,8 +107,14 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
-		if (ny != 0) {
+		if (ny < 0)
+		{
+			isOnGround = true;
 			vy = 0;
+		}
+		if (ny > 0)
+		{
+			isOnGround = false;
 		}
 		if (nx != 0)
 		{
@@ -108,14 +133,37 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba 
+
+			if (e->obj->GetType()==GOOMBA)
+			{
+				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+				{
+					if (state == KOOPAS_STATE_BALL)
+					{
+						if (e->nx != 0 || e->ny != 0)
+						{
+							goomba->SetDirection(this->nx);
+							goomba->SetState(GOOMBA_STATE_ATTACKED);
+						}
+					}
+				}
+			}
+			if (e->obj->GetType() == BRICK)
 			{
 				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-				if (brick->GetModel() == 1)
+				if (e->nx != 0)
 				{
-					if (e->nx != 0)
+					x += dx;
+				}
+				if (state == KOOPAS_STATE_BALL)
+				{
+					if (e->nx)
 					{
-						x += dx;
+						if (brick->GetState() != QB_STATE_EMPTY)
+						{
+							brick->SetState(QB_STATE_UNBOX);
+							brick->SubHealth(1);
+						}
 					}
 				}
 			}
@@ -127,28 +175,93 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 void CKoopas::Render()
 {
-	int ani = KOOPAS_ANI_WALKING_LEFT;
-	if (state == KOOPAS_STATE_BALL)
+	int ani = KOOPAS_BASE_ANI_WALKING_LEFT;
+	if (model == KOOPAS_BASE)
 	{
-		ani = KOOPAS_ANI_BALL;
+		if (state == KOOPAS_STATE_BALL)
+		{
+			ani = KOOPAS_BASE_ANI_BALL;
+		}
+		if (state == KOOPAS_STATE_DEFEND) {
+			ani = KOOPAS_BASE_ANI_DEFEND;
+		}
+		if (state == KOOPAS_STATE_WALKING)
+		{
+			if (direction > 0)
+				ani = KOOPAS_BASE_ANI_WALKING_RIGHT;
+			else if (direction < 0)
+				ani = KOOPAS_BASE_ANI_WALKING_LEFT;
+		}
+		if (state == KOOPAS_STATE_ATTACKED)
+		{
+			ani = KOOPAS_BASE_ANI_ATTACKED;
+		}
+		if (isUpside)
+		{
+			ani = KOOPAS_BASE_ANI_ATTACKED;
+		}
 	}
-	if (state == KOOPAS_STATE_DEFEND) {
-		ani = KOOPAS_ANI_DEFEND;
-	}
-	if (state == KOOPAS_STATE_WALKING)
+	else if (model == KOOPAS_RED)
 	{
-		if (direction > 0)
-			ani = KOOPAS_ANI_WALKING_RIGHT;
-		else if (direction < 0)
-			ani = KOOPAS_ANI_WALKING_LEFT;
+		if (state == KOOPAS_STATE_BALL)
+		{
+			ani = KOOPAS_RED_ANI_BALL;
+		}
+		if (state == KOOPAS_STATE_DEFEND) {
+			ani = KOOPAS_RED_ANI_DEFEND;
+		}
+		if (state == KOOPAS_STATE_WALKING)
+		{
+			if (direction > 0)
+				ani = KOOPAS_RED_ANI_WALKING_RIGHT;
+			else if (direction < 0)
+				ani = KOOPAS_RED_ANI_WALKING_LEFT;
+		}
+		if (state == KOOPAS_STATE_ATTACKED)
+		{
+			ani = KOOPAS_RED_ANI_ATTACKED;
+		}
+		if (isUpside)
+		{
+			ani = KOOPAS_RED_ANI_ATTACKED;
+		}
+
 	}
-	if (state == KOOPAS_STATE_ATTACKED)
+	else if (model == KOOPAS_FLY)
 	{
-		ani = KOOPAS_ANI_ATTACKED;
-	}
-	if (isUpside)
-	{
-		ani = KOOPAS_ANI_ATTACKED;
+		if (state == KOOPAS_STATE_FLY)
+		{
+			if (direction > 0)
+			{
+				ani = KOOPAS_BASE_ANI_FLY_RIGHT;
+			}
+			else if (direction < 0)
+			{
+				ani = KOOPAS_BASE_ANI_FLY_LEFT;
+			}
+		}
+		if (state == KOOPAS_STATE_BALL)
+		{
+			ani = KOOPAS_BASE_ANI_BALL;
+		}
+		if (state == KOOPAS_STATE_DEFEND) {
+			ani = KOOPAS_BASE_ANI_DEFEND;
+		}
+		if (state == KOOPAS_STATE_WALKING)
+		{
+			if (direction > 0)
+				ani = KOOPAS_BASE_ANI_WALKING_RIGHT;
+			else if (direction < 0)
+				ani = KOOPAS_BASE_ANI_WALKING_LEFT;
+		}
+		if (state == KOOPAS_STATE_ATTACKED)
+		{
+			ani = KOOPAS_BASE_ANI_ATTACKED;
+		}
+		if (isUpside)
+		{
+			ani = KOOPAS_BASE_ANI_ATTACKED;
+		}
 	}
 	animation_set->at(ani)->Render(x, y);
 
@@ -165,7 +278,6 @@ void CKoopas::SetState(int state)
 		break;
 	case KOOPAS_STATE_DEFEND:
 		vx = 0;
-		isDefend = true;
 		break;
 	case KOOPAS_STATE_BALL:
 		vx =  direction*KOOPAS_BALL_SPEED;
@@ -174,7 +286,15 @@ void CKoopas::SetState(int state)
 		isAttacked = true;
 		vy = -KOOPAS_SPEED_Y_AFTER_ATTACKED;
 		break;
-
+	case KOOPAS_STATE_FLY:
+		vx = direction * KOOPAS_FLY_SPEED_X;
+		isOnGround = false;
+		vy = -KOOPAS_FLY_SPEED;
+		break;
 	}
 
+}
+int CKoopas::GetModel()
+{
+	return model;
 }

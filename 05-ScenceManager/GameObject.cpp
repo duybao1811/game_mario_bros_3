@@ -173,6 +173,20 @@ bool CGameObject::checkAABB(CGameObject* obj)
 		return true;
 	return false;
 }
+bool CGameObject::checkObjInCamera(CGameObject* obj)
+{
+	float w = 16.0f;
+	float h = 16.0f;
+	if (obj->x + w < (CGame::GetInstance()->GetCamX()) || (CGame::GetInstance()->GetCamX()) + SCREEN_WIDTH < obj->x)
+		return false;
+	if (obj->y + h < (CGame::GetInstance()->GetCamY()) || (CGame::GetInstance()->GetCamY()) + SCREEN_HEIGHT < obj->y)
+		return false;
+	return true;
+}
+Type CGameObject::GetType()
+{
+	return eType;
+}
 CGameObject::~CGameObject()
 {
 

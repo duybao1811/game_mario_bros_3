@@ -7,8 +7,7 @@
 #include "Sprites.h"
 #include "define.h"
 #include "Animations.h"
-
-
+#include "Game.h"
 using namespace std;
 
 #define ID_TEX_BBOX -100		// special texture to draw object bounding box
@@ -43,8 +42,9 @@ struct CCollisionEvent
 
 class CGameObject
 {
+protected:
+	Type eType;
 public:
-	Type type;
 	int Health;
 	float x; 
 	float y;
@@ -56,14 +56,19 @@ public:
 	float vy;
 	int direction; // -1: hướng trái, 1: hướng phải
 	int nx;	 
-
 	int state;
-
+	bool isFinish;
 	DWORD dt; 
+
 
 	LPANIMATION_SET animation_set;
 
 public: 
+	CGame* cam;
+	bool GetFinish() { return isFinish; }
+	void SetFinish(bool b) {
+		isFinish = b;
+	}
 	void SetX(float X) { x = X; }
 	float GetX() { return x; }
 	void SetY(float Y) { y = Y; }
@@ -78,7 +83,7 @@ public:
 	void SetDirection(int d);
 	int GetDirection();
 	int GetState() { return this->state; }
-	Type GetType() { return this->type; }
+	Type GetType();
 	void RenderBoundingBox();
 
 	void SetAnimationSet(LPANIMATION_SET ani_set) { animation_set = ani_set; }
@@ -98,12 +103,11 @@ public:
 	CGameObject();
 	bool isCollisionObjectWithObject(CGameObject* obj);
 	bool checkAABB(CGameObject* obj);
+	bool checkObjInCamera(CGameObject* obj);
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom) = 0;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects = NULL);
 	virtual void Render() = 0;
 	virtual void SetState(int state) { this->state = state; }
-
-
 	~CGameObject();
 };
 

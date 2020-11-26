@@ -35,8 +35,6 @@ class CGame
 
 	LPKEYEVENTHANDLER keyHandler;
 
-	float cam_x = 0.0f;
-	float cam_y = 0.0f;
 
 	int screen_width;
 	int screen_height; 
@@ -48,6 +46,8 @@ class CGame
 	void _ParseSection_SCENES(string line);
 
 public:
+	float cam_x = 0.0f;
+	float cam_y = 0.0f;
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; }
 	void Init(HWND hWnd);
@@ -83,6 +83,8 @@ public:
 	LPD3DXSPRITE GetSpriteHandler() { return this->spriteHandler; }
 
 	void SetCamPos(float x, float y) { cam_x = x; cam_y = y; }
+	float GetCamX();
+	float GetCamY();
 	bool checkAABB(float b1left, float b1top, float b1right, float b1bottom, float b2left, float b2top, float b2right, float b2bottom);
 	static CGame * GetInstance();
 

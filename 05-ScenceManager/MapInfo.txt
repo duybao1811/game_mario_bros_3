@@ -1,3 +1,0 @@
-out.txt
-textures//TileMap.png
-12	11

@@ -25,7 +25,7 @@
 #include "Goomba.h"
 
 #include "PlayScence.h"
-
+#include "define.h"
 #define WINDOW_CLASS_NAME L"SampleWindow"
 #define MAIN_WINDOW_TITLE L"SAMPLE 05 - SCENCE MANAGER"
 
@@ -33,8 +33,7 @@
 
 
 #define MAX_FRAME_RATE 90
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+
 CGame *game;
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
