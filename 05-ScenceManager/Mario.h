@@ -134,6 +134,7 @@
 #define PULL_UP_MARIO_AFTER_SIT 10.0f
 #define MARIO_FALL_SLOW 0.04f
 #define MARIO_FLY_SPEED_Y 0.15f
+#define MARIO_DEFAULT_SCORE 0
 class CMario : public CGameObject
 {
 
@@ -166,6 +167,7 @@ public:
 
 	float last_vy;
 	float last_vx;
+	bool isDeadth;
 public:
 	bool untouchable;
 	DWORD untouchable_start;
@@ -207,5 +209,8 @@ public:
 	int GetCoinCollect();
 	void SetScore(int s);
 	int GetScore();
+	bool GetIsDeadth();
+	void SetIsDeadth(bool b);
+	void Init();
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 };

@@ -60,9 +60,6 @@
     <ClCompile Include="BlockColor.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="Brick.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="Coin.cpp">
       <Filter>Item</Filter>
     </ClCompile>
@@ -147,6 +144,12 @@
     <ClCompile Include="PointEffect.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
+    <ClCompile Include="QuestionBrick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Font.h">
@@ -184,9 +187,6 @@
     </ClInclude>
     <ClInclude Include="Mario.h">
       <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayScence.h">
-      <Filter>FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="PiranhaPlant.h">
       <Filter>Enemy</Filter>
@@ -230,9 +230,6 @@
     <ClInclude Include="CoinEffect.h">
       <Filter>Effect</Filter>
     </ClInclude>
-    <ClInclude Include="Brick.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>FrameWork</Filter>
     </ClInclude>
@@ -250,6 +247,15 @@
     </ClInclude>
     <ClInclude Include="PointEffect.h">
       <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayScence.h">
+      <Filter>Scence</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestionBrick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatForm.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

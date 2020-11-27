@@ -13,7 +13,6 @@ CBrick::CBrick(float X,float Y,float w,float h, int Btype)
 	this->bType = Btype;
 	this->width = w;
 	this->height = h;
-	starty = Y;
 	//Btype = 0 : nền
 	//Loại khối có màu
 	switch (bType)
@@ -21,12 +20,6 @@ CBrick::CBrick(float X,float Y,float w,float h, int Btype)
 	case GROUND:
 		break;
 	case BLOCK_COLOR:
-		break;
-	case BRICK_MODEL_COIN:
-		SetHealth(1);
-		break;
-	case BRICK_MODEL_POWER_UP:
-		SetHealth(1);
 		break;
 	}
 	eType = Type::BRICK;
@@ -42,14 +35,6 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (bType == 0 || bType == 1)
 		return;
-	if (Health == 1)
-	{
-		state = QB_STATE_BASE;
-	}
-	if (Health == 0)
-	{
-		state = QB_STATE_EMPTY;
-	}
 	if (starty - y >= QB_UP)
 	{
 		vy = QB_SPEED_DOWN;
@@ -67,7 +52,6 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		LPSCENE scence = CGame::GetInstance()->GetCurrentScene();
 		CMario* mario = ((CPlayScene*)scence)->GetPlayer();
 		Item* item;
-
 		switch (bType)
 		{
 		case BRICK_MODEL_POWER_UP:

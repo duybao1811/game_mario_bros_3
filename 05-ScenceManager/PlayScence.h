@@ -3,7 +3,6 @@
 #include "Textures.h"
 #include "Scence.h"
 #include "GameObject.h"
-#include "Brick.h"
 #include "Mario.h"
 #include "Goomba.h"
 #include "Koopas.h"
@@ -25,6 +24,7 @@ protected:
 	Map* map;
 	Camera* camera;
 	CMushRoom* mushroom;
+	vector<CGameObject*> listObj;
 	vector<LPGAMEOBJECT> objects;
 	vector<CGameObject*> ListEnemy;
 	void _ParseSection_TEXTURES(string line);
@@ -50,7 +50,7 @@ public:
 	//Check collision
 	void CheckCollision();
 	void CheckCollistionMarioWithItem();
-	void CheckCollisionMarioWithEnemy();
+//	void CheckCollisionMarioWithEnemy();
 };
 
 class CPlayScenceKeyHandler : public CScenceKeyHandler

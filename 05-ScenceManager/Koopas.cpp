@@ -1,5 +1,4 @@
 ﻿#include "Koopas.h"
-#include "Brick.h"
 #include "Goomba.h"
 CKoopas::CKoopas(int Model, int d)
 {
@@ -144,25 +143,6 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						{
 							goomba->SetDirection(this->nx);
 							goomba->SetState(GOOMBA_STATE_ATTACKED);
-						}
-					}
-				}
-			}
-			if (e->obj->GetType() == BRICK)
-			{
-				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-				if (e->nx != 0)
-				{
-					x += dx;
-				}
-				if (state == KOOPAS_STATE_BALL)
-				{
-					if (e->nx)
-					{
-						if (brick->GetState() != QB_STATE_EMPTY)
-						{
-							brick->SetState(QB_STATE_UNBOX);
-							brick->SubHealth(1);
 						}
 					}
 				}

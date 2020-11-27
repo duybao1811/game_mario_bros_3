@@ -16,6 +16,9 @@
 #include "Coin.h"
 #include "Pipe.h"
 #include "PiranhaPlant.h"
+#include "PlatForm.h"
+#include "QuestionBrick.h"
+#include "BlockColor.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -37,13 +40,15 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 #define SCENE_SECTION_OBJECTS	6
 #define SCENE_SECTION_DRAWMAP 7
 #define OBJECT_TYPE_MARIO	0
-#define OBJECT_TYPE_BRICK	1
+#define OBJECT_TYPE_PLATFORM	1
 #define OBJECT_TYPE_GOOMBA	2
 #define OBJECT_TYPE_KOOPAS	3
 #define OBJECT_TYPE_COIN 4
 #define OBJECT_TYPE_FIRE_PLANT 5
 #define OBJECT_TYPE_PIPE    7
 #define OBJECT_TYPE_PLANT 8
+#define OBJECT_TYPE_QUESTIONBRICK 9
+#define OBJECT_TYPE_BLOCK_COLOR 10
 #define OBJECT_TYPE_PORTAL	50
 
 #define MAX_SCENE_LINE 1024
@@ -170,11 +175,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CGoomba(model, d);
 		break;
 	}
-	case OBJECT_TYPE_BRICK: {
+	case OBJECT_TYPE_PLATFORM: {
 		float w = atof(tokens[4].c_str());
 		float h = atof(tokens[5].c_str());
-		int BType = atof(tokens[6].c_str());
-		obj = new CBrick(x,y,w, h, BType);
+		obj = new CPlatform(w, h);
 		break;
 	}
 	case OBJECT_TYPE_KOOPAS: 
@@ -215,11 +219,23 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CPiranhaPlant(x,y,model);
 		break;
 	}
+	case OBJECT_TYPE_QUESTIONBRICK:
+	{
+		int model = atof(tokens[4].c_str());
+		obj = new CQuestionBrick(x, y, model);
+		break;
+	}
+	case OBJECT_TYPE_BLOCK_COLOR:
+	{
+		float w = atof(tokens[4].c_str());
+		float h = atof(tokens[5].c_str());
+		obj = new CBlockColor(w, h);
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
 	}
-
 	// General object setup
 	obj->SetPosition(x, y);
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
@@ -302,7 +318,46 @@ void CPlayScene::Load()
 
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
-
+void CPlayScene::CheckCollistionMarioWithItem()
+{
+	LPSCENE scence = CGame::GetInstance()->GetCurrentScene();
+	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
+	for (UINT i = 0; i < ListItem.size(); i++)
+	{
+		if (ListItem[i]->GetFinish() == false)
+		{
+			if (mario->isCollisionWithItem(ListItem[i]) == true)
+			{
+				switch (ListItem[i]->GetType())
+				{
+				case Type::MUSHROOM_POWER:
+				{
+					mario->SetLevel(MARIO_LEVEL_BIG);
+					mario->SetHealth(2);
+					ListItem[i]->SetFinish(true);
+					break;
+				}
+				case Type::MUSHROOM_1_UP:
+				{
+					break;
+				}
+				case Type::LEAF:
+				{
+					mario->SetLevel(MARIO_LEVEL_RACCOON);
+					mario->SetHealth(3);
+					ListItem[i]->SetFinish(true);
+					break;
+				}
+				}
+			}
+		}
+	}
+}
+void CPlayScene::CheckCollision()
+{
+	CheckCollistionMarioWithItem();
+	//CheckCollisionMarioWithEnemy();
+}
 void CPlayScene::Update(DWORD dt)
 {
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
@@ -318,7 +373,22 @@ void CPlayScene::Update(DWORD dt)
 	{
 		objects[i]->Update(dt, &coObjects);
 	}
+	for (int i = 0; i < ListItem.size(); i++)
+	{
+		if (ListItem[i]->GetFinish() == false)
+		{
+			ListItem[i]->Update(dt, &listObj);
+		}
+	}
+	for (int i = 0; i < ListItem.size(); i++)
+	{
+		if (ListItem[i]->GetFinish()==true)
+		{
+			ListItem.erase(ListItem.begin() + i);
+		}
+	}
 
+	CheckCollision();
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
@@ -377,47 +447,8 @@ void CPlayScene::Unload()
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
-void CPlayScene::CheckCollision()
-{
-	CheckCollistionMarioWithItem();
-	CheckCollisionMarioWithEnemy();
-}
-void CPlayScene::CheckCollistionMarioWithItem()
-{
-	for (UINT i = 0; i < ListItem.size(); i++)
-	{
-		if (ListItem[i]->GetFinish() == false)
-		{
-			if (mario->isCollisionWithItem(ListItem[i])==true)
-			{
-				switch (ListItem[i]->GetType())
-				{
-				case Type::MUSHROOM_POWER:
-				{
-					mario->SetLevel(MARIO_LEVEL_BIG);
-					mario->SetHealth(2);
-					break;
-				}
-				case Type::MUSHROOM_1_UP:
-				{
-					break;
-				}
-				case Type::LEAF:
-				{
-					mario->SetLevel(MARIO_LEVEL_RACCOON);
-					mario->SetHealth(3);
-					if (mario->GetLevel() == MARIO_LEVEL_RACCOON)
-					{
 
-					}
-					break;
-				}
-				}
-			}
-		}
-	}
-}
-void CPlayScene::CheckCollisionMarioWithEnemy()
+/*void CPlayScene::CheckCollisionMarioWithEnemy()
 {
 	if (GetTickCount64() - mario->untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
@@ -447,7 +478,7 @@ void CPlayScene::CheckCollisionMarioWithEnemy()
 			}
 		}
 	}
-}
+}*/
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);

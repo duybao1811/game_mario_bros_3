@@ -1,8 +1,7 @@
 #include "MushRoom.h"
-#include "Brick.h"
 CMushRoom::CMushRoom(int Model, float X,float Y)
 {
-	model = Model;
+	this->model = Model;
 	this->x = X;
 	this->y = Y;
 	direction = 1; 
@@ -21,12 +20,9 @@ CMushRoom::CMushRoom(int Model, float X,float Y)
 }
 void CMushRoom::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	left = x;
-	top = y;
-	right = x + MUSHROOM_BBOX_WIDTH;
-	bottom = y + MUSHROOM_BBOX_HEIGHT;
+	Item::GetBoundingBox(left, top, right, bottom);
 }
-void CMushRoom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CMushRoom::Update(DWORD dt, vector<LPGAMEOBJECT>* listObject)
 {
 	CGameObject::Update(dt);
 	if (y <= minY)
@@ -35,7 +31,7 @@ void CMushRoom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (isWalking)
 	{
-		vx = MUSHROOM_SPEED;
+		vx = direction*MUSHROOM_SPEED;
 		vy = MUSHROOM_GRAVITY;
 	}
 
@@ -43,7 +39,7 @@ void CMushRoom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
-	CalcPotentialCollisions(coObjects, coEvents);
+	CalcPotentialCollisions(listObject, coEvents);
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -68,18 +64,19 @@ void CMushRoom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (e->obj->GetType() == BRICK)
+			if (e->obj->GetType() == BLOCK_COLOR)
 			{
-				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
 				if (e->nx != 0)
 				{
-					nx *= -1;
-					vx *= -1;
+					x += dx;
 				}
-				if (brick->GetModel() == BLOCK_COLOR)
+			}
+			else
+			{
+				if (e->nx != 0)
 				{
-					if (e->nx != 0)
-						x += dx;
+					direction *= -1;
+					vx *= -1;
 				}
 			}
 		}
@@ -99,10 +96,13 @@ void CMushRoom::SetState(int state)
 
 void CMushRoom::Render()
 {
-	int ani = MUSHROOM_RED_ANI;
+	int ani = -1;
+	if(model==MUSHROOM_RED)
+		ani = MUSHROOM_RED_ANI;
 	if (model == MUSHROOM_GREEN)
 	{
 		ani = MUSHROOM_GREEN_ANI;
 	}
 	animation_set->at(ani)->Render(x, y);
+	RenderBoundingBox();
 }

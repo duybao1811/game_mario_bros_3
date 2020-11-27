@@ -1,5 +1,4 @@
 #include "Goomba.h"
-#include "Brick.h"
 #include "Fire.h"
 CGoomba::CGoomba(int Model, int d)
 {
@@ -123,7 +122,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba 
+		/*	if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba 
 			{
 				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
 				if (brick->GetModel() == 1)
@@ -133,7 +132,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						x += dx;
 					}
 				}
-			}
+			}*/
 		}
 	}
 

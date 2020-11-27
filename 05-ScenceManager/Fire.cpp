@@ -1,10 +1,12 @@
 ﻿#include "Fire.h"
 #include "define.h"
 #include "Camera.h"
-#include "Brick.h"
+
 #include "Goomba.h"
 #include "Koopas.h"
 #include "Game.h"
+#include "PlatForm.h"
+#include "BlockColor.h"
 Fire::Fire(float X,float Y)
 {
 	this->x = X;
@@ -43,28 +45,17 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		float rdx = 0;
 		float rdy = 0;
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+		x += min_tx * dx + nx * 0.4f;
+		y += min_ty * dy + ny * 0.1f;
+		if (ny != 0)
+		{
+			this->vy = -FIRE_BOUNCE_SPEED_Y;
+		}
 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<Fire*>(e->obj))
-			{
-				Fire* fire = dynamic_cast<Fire*>(e->obj);
-				x += dx;
-				y += dy;
-			}
-			else if (dynamic_cast<CBrick*>(e->obj)) {
-				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-				if (nx != 0)
-				{
-					SetFinish(true);
-				}
-				if (ny != 0)
-				{
-					this->vy = -FIRE_BOUNCE_SPEED_Y;
-				}
 
-			}
 			if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
 			{
 				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
@@ -85,6 +76,20 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							//koopas->SetState(GOOMBA_STATE_ATTACKED);
 							koopas->SubHealth(1);
 						}
+					}
+				}
+				if (e->obj->GetType()==BLOCK_COLOR)
+				{
+					if (e->nx != 0)
+					{
+						x += dx;
+					}
+				}
+				else
+				{
+					if (e->nx != 0)
+					{
+						SetFinish(true);
 					}
 				}
 		}

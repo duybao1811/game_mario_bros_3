@@ -10,13 +10,13 @@
 
 #include "Goomba.h"
 #include "Portal.h"
-#include "Brick.h"
 #include "Koopas.h"
 #include "Fire.h"
 #include "BlockColor.h"
 #include "Coin.h"
 #include "Item.h"
 #include "EffectDisappear.h"
+#include "MushRoom.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
 	level = MARIO_LEVEL_BIG;
@@ -227,7 +227,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 			} // if Goomba
-			if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba 
+		/*	if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba 
 			{
 				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
 				if (e->nx != 0)
@@ -248,15 +248,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 					}
 				}
-				if (brick->GetModel() == 1)
-				{
-					if (e->nx != 0)
-					{
-						x += dx;
-					}
-				}
 
-			}
+			}*/
 			if (e->obj->GetType() == KOOPAS)
 			{
 				CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
@@ -311,6 +304,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				
 
+			}
+			if (e->obj->GetType() == BLOCK_COLOR)
+			{
+				if (e->nx != 0)
+				{
+					x += dx;
+				}
 			}
 			else if (dynamic_cast<CPortal*>(e->obj))
 			{
@@ -827,9 +827,11 @@ bool CMario::isCollisionWithItem(Item* objItem)
 {
 	if (objItem->GetFinish() == true)
 		return false;
+
 	float l, t, r, b;
 	float l1, t1, r1, b1;
 	this->GetBoundingBox(l, t, r, b);
+
 	objItem->GetBoundingBox(l1, t1, r1, b1);
 	if (CGame::GetInstance()->checkAABB(l, t, r, b, l1, t1, r1, b1) == true)
 	{
@@ -871,6 +873,14 @@ int CMario::GetScore()
 {
 	return score;
 }
+bool CMario::GetIsDeadth()
+{
+	return isDeadth;
+}
+void CMario::SetIsDeadth(bool b)
+{
+	isDeadth = b;
+}
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 
@@ -904,7 +914,10 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		}
 	}
 }
-
+void CMario::Init()
+{
+	score = MARIO_DEFAULT_SCORE;
+}
 /*
 	Reset Mario status to the beginning state of a scene
 */
