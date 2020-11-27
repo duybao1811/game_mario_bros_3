@@ -353,6 +353,19 @@ void CPlayScene::CheckCollistionMarioWithItem()
 		}
 	}
 }
+void CPlayScene::CheckCollisionWithQuestionBrick()
+{
+	for (UINT i = 0; i < objects.size(); i++)
+	{
+		if (objects[i]->GetType() == QUESTION_BRICK)
+		{
+			if (mario->isCollisionObjectWithObject(objects[i]))
+			{
+
+			}
+		}
+	}
+}
 void CPlayScene::CheckCollision()
 {
 	CheckCollistionMarioWithItem();

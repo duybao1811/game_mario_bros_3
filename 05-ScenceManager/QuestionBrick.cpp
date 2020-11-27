@@ -6,6 +6,7 @@ CQuestionBrick::CQuestionBrick(float X, float Y,int Model)
 	this->y = Y;
 	starty = Y;
 	minY = Y - QB_MINY;
+	eType = Type::QUESTION_BRICK;
 	switch (model)
 	{
 	case BRICK_MODEL_COIN:

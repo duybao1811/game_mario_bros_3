@@ -27,6 +27,8 @@ protected:
 	vector<CGameObject*> listObj;
 	vector<LPGAMEOBJECT> objects;
 	vector<CGameObject*> ListEnemy;
+	vector<LPGAMEOBJECT> ListEffect;
+	vector<LPGAMEOBJECT> ListPointEffect;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
@@ -50,6 +52,7 @@ public:
 	//Check collision
 	void CheckCollision();
 	void CheckCollistionMarioWithItem();
+	void CheckCollisionWithQuestionBrick();
 //	void CheckCollisionMarioWithEnemy();
 };
 
