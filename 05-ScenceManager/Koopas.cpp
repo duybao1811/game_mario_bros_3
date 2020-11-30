@@ -3,6 +3,7 @@
 CKoopas::CKoopas(int Model, int d)
 {
 	model = Model;
+	objType = ObjectType::ENEMY;
 	eType = Type::KOOPAS;
 	SetState(KOOPAS_STATE_WALKING);
 	SetHealth(3);
@@ -39,7 +40,7 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	vy += KOOPAS_GRAVITY * dt;
-	CGameObject::Update(dt);
+	CGameObject::Update(dt, coObjects);
 	// ra khỏi camera thì kết thúc
 	if (!(checkObjInCamera(this)))
 		SetFinish(true);
@@ -74,21 +75,11 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		state = KOOPAS_STATE_ATTACKED;
 		vx = direction * 0.1f;
 	}
-	vector<LPGAMEOBJECT> ListBrick;
-	ListBrick.clear();
-	for (UINT i = 0; i < coObjects->size(); i++)
-	{
-		if (coObjects->at(i)->GetType() == Type::BRICK)
-		{
-			ListBrick.push_back(coObjects->at(i));
-		}
-	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
 	CalcPotentialCollisions(coObjects, coEvents);
-	CalcPotentialCollisions(&ListBrick, coEvents);
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -104,7 +95,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-		x += min_tx * dx + nx * 0.4f;
+		x += min_tx * dx + nx * 0.1f;
 		y += min_ty * dy + ny * 0.4f;
 		if (ny < 0)
 		{
@@ -115,11 +106,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			isOnGround = false;
 		}
-		if (nx != 0)
-		{
-			vx *= -1;
-			direction *= -1;
-		}
+
 		if (state == KOOPAS_STATE_ATTACKED)
 		{
 			if (ny != 0)
@@ -133,20 +120,47 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 
-			if (e->obj->GetType()==GOOMBA)
+			if (e->obj->GetType() == BLOCK_COLOR)
 			{
-				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+				if (e->nx != 0)
 				{
-					if (state == KOOPAS_STATE_BALL)
+					x += dx;
+				}
+				if(e->ny <0 && state==KOOPAS_STATE_WALKING && model==KOOPAS_RED)
+				{
+					if (x <= e->obj->GetX() || x >= e->obj->GetX() + e->obj->width-KOOPAS_BBOX_WIDTH)
 					{
-						if (e->nx != 0 || e->ny != 0)
+						direction *= -1;
+						vx *= -1;
+					}
+				}
+			}
+			else
+			{
+				if (e->nx != 0)
+				{
+					direction *= -1;
+					vx *= -1;
+				}
+			}
+			if (state == KOOPAS_STATE_BALL)
+			{
+				if (e->obj->GetType() == QUESTION_BRICK)
+				{
+					CQuestionBrick* questionbrick = dynamic_cast<CQuestionBrick*>(e->obj);
+					if (e->nx != 0)
+					{
+						if (questionbrick->GetState() != QB_STATE_EMPTY)
 						{
-							goomba->SetDirection(this->nx);
-							goomba->SetState(GOOMBA_STATE_ATTACKED);
+							questionbrick->SetState(QB_STATE_UNBOX);
+							questionbrick->SubHealth(1);
+							direction *= -1;
+							vx *= -1;
 						}
 					}
 				}
 			}
+	
 		}
 	}
 
@@ -269,7 +283,7 @@ void CKoopas::SetState(int state)
 	case KOOPAS_STATE_FLY:
 		vx = direction * KOOPAS_FLY_SPEED_X;
 		isOnGround = false;
-		vy = -KOOPAS_FLY_SPEED;
+		vy = -KOOPAS_FLY_SPEED_Y;
 		break;
 	}
 

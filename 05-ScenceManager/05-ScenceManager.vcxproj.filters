@@ -75,9 +75,6 @@
     <ClCompile Include="FirePiranhaPlant.cpp">
       <Filter>Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="FirePlant.cpp">
       <Filter>Enemy</Filter>
     </ClCompile>
@@ -220,9 +217,6 @@
     </ClInclude>
     <ClInclude Include="Fire.h">
       <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Enemy</Filter>
     </ClInclude>
     <ClInclude Include="EffectDisappear.h">
       <Filter>Effect</Filter>

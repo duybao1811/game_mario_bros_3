@@ -16,6 +16,10 @@ private:
 	float minY;
 	float maxY;
 	bool isFalling;
+	vector<LPGAMEOBJECT> ListPointEffect;
+	bool effectPoint;
+	bool isDisappear;
+	PointEffect* effect;
 
 public:
 	CoinEffect(float X, float Y);

@@ -1,6 +1,7 @@
 #include "PlatForm.h"
 CPlatform::CPlatform(float w, float h)
 {
+	eType=Type::PLATFORM;
 	this->width = w;
 	this->height = h;
 }

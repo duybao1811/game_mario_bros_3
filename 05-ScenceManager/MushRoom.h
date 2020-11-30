@@ -25,7 +25,7 @@ public:
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
-	CMushRoom(int Model, float X, float Y);
+	CMushRoom(float X, float Y, int Model);
 	void SetState(int state);
 	int GetModel() { return model; }
 };

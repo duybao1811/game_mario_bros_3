@@ -3,6 +3,7 @@ FirePlant::FirePlant(float X, float Y,Range marioRange)
 {
 	this->x = X;
 	this->y = Y;
+	objType = ObjectType::ENEMY;
 	eType = Type::FIRE_ENEMY;
 	SetAnimationSet(CAnimationSets::GetInstance()->Get(LOAD_FIRE_FROM_TXT));
 	isFinish = false;

@@ -13,11 +13,10 @@ Leaf::Leaf(float X,float Y)
 void Leaf::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	Item::GetBoundingBox(left, top, right, bottom);
-	RenderBoundingBox();
 }
-void Leaf::Update(DWORD dt, vector<LPGAMEOBJECT>* listObject)
+void Leaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt);
+	CGameObject::Update(dt, coObjects);
 	x += dx;
 	y += dy;
 	if (y <= minY)

@@ -3,6 +3,7 @@
 CGoomba::CGoomba(int Model, int d)
 {
 	model = Model;
+	objType = ObjectType::ENEMY;
 	eType = Type::GOOMBA;
 	SetState(GOOMBA_STATE_WALKING);
 	direction = d;
@@ -41,6 +42,10 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	CGameObject::Update(dt, coObjects);
 	vy += 0.001f * dt;
+	if (!checkObjInCamera(this))
+	{
+		SetFinish(true);
+	}
 	if(model == GOOMBA_RED_PARA && Health == 2 && isOnGround)
 	{
 
@@ -56,9 +61,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	if (Health == 0)
 	{
-		state=GOOMBA_STATE_DIE;
-		vx = 0;
-		vy = 0;
+		isDie = true;
 	}
 	if (isDie)
 	{
@@ -66,75 +69,67 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		state = GOOMBA_STATE_DIE;
 		if (TimeDisappear <= 30)
 		{
-			TimeDisappear+=dt;
+			TimeDisappear += dt;
 		}
 		else
 		{
 			isFinish = true;
 		}
 	}
-	vector<LPGAMEOBJECT> ListBrick;
-	ListBrick.clear();
-	for (UINT i = 0; i < coObjects->size(); i++)
-	{
-		if (coObjects->at(i)->GetType() == Type::BRICK)
-		{
-			ListBrick.push_back(coObjects->at(i));
-		}
-	}
-	vector<LPCOLLISIONEVENT> coEvents;
-	vector<LPCOLLISIONEVENT> coEventsResult;
 
-	coEvents.clear();
-	CalcPotentialCollisions(coObjects, coEvents);
-	CalcPotentialCollisions(&ListBrick, coEvents);
+		vector<LPCOLLISIONEVENT> coEvents;
+		vector<LPCOLLISIONEVENT> coEventsResult;
 
-	// No collision occured, proceed normally
-	if (coEvents.size() == 0)
-	{
-		x += dx;
-		y += dy;
-	}
-	else
-	{
-		float min_tx, min_ty, nx = 0, ny;
-		float rdx = 0;
-		float rdy = 0;
+		coEvents.clear();
+		CalcPotentialCollisions(coObjects, coEvents);
 
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+		// No collision occured, proceed normally
+		if (coEvents.size() == 0)
+		{
+			x += dx;
+			y += dy;
+		}
+		else
+		{
+			float min_tx, min_ty, nx = 0, ny;
+			float rdx = 0;
+			float rdy = 0;
 
-		x += min_tx * dx + nx * 0.1f;
-		y += min_ty * dy + ny * 0.4f;
-		if (ny < 0)
-		{
-			isOnGround = true;
-			vy = 0;
-		}
-		if (ny > 0)
-		{
-			isOnGround = false;
-		}
-		if (nx != 0)
-		{
-			vx *= -1;
-			direction *= -1;
-		}
-		for (UINT i = 0; i < coEventsResult.size(); i++)
-		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-		/*	if (dynamic_cast<CBrick*>(e->obj)) // if e->obj is Goomba 
+			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+			x += min_tx * dx + nx * 0.4f;
+			y += min_ty * dy + ny * 0.4f;
+			if (ny < 0)
 			{
-				CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-				if (brick->GetModel() == 1)
+				isOnGround = true;
+				vy = 0;
+			}
+			if (ny > 0)
+			{
+				isOnGround = false;
+			}
+
+			for (UINT i = 0; i < coEventsResult.size(); i++)
+			{
+				LPCOLLISIONEVENT e = coEventsResult[i];
+				if (e->obj->GetType() == BLOCK_COLOR) // if e->obj is Goomba 
 				{
 					if (e->nx != 0)
 					{
 						x += dx;
 					}
 				}
-			}*/
+				if (e->obj->GetType() != BLOCK_COLOR)
+				{
+					if (e->nx != 0)
+					{
+						vx *= -1;
+						direction *= -1;
+					}
+				}
+			}
 		}
-	}
+	
 
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }

@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Enemy.h"
-
+#include "GameObject.h"
+#include "BlockColor.h"
+#include "QuestionBrick.h"
 #define KOOPAS_WALKING_SPEED 0.02f
 #define KOOPAS_BALL_SPEED    0.1f
 #define KOOPAS_FLY_SPEED_X   0.02f
-#define KOOPAS_FLY_SPEED 0.28f
+#define KOOPAS_FLY_SPEED_Y 0.3f
 #define KOOPAS_SPEED_Y_AFTER_ATTACKED 0.4f
 #define KOOPAS_BBOX_WIDTH 16
 #define KOOPAS_BBOX_HEIGHT 26
@@ -37,7 +38,7 @@
 #define KOOPAS_BASE 1
 #define KOOPAS_RED 2
 #define KOOPAS_FLY 3
-class CKoopas : public Enemy
+class CKoopas : public CGameObject
 {
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);

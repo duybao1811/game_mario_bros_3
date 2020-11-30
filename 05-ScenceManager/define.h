@@ -21,13 +21,14 @@ enum Type {
 	MARIO_FIRE = 04,
 
 	//OBJECT nền 
-	BRICK = 21,
+	PLATFORM = 21,
 	QUESTION_BRICK = 22,
 	PORTAL = 23,
 	PORAL_SWITCH = 24,
 	BLOCK_COLOR = 25,
 	ESHORT_PIPE =26,
 	EMEDIUM_PIPE=27,
+
 
 	//ENEMY 
 	GOOMBA = 30,
@@ -44,8 +45,15 @@ enum Type {
 	MUSHROOM_POWER = 50,
 	MUSHROOM_1_UP =51,
 	LEAF = 52,
-	COIN = 53
+	COIN = 53, 
 
+
+};
+enum ObjectType
+{
+	MISC =1,
+	ENEMY=2,
+	ITEM=3,
 };
 enum Range
 {
@@ -87,7 +95,19 @@ enum Range
 
 //############################# PLANT ###############################
 
-
+//                          QUESTION BRICK
+#define QB_BBOX_WIDTH 16
+#define QB_BBOX_HEIGHT 16
+#define QB_ANI 0
+#define QB_ANI_EMPTY 1
+#define	QB_MODEL_1UP_ANI 2
+#define QUESTION_BRICK_MODEL_COIN 1
+#define QUESTION_BRICK_MODEL_POWER_UP 2
+#define QB_MINY 10
+#define QB_SPEED_DOWN 0.1f
+#define QB_SPEED_UP 0.1f
+#define QB_STATE_UNBOX 100
+#define QB_STATE_EMPTY 200
 
 #define GAMEOVER_SELECT_CONTINUE 0
 #define GAME_OVER_SELECT_END 1

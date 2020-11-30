@@ -544,9 +544,9 @@ Resources\Tilemap\world1-1.txt
 #MARIOTAIL RUN LEFT
 559	10051	50	10052	50	10053	50
 #MARIOTAIL FALLSLOW RIGHT
-560	10162	20	10163	30
+560	10161	50	10163	50
 #MARIOTAIL FALLSLOW LEFT
-561	10165	50	10166	50
+561	10164	50	10166	50
 #MARIOTAIL DOWN FLY RIGHT
 562	10167	200
 #MARIOTAIL DOWN FLY LEFT
@@ -787,16 +787,23 @@ Resources\Tilemap\world1-1.txt
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3=KOOPAS, 4=COIN, 5:Piranha fire plant 6:piranha plant 7:pipe
 # MARIO
-0	80	300	1
+0	80	385	1
+#0	560	344	1
+
 ######################KOOPAS################ 3 ani_set_id 6 ## model 1: base 2: red 3:base fly
 
 #type   x       y    ani_set_id model    direction
-
-
+3	560	344	6	2	-1
+3	1456	375	6	1	-1
+3	1312	277	6	3	-1
+3	1360	277	6	3	-1
+3	1406	277	6	3	-1
 ###################GOOMBA###################
 #TYPE    X       Y  ANI_SET_ID  MODEL   DIRECTION 1:GOOMBA base 2:GOOMBA RED
-
-
+2	208	385	3	1	-1
+2	512	385	3	1	-1
+2	864	369	3	1	-1
+2	816	369	3	1	-1
 
 ########################## BRICK ####################
 # --- platform (hint: I created the list using Excel!) ----
@@ -843,8 +850,8 @@ Resources\Tilemap\world1-1.txt
 4	1761	128	5
 4	1809	96	5
 4	1841	128	5
-4	160	340	5
 
+4	144	336	5
 
 #Fire Plant Red Model 1: Red 
 5	360	368	7	1
@@ -857,7 +864,7 @@ Resources\Tilemap\world1-1.txt
 
 
 # PIRANHA GREEN 
-
+6	1784	344	13	1
 #BLOCK COLOR
 10	240	368	2	48	48
 10	272	336	2	48	80
@@ -875,11 +882,11 @@ Resources\Tilemap\world1-1.txt
 10	1488	176	2	208	16
 
 #QUESTION BRICK
-9	1472	368	18	1
+9	1472	368	18	2
 9	416	320	18	1
 9	176	352	18	1
 9	192	352	18	1
 9	224	304	18	1
-9	656	385	18	1
+9	656	384	18	2
 9	704	350	18	1
-9	240	304	18	1
+9	240	304	18	2

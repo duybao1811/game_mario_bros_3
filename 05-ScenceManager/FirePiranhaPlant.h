@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "Enemy.h"
+#include "GameObject.h"
 #include "Mario.h"
 #include "PlayScence.h"
-class CFirePiranhaPlant: public Enemy
+class CFirePiranhaPlant: public CGameObject
 {
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

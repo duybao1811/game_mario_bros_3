@@ -3,7 +3,6 @@
 class CBlockColor : public CGameObject
 {
 
-	float width, height;
 public:
 	CBlockColor(float w, float h);
 	virtual void Render(){}

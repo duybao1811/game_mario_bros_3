@@ -19,6 +19,10 @@
 #include "PlatForm.h"
 #include "QuestionBrick.h"
 #include "BlockColor.h"
+#include "Effect.h"
+#include "CoinEffect.h"
+#include "PointEffect.h"
+#include "define.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -314,7 +318,7 @@ void CPlayScene::Load()
 
 	f.close();
 
-	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
+	//CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
@@ -332,19 +336,13 @@ void CPlayScene::CheckCollistionMarioWithItem()
 				{
 				case Type::MUSHROOM_POWER:
 				{
-					mario->SetLevel(MARIO_LEVEL_BIG);
-					mario->SetHealth(2);
+					mario->GetMushRoomBig();
 					ListItem[i]->SetFinish(true);
-					break;
-				}
-				case Type::MUSHROOM_1_UP:
-				{
 					break;
 				}
 				case Type::LEAF:
 				{
-					mario->SetLevel(MARIO_LEVEL_RACCOON);
-					mario->SetHealth(3);
+					mario->GetLeaf();
 					ListItem[i]->SetFinish(true);
 					break;
 				}
@@ -353,49 +351,104 @@ void CPlayScene::CheckCollistionMarioWithItem()
 		}
 	}
 }
-void CPlayScene::CheckCollisionWithQuestionBrick()
+void CPlayScene::MarioTrampleEnemy()
 {
+	LPSCENE scence = CGame::GetInstance()->GetCurrentScene();
+	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
 	for (UINT i = 0; i < objects.size(); i++)
 	{
-		if (objects[i]->GetType() == QUESTION_BRICK)
-		{
-			if (mario->isCollisionObjectWithObject(objects[i]))
+			CGameObject* enemy = objects[i];
+			if (enemy->GetHealth() > 0)
 			{
-
+				if (mario->isTrampleEnemy)
+				{
+					switch (enemy->GetType())
+					{
+					case Type::GOOMBA:
+					{
+						mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
+						enemy->SetHealth(0);
+					}
+					}
+				}
 			}
+
+	}
+}
+void CPlayScene::QuestionBrickDropItem(int model, float x,float y)
+{
+	switch (model)
+	{
+	case QUESTION_BRICK_MODEL_COIN:
+	{	
+		ListEffect.push_back(new CoinEffect(x, y));
+	}
+	break;
+	case QUESTION_BRICK_MODEL_POWER_UP:
+	{
+		if (player->level == MARIO_LEVEL_SMALL)
+		{	
+			ListItem.push_back(new CMushRoom(x, y+10, MUSHROOM_RED));
 		}
+		else
+		{
+			ListItem.push_back(new Leaf(x, y));
+		}
+	}
+	break;
+	
 	}
 }
 void CPlayScene::CheckCollision()
 {
 	CheckCollistionMarioWithItem();
+	MarioTrampleEnemy();
 	//CheckCollisionMarioWithEnemy();
 }
 void CPlayScene::Update(DWORD dt)
-{
-	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
-	// TO-DO: This is a "dirty" way, need a more organized way 
+{   
+	CGameObject* obj = NULL;
 
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
 	}
-
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-		objects[i]->Update(dt, &coObjects);
-	}
-	for (int i = 0; i < ListItem.size(); i++)
-	{
-		if (ListItem[i]->GetFinish() == false)
+		LPGAMEOBJECT e = objects[i];
+		if (objects[i]->checkObjInCamera(objects[i]))
 		{
-			ListItem[i]->Update(dt, &listObj);
+			objects[i]->Update(dt, &coObjects);
+		}
+		if (e->GetType() == QUESTION_BRICK)
+		{
+			CQuestionBrick* questionbrick = dynamic_cast<CQuestionBrick*>(e);
+			if (questionbrick->isUnbox)
+			{
+				QuestionBrickDropItem(questionbrick->GetModel(), questionbrick->GetX(), questionbrick->GetY());
+				questionbrick->isUnbox = false;
+			}
+		}
+	}
+	for (int i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->Update(dt);
+	}
+	for (int i = 0; i < ListEffect.size(); i++)
+	{
+		if (ListEffect[i]->GetFinish())
+		{
+			ListEffect.erase(ListEffect.begin() + i);
 		}
 	}
 	for (int i = 0; i < ListItem.size(); i++)
 	{
-		if (ListItem[i]->GetFinish()==true)
+		ListItem[i]->Update(dt,&coObjects);
+	}
+	for (int i = 0; i < ListItem.size(); i++)
+	{
+		if (ListItem[i]->GetFinish())
 		{
 			ListItem.erase(ListItem.begin() + i);
 		}
@@ -445,6 +498,14 @@ void CPlayScene::Render()
 	map->DrawMap();
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
+	for (int i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->Render();
+	}
+	for (int i = 0; i < ListItem.size(); i++)
+	{
+		ListItem[i]->Render();
+	}
 }
 
 /*
@@ -537,9 +598,9 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	{
 		if (mario->isOnGround)
 		{
-			mario->JumpHight();
-			mario->SetState(MARIO_STATE_JUMP);
+			mario->JumpHight();	
 		}
+		break;
 	}
 	}
 
@@ -556,6 +617,8 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	{
 		mario->isRunning = true;
 		mario->SetState(MARIO_STATE_RUN_RIGHT);
+
+
 	}
 	else if (game->IsKeyDown(DIK_Z) && game->IsKeyDown(DIK_LEFT))
 	{
@@ -587,8 +650,11 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 
 	else if (game->IsKeyDown(DIK_X))
 	{
-		mario->JumpSlow();
-		mario->SetState(MARIO_STATE_JUMP);
+		if (mario->isOnGround)
+		{
+			mario->JumpSlow();
+		}
+		
 	}
 
 	else
@@ -617,31 +683,12 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			mario->SetState(MARIO_STATE_IDLE);
 			break;
 		}
-	case DIK_X:
-		float cVx, cVy;
-		mario->GetSpeed(cVx, cVy);
-		if (mario->level == MARIO_LEVEL_RACCOON) {
-			if (mario->isOnAir)
+	case DIK_S:
+		if (mario->level == MARIO_LEVEL_RACCOON && !mario->isOnGround) {
+
+			if (!mario->isFlying && mario->vy >= 0)
 			{
-				if (!mario->isFlying && mario->vy >= 0)
-				{
-					mario->SetSpeed(cVx, -MARIO_FALL_SLOW);
-					mario->isFallSlow = true;
-					break;
-				}
-				if (mario->isFlying)
-				{
-					if (mario->isFlyup)
-					{
-						mario->SetSpeed(cVx, -MARIO_FLY_SPEED_Y);
-						mario->isFallFly = true;
-					}
-					break;
-				}
-			}
-			else if (mario->isOnGround)
-			{
-				mario->isFallSlow = false;
+				mario->FallSlow();
 			}
 		}
 		break;

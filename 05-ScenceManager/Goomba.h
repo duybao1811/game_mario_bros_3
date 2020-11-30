@@ -1,7 +1,7 @@
 #pragma once
-#include "Enemy.h"
+#include "GameObject.h"
 
-#define GOOMBA_WALKING_SPEED 0.035f
+#define GOOMBA_WALKING_SPEED 0.025f
 #define GOOMBA_RED_WALKING_SPEED 0.02f
 #define GOOMBA_BBOX_WIDTH 16
 #define GOOMBA_BBOX_HEIGHT 16
@@ -29,13 +29,14 @@
 #define GOOMBA_ATTACKED_SPEED_Y 0.35f
 #define GOOMBA_BASE 1
 #define GOOMBA_RED_PARA 2
-class CGoomba : public Enemy
+class CGoomba : public CGameObject
 {
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void Render();
 
 public: 	
+	float lastvx;
 	int model;
 	int JumpCount;
 	DWORD TimeWalk;

@@ -1,5 +1,5 @@
 #pragma once
-#include "Enemy.h"
+#include "GameObject.h"
 #include "Mario.h"
 #include "define.h"
 #include "PlayScence.h"
@@ -12,7 +12,7 @@
 #define PLANT_SPEED_HIDDING 0.002f
 #define TIME_DELAY_GROW_UP 1500
 #define TIME_DELAY_HIDE 1500
-class CPiranhaPlant : public Enemy
+class CPiranhaPlant : public CGameObject
 {
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

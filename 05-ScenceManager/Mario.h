@@ -2,9 +2,8 @@
 #include "GameObject.h"
 #include "Item.h"
 #include "define.h"
-#define MARIO_WALKING_SPEED		0.0002f 
+#define MARIO_WALKING_SPEED		0.00015f 
 #define MARIO_RUNNING_SPEED     0.00015f
-//0.1f
 #define MARIO_DECELERATE_SPEED 0.0005f
 #define MARIO_JUMP_SLOW_SPEED_Y 0.25f
 #define MARIO_JUMP_SPEED_Y		0.37f
@@ -14,15 +13,11 @@
 #define MARIO_DIE_DEFLECT_SPEED	 0.5f
 #define MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION 0.3f
 #define MARIO_WALKING_MAXSPEED 0.12f
-#define MARIO_RUNNING_MAXSPEED 0.23f
+#define MARIO_RUNNING_MAXSPEED 0.2f
 #define PULL_UP_MARIO_AFTER_SIT 10.0f
-#define turn 0.007f                //vân tốc quay đầu
-#define a 0.007f                  //gia tốc
 #define MARIO_STATE_IDLE			0
 #define MARIO_STATE_WALKING_RIGHT	100
 #define MARIO_STATE_WALKING_LEFT	200
-#define MARIO_STATE_WALKING         101
-#define MARIO_STATE_JUMP			300
 #define MARIO_STATE_DIE				400
 #define MARIO_STATE_SIT             500
 #define MARIO_STATE_RUN_MAXSPEED    600
@@ -31,12 +26,8 @@
 #define MARIO_STATE_TURN            800
 #define MARIO_STATE_RACCOON_ATTACK  900
 #define MARIO_STATE_SHOOT_FIRE      901
-#define MARIO_STATE_FALLING         301
-#define MARIO_STATE_UP              1000
-#define MARIO_STATE_FLY             301
+#define MARIO_STATE_FLY             300
 #define MARIO_STATE_KICK            1
-#define MARIO_STATE_FLY_UP          2
-#define MARIO_RACCOON_STATE_FALL_SLOW 3
 #define MARIO_STATE_FALL_FLY         4
 #define MARIO_ANI_BIG_IDLE_RIGHT		0    //400
 #define MARIO_ANI_BIG_IDLE_LEFT			1   //401
@@ -148,25 +139,18 @@ public:
 	int level;
 	bool isJumping;
 	bool isOnGround;
-	bool isWalking;
 	bool isFalling;
 	bool isSitting;
 	bool isDie;
 	bool isFlying;
 	bool isRunning;
-	bool isFlyup;
 	bool isFallSlow;
 	bool isAttack;
 	bool isKick;
 	bool isFallFly;
-	bool isOnAir;
-	bool isReadyToFly;
 	bool isHurting;
-
-	bool isWagging;
-
+	bool isTrampleEnemy;
 	float last_vy;
-	float last_vx;
 	bool isDeadth;
 public:
 	bool untouchable;
@@ -174,7 +158,7 @@ public:
 	DWORD Time;
 	DWORD StartFly;
 	DWORD TimeAttack;
-	DWORD Kick;
+	DWORD TimeKick;
 
 	void ResetSit();
 	vector<LPGAMEOBJECT> ListFire;
@@ -196,8 +180,7 @@ public:
 	void WalkLeft();
 	void JumpSlow();
 	void JumpHight();
-
-
+	void FallSlow();
 
 	void SetHurt(LPCOLLISIONEVENT e);
 	void Reset();
@@ -205,6 +188,8 @@ public:
 	bool isCollisionWithItem(Item* objItem);
 	void ShootFire();
 
+	void GetMushRoomBig();
+	void GetLeaf();
 	void SetCoinCollect(int c);
 	int GetCoinCollect();
 	void SetScore(int s);

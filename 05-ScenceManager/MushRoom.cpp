@@ -1,5 +1,5 @@
 #include "MushRoom.h"
-CMushRoom::CMushRoom(int Model, float X,float Y)
+CMushRoom::CMushRoom(float X,float Y,int Model)
 {
 	this->model = Model;
 	this->x = X;

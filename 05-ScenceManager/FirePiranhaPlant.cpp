@@ -12,6 +12,7 @@ CFirePiranhaPlant::CFirePiranhaPlant(float X,float Y,int Model)
 	minY = Y - FPLANT_BBOX_HEIGHT;
 	maxY = Y;
 	SetState(PLANT_STATE_GROW_UP);
+	objType = ObjectType::ENEMY;
 	switch (model)
 	{
 	case 1:                //Fire piranha red

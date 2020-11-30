@@ -13,6 +13,7 @@ CPiranhaPlant::CPiranhaPlant(float X, float Y, int Model)
 	{
 	case 1:                // piranha plant green
 		eType = Type::PIRANHA_GREEN;
+		objType = ObjectType::ENEMY;
 		SetHealth(1);
 		break;
 	}

@@ -44,6 +44,7 @@ class CGameObject
 {
 protected:
 	Type eType;
+	ObjectType objType;
 public:
 	int Health;
 	float x; 
@@ -58,6 +59,8 @@ public:
 	int nx;	 
 	int state;
 	bool isFinish;
+	float width;
+	float height;
 	DWORD dt; 
 
 
@@ -85,7 +88,7 @@ public:
 	int GetState() { return this->state; }
 	Type GetType();
 	void RenderBoundingBox();
-
+	ObjectType GetObjType();
 	void SetAnimationSet(LPANIMATION_SET ani_set) { animation_set = ani_set; }
 	
 	LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);

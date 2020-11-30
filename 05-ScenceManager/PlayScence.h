@@ -13,6 +13,7 @@
 #include "Leaf.h"
 #include "FirePiranhaPlant.h"
 #include "Board.h"
+#include "QuestionBrick.h"
 class CPlayScene: public CScene
 {
 private:
@@ -24,11 +25,12 @@ protected:
 	Map* map;
 	Camera* camera;
 	CMushRoom* mushroom;
+	CQuestionBrick* questionbrick;
 	vector<CGameObject*> listObj;
 	vector<LPGAMEOBJECT> objects;
-	vector<CGameObject*> ListEnemy;
 	vector<LPGAMEOBJECT> ListEffect;
 	vector<LPGAMEOBJECT> ListPointEffect;
+	vector<LPGAMEOBJECT> ListItems;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
@@ -52,7 +54,8 @@ public:
 	//Check collision
 	void CheckCollision();
 	void CheckCollistionMarioWithItem();
-	void CheckCollisionWithQuestionBrick();
+	void MarioTrampleEnemy();
+	void QuestionBrickDropItem(int model,float x,float y);
 //	void CheckCollisionMarioWithEnemy();
 };
 

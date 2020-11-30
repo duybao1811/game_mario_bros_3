@@ -133,7 +133,6 @@
     <ClCompile Include="define.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectDisappear.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Fire.cpp" />
     <ClCompile Include="FirePiranhaPlant.cpp" />
     <ClCompile Include="FirePlant.cpp" />
@@ -170,7 +169,6 @@
     <ClInclude Include="define.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectDisappear.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Fire.h" />
     <ClInclude Include="FirePiranhaPlant.h" />
     <ClInclude Include="FirePlant.h" />

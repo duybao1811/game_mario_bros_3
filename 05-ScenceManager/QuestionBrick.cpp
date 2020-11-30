@@ -9,10 +9,10 @@ CQuestionBrick::CQuestionBrick(float X, float Y,int Model)
 	eType = Type::QUESTION_BRICK;
 	switch (model)
 	{
-	case BRICK_MODEL_COIN:
+	case QUESTION_BRICK_MODEL_COIN:
 		SetHealth(1);
 		break;
-	case BRICK_MODEL_POWER_UP:
+	case QUESTION_BRICK_MODEL_POWER_UP:
 		SetHealth(1);
 		break;
 	}
@@ -21,13 +21,17 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
 	y += dy;
-	if (Health <= 0 )
+	if (Health == 0 )
 	{
 		state = QB_STATE_EMPTY;
 	}
-	if (y <= QB_MINY)
+	if (y <= minY)
 	{
-		vy = QB_SPEED_DOWN;
+		vy = QB_SPEED_UP;
+		isUnbox = true;
+	}
+	if (y >= starty)
+	{
 		y = starty;
 		SetState(QB_STATE_EMPTY);
 	}
@@ -60,6 +64,11 @@ void CQuestionBrick::SetState(int state)
 		vy = -QB_SPEED_UP;
 		break;
 	case QB_STATE_EMPTY:
+		vy = 0;
 		break;
 	}
+}
+int CQuestionBrick::GetModel()
+{
+	return model;
 }
