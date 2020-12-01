@@ -29,6 +29,7 @@ CMario::CMario(float x, float y) : CGameObject()
 	this->x = x;
 	this->y = y;
 	SetHealth(1);
+	isKick = false;
 }
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -76,7 +77,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (GetTickCount64() - TimeKick > 230 && isKick)
 	{
 		isKick = false;
-		state = MARIO_STATE_IDLE;
 	}
 	if (level == MARIO_LEVEL_RACCOON && TimeFly > 400 && isFlying)
 	{
@@ -154,27 +154,34 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-	/*		if (e->obj->GetType() == KOOPAS)
+			if (e->obj->GetType() == KOOPAS)
 			{
+				CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
 				if (e->nx != 0)
 				{
 					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
 					{
-						koopas->SetDirection(this->nx);
-						koopas->SubHealth(1);
-						isKick = true;
-						TimeKick = GetTickCount64();
-
+						if (isRunning)
+						{
+							koopas->isHeld = true;
+							isHoldTurtle = true;
+						}
+						else
+						{
+							isKick = true;
+							TimeKick = GetTickCount64();
+							koopas->isKicked = true;
+							koopas->SetDirection(this->nx);
+						}
 					}
-				}
-				if (level == MARIO_LEVEL_RACCOON && isAttack)
-				{
-					if (nx != 0) {
+					if (level == MARIO_LEVEL_RACCOON && isAttack)
+					{
 						koopas->SetDirection(-nx);
 						koopas->SetState(KOOPAS_STATE_ATTACKED);
 					}
 				}
-			}*/
+
+			}
 			if (e->obj->GetType() == COIN)
 			{
 
@@ -401,14 +408,22 @@ void CMario::Render()
 				ani = MARIO_ANI_RACCOON_IDLE_RIGHT;
 			else
 				ani = MARIO_ANI_RACCOON_IDLE_LEFT;
-			
+			if (isHoldTurtle)
+			{
+				if (nx > 0)
+					ani = MARIO_RACCOON_ANI_HOLD_IDLE_RIGHT;
+				if(nx<0)
+					ani = MARIO_RACCOON_ANI_HOLD_IDLE_LEFT;
+			}
 			if (state == MARIO_STATE_WALKING_RIGHT)
+			{
 				ani = MARIO_ANI_RACCOON_WALKING_RIGHT;
+			}
 		
 			if (state == MARIO_STATE_WALKING_LEFT)
+			{
 				ani = MARIO_ANI_RACCOON_WALKING_LEFT;
-			
-
+			}
 			if (state == MARIO_STATE_TURN)
 			{
 				if (nx > 0)
@@ -421,10 +436,18 @@ void CMario::Render()
 			if (state == MARIO_STATE_RUN_RIGHT)
 			{
 				ani = MARIO_ANI_RACCOON_RUN_RIGHT;
+				if (isHoldTurtle)
+				{
+					ani = MARIO_RACCOON_ANI_HOLD_WALK_RIGHT;
+				}
 			}
 			if (state == MARIO_STATE_RUN_LEFT)
 			{
 				ani = MARIO_ANI_RACCOON_RUN_LEFT;
+				if (isHoldTurtle)
+				{
+					ani = MARIO_RACCOON_ANI_HOLD_WALK_LEFT;
+				}
 			}
 			if (state == MARIO_STATE_FALL_FLY)
 			{
@@ -457,9 +480,17 @@ void CMario::Render()
 			if (state == MARIO_STATE_RUN_MAXSPEED)
 			{
 				if (nx > 0)
+				{
 					ani = MARIO_ANI_RACCOON_RUNMAXSPEED_RIGHT;
+					if (isHoldTurtle)
+						ani = MARIO_RACCOON_ANI_HOLD_RUN_MAX_RIGHT;
+				}
 				else if (nx < 0)
+				{
 					ani = MARIO_ANI_RACCOON_RUNMAXSPEED_LEFT;
+					if (isHoldTurtle)
+						ani = MARIO_RACCOON_ANI_HOLD_RUN_MAX_LEFT;
+				}
 			}
 			if (isFlyup)
 			{
@@ -474,6 +505,14 @@ void CMario::Render()
 					ani = MARIO_ANI_RACCOON_JUMP_RIGHT;
 				else if (nx < 0)
 					ani = MARIO_ANI_RACCOON_JUMP_LEFT;
+				if (nx>0 && isHoldTurtle)
+				{
+					ani = MARIO_RACCOON_ANI_HOLD_JUMP_RIGHT;
+				}
+				if (nx < 0 && isHoldTurtle)
+				{
+					ani = MARIO_RACCOON_ANI_HOLD_JUMP_LEFT;
+				}
 			}
 			if (isFalling)
 			{
@@ -620,6 +659,7 @@ void CMario::SetState(int state)
 		break;
 	case MARIO_STATE_WALKING_LEFT:
 		nx = -1;
+		isWalkingL = true;
 		if (isSitting)
 		{
 			ResetSit();
@@ -669,7 +709,7 @@ break;
 bool CMario::CheckTrampleEnemy(CGameObject* obj)
 {
 	LPCOLLISIONEVENT e = SweptAABBEx(obj);
-	if (e->ny < 0)
+	if (e->ny != 0)
 	{
 		return true;
 	}
@@ -803,6 +843,7 @@ void CMario::SetHurt(LPCOLLISIONEVENT e)
 		return;
 	if (e->nx == 0 && e->ny == 0)  //không có va chạm
 		return;
+	SubHealth(1);
 }
 void CMario::SetLive(int l)
 {

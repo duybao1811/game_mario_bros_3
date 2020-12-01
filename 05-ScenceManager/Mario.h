@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Item.h"
 #include "define.h"
+#include "Coin.h"
 #define MARIO_WALKING_SPEED		0.00015f 
 #define MARIO_RUNNING_SPEED     0.00015f
 #define MARIO_DECELERATE_SPEED 0.0005f
@@ -113,6 +114,14 @@
 #define MARIO_ANI_RACCOON_FALL_FLY_LEFT     80
 #define MARIO_ANI_RACCOON_FLY_UP_RIGHT 81
 #define MARIO_ANI_RACCOON_FLY_UP_LEFT 82
+#define MARIO_RACCOON_ANI_HOLD_WALK_RIGHT 83
+#define MARIO_RACCOON_ANI_HOLD_WALK_LEFT 84
+#define MARIO_RACCOON_ANI_HOLD_JUMP_RIGHT 85
+#define MARIO_RACCOON_ANI_HOLD_JUMP_LEFT 86
+#define MARIO_RACCOON_ANI_HOLD_IDLE_RIGHT 87
+#define MARIO_RACCOON_ANI_HOLD_IDLE_LEFT 88
+#define MARIO_RACCOON_ANI_HOLD_RUN_MAX_RIGHT 89
+#define MARIO_RACCOON_ANI_HOLD_RUN_MAX_LEFT 90
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 #define MARIO_LEVEL_RACCOON 3
@@ -142,9 +151,11 @@ class CMario : public CGameObject
 	int CoinCollect;
 	int score;
 	int Live;
+	CCoin* coin;
 public:
 	DWORD TimeFly;
 	int level;
+	bool isWalkingR, isWalkingL;
 	bool isJumping;
 	bool isOnGround;
 	bool isFalling;
@@ -162,6 +173,7 @@ public:
 	bool isDeadth;
 	bool isFlyup;
 	bool isReadytoFly;
+	bool isHoldTurtle;
 public:
 	bool untouchable;
 	DWORD untouchable_start;

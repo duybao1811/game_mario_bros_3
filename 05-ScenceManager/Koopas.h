@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "BlockColor.h"
 #include "QuestionBrick.h"
+#include "Mario.h"
 #define KOOPAS_WALKING_SPEED 0.02f
 #define KOOPAS_BALL_SPEED    0.1f
 #define KOOPAS_FLY_SPEED_X   0.02f
@@ -40,13 +41,15 @@
 #define KOOPAS_FLY 3
 class CKoopas : public CGameObject
 {
-	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
-	virtual void Render();
-
+	CMario* player;
 public:
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual void Render();
 	int model;
 	int GetModel();
+	bool isHeld;
+	bool isKicked;
 	float KoopasGravity;
 	bool isWalking;
 	bool isDefend;
@@ -56,6 +59,7 @@ public:
 	bool isUpside;
 	bool isFlying;
 	bool isOnGround;
-	CKoopas(int Model,int d);
+	CKoopas(CMario* mario,int Model,int d);
+	void SetPositionFollowMario();
 	virtual void SetState(int state);
 };

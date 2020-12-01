@@ -1,7 +1,8 @@
 ﻿#include "Koopas.h"
 #include "Goomba.h"
-CKoopas::CKoopas(int Model, int d)
+CKoopas::CKoopas(CMario* mario,int Model, int d)
 {
+	player = mario;
 	model = Model;
 	objType = ObjectType::ENEMY;
 	eType = Type::KOOPAS;
@@ -59,11 +60,28 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (Health == 2)
 	{
 		SetState(KOOPAS_STATE_DEFEND);
+
 	}
 	if (Health == 1)
 	{
-		if (state != KOOPAS_STATE_BALL)
-			SetState(KOOPAS_STATE_BALL);
+		SetState(KOOPAS_STATE_BALL);
+	}
+	if (!isHeld && isKicked)
+	{
+		SetHealth(1);
+	}
+	if (isHeld && player->isHoldTurtle==true)
+	{
+		SetPositionFollowMario();
+		vy = 0;
+	}
+	if (isHeld && player->isHoldTurtle == false)
+	{
+		player->isKick = true;
+		player->TimeKick = GetTickCount64();
+		SetDirection(player->nx);
+		SetHealth(1);
+		isHeld = false;
 	}
 	//bị lật ngược thì nằm im
 	if (isUpside)
@@ -166,7 +184,30 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
-
+void CKoopas::SetPositionFollowMario()
+{
+	if (player->GetLevel() == MARIO_LEVEL_SMALL)
+	{
+		if (player->nx > 0)
+			SetPosition(player->x + 19, player->y + 2);
+		else
+			SetPosition(player->x - 3, player->y + 2);
+	}
+	else if (player->GetLevel() == MARIO_RACCOON)
+	{
+		if (player->nx > 0)
+			SetPosition(player->x + 19, player->y+5);
+		else
+			SetPosition(player->x - 13, player->y+5);
+	}
+	else if (player->GetLevel() == MARIO_LEVEL_BIG || player->GetLevel() == MARIO_FIRE)
+	{
+		if (player->nx > 0)
+			SetPosition(player->x + 19, player->y);
+		else
+			SetPosition(player->x - 3, player->y);
+	}
+}
 void CKoopas::Render()
 {
 	int ani = KOOPAS_BASE_ANI_WALKING_LEFT;

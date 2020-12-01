@@ -189,7 +189,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		int model = atof(tokens[4].c_str());
 		int d = atof(tokens[5].c_str());
-		obj = new CKoopas(model,d); 
+		obj = new CKoopas(player,model,d); 
 		break;
 	}
 	case OBJECT_TYPE_PORTAL:
@@ -381,7 +381,7 @@ void CPlayScene::MarioTrampleEnemy()
 						{
 							enemy->SetDirection(mario->nx);
 						}
-						if (enemy->GetState() == KOOPAS_STATE_BALL)
+						if (enemy->GetState()==KOOPAS_STATE_BALL)
 						{
 							enemy->SetHealth(2);
 						}
@@ -635,8 +635,6 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	{
 		mario->isRunning = true;
 		mario->SetState(MARIO_STATE_RUN_RIGHT);
-
-
 	}
 	else if (game->IsKeyDown(DIK_Z) && game->IsKeyDown(DIK_LEFT))
 	{
@@ -690,8 +688,11 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_Z:
-		mario->Idle();
+	{
+		mario->isRunning = false;
+		mario->isHoldTurtle = false;
 		break;
+	}
 	case DIK_DOWN:
 		if (mario->isSitting)
 		{
