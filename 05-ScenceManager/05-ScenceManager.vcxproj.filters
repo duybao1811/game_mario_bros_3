@@ -141,11 +141,11 @@
     <ClCompile Include="PointEffect.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
-    <ClCompile Include="QuestionBrick.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PlatForm.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestionBrick.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -245,11 +245,11 @@
     <ClInclude Include="PlayScence.h">
       <Filter>Scence</Filter>
     </ClInclude>
-    <ClInclude Include="QuestionBrick.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PlatForm.h">
-      <Filter>Header Files</Filter>
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestionBrick.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

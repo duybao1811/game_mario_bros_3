@@ -67,7 +67,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		vx = 0;
 		state = GOOMBA_STATE_DIE;
-		if (TimeDisappear <= 30)
+		if (TimeDisappear <= 100)
 		{
 			TimeDisappear += dt;
 		}

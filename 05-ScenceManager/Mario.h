@@ -5,7 +5,7 @@
 #define MARIO_WALKING_SPEED		0.00015f 
 #define MARIO_RUNNING_SPEED     0.00015f
 #define MARIO_DECELERATE_SPEED 0.0005f
-#define MARIO_JUMP_SLOW_SPEED_Y 0.25f
+#define MARIO_JUMP_SLOW_SPEED_Y 0.2f
 #define MARIO_JUMP_SPEED_Y		0.37f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
 #define MARIO_JUMP_SPEED_RUNNING_MAXSPEED 0.45f
@@ -27,6 +27,7 @@
 #define MARIO_STATE_RACCOON_ATTACK  900
 #define MARIO_STATE_SHOOT_FIRE      901
 #define MARIO_STATE_FLY             300
+#define MARIO_RACCOON_STATE_FALL_SLOW 550
 #define MARIO_STATE_KICK            1
 #define MARIO_STATE_FALL_FLY         4
 #define MARIO_ANI_BIG_IDLE_RIGHT		0    //400
@@ -110,6 +111,8 @@
 #define MARIO_ANI_RACCOON_FLY_LEFT          78
 #define MARIO_ANI_RACCOON_FALL_FLY_RIGHT    79
 #define MARIO_ANI_RACCOON_FALL_FLY_LEFT     80
+#define MARIO_ANI_RACCOON_FLY_UP_RIGHT 81
+#define MARIO_ANI_RACCOON_FLY_UP_LEFT 82
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 #define MARIO_LEVEL_RACCOON 3
@@ -124,8 +127,12 @@
 #define MARIO_GRAVITY_JUMPING 0.0001f
 #define PULL_UP_MARIO_AFTER_SIT 10.0f
 #define MARIO_FALL_SLOW 0.04f
-#define MARIO_FLY_SPEED_Y 0.15f
+#define MARIO_FLY_SPEED_Y 0.01f
+#define TIME_CAN_FLY 5000
 #define MARIO_DEFAULT_SCORE 0
+#define MARIO_DEFAULT_COIN 0
+#define MARIO_DEFAULT_LIVE 4
+#define MARIO_RACCOON_STATE_FLY_UP 1000
 class CMario : public CGameObject
 {
 
@@ -134,8 +141,9 @@ class CMario : public CGameObject
 	float MarioGravity;
 	int CoinCollect;
 	int score;
+	int Live;
 public:
-	int TimeFly;
+	DWORD TimeFly;
 	int level;
 	bool isJumping;
 	bool isOnGround;
@@ -152,6 +160,8 @@ public:
 	bool isTrampleEnemy;
 	float last_vy;
 	bool isDeadth;
+	bool isFlyup;
+	bool isReadytoFly;
 public:
 	bool untouchable;
 	DWORD untouchable_start;
@@ -182,6 +192,8 @@ public:
 	void JumpHight();
 	void FallSlow();
 
+	bool CheckCollision(CGameObject* obj);
+	bool CheckTrampleEnemy(CGameObject* obj);
 	void SetHurt(LPCOLLISIONEVENT e);
 	void Reset();
 	int GetLevel();
@@ -196,6 +208,8 @@ public:
 	int GetScore();
 	bool GetIsDeadth();
 	void SetIsDeadth(bool b);
+	void SetLive(int l);
+	int GetLive();
 	void Init();
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 };

@@ -62,11 +62,11 @@ void CFirePiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		SetFinish(true);
 	}
 
-	for (int i = 0; i < ListFireEnemy.size(); i++)
+	for (UINT i = 0; i < ListFireEnemy.size(); i++)
 	{
 		ListFireEnemy[i]->Update(dt, coObjects);
 	}
-	for (int i = 0; i < ListFireEnemy.size(); i++)
+	for (UINT i = 0; i < ListFireEnemy.size(); i++)
 	{
 		if (ListFireEnemy[i]->GetFinish() == true)
 		{

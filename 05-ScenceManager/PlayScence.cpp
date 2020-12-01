@@ -360,14 +360,31 @@ void CPlayScene::MarioTrampleEnemy()
 			CGameObject* enemy = objects[i];
 			if (enemy->GetHealth() > 0)
 			{
-				if (mario->isTrampleEnemy)
+				if (mario->CheckTrampleEnemy(enemy)==true)
 				{
 					switch (enemy->GetType())
 					{
 					case Type::GOOMBA:
 					{
-						mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
-						enemy->SetHealth(0);
+						mario->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
+						enemy->SubHealth(1);
+						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
+						mario->SetScore(mario->GetScore() + 100);
+					}
+					case Type::KOOPAS:
+					{
+						mario->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
+						enemy->SubHealth(1);
+						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
+						mario->SetScore(mario->GetScore() + 100);
+						if (enemy->GetState() == KOOPAS_STATE_DEFEND)
+						{
+							enemy->SetDirection(mario->nx);
+						}
+						if (enemy->GetState() == KOOPAS_STATE_BALL)
+						{
+							enemy->SetHealth(2);
+						}
 					}
 					}
 				}
@@ -421,6 +438,7 @@ void CPlayScene::Update(DWORD dt)
 		{
 			objects[i]->Update(dt, &coObjects);
 		}
+
 		if (e->GetType() == QUESTION_BRICK)
 		{
 			CQuestionBrick* questionbrick = dynamic_cast<CQuestionBrick*>(e);
@@ -684,11 +702,18 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			break;
 		}
 	case DIK_S:
-		if (mario->level == MARIO_LEVEL_RACCOON && !mario->isOnGround) {
+
+		if (mario->level == MARIO_LEVEL_RACCOON) {
 
 			if (!mario->isFlying && mario->vy >= 0)
 			{
 				mario->FallSlow();
+				break;
+			}
+			if (mario->isFlying)
+			{
+				mario->Fly();
+				break;
 			}
 		}
 		break;
