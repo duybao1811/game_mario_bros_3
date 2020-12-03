@@ -14,11 +14,11 @@
 #include "FirePiranhaPlant.h"
 #include "Board.h"
 #include "QuestionBrick.h"
+#include "FirePlant.h"
 class CPlayScene: public CScene
 {
 private:
 	vector <Item*> ListItem;
-	CMario* mario;
 	bool isGameOver;
 protected: 
 	CMario *player;					// A play scene has to have player, right? 
@@ -31,6 +31,8 @@ protected:
 	vector<LPGAMEOBJECT> ListEffect;
 	vector<LPGAMEOBJECT> ListPointEffect;
 	vector<LPGAMEOBJECT> ListItems;
+	vector<LPGAMEOBJECT> ListEnemy;
+	vector<FirePlant*> listFireEnemy;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);

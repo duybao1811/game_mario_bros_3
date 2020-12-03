@@ -79,6 +79,17 @@ void CMushRoom::Update(DWORD dt, vector<LPGAMEOBJECT>* listObject)
 					vx *= -1;
 				}
 			}
+			if (e->obj->GetObjType() == ENEMY)
+			{
+				if (e->nx != 0)
+				{
+					x += dx;
+				}
+				if (e->ny != 0)
+				{
+					y += dy;
+				}
+			}
 		}
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];

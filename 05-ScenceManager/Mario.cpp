@@ -34,6 +34,7 @@ CMario::CMario(float x, float y) : CGameObject()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	now = GetTickCount();
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
 	vy += MARIO_GRAVITY * dt;
@@ -68,11 +69,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
+		TimeAttack = now;
 	}
-	if (level == MARIO_LEVEL_FIRE && GetTickCount64() - TimeAttack > 240 && isAttack)
+	if (level == MARIO_LEVEL_FIRE && GetTickCount64() - TimeAttack > 300 && isAttack)
 	{
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
+		TimeAttack = now;
 	}
 	if (GetTickCount64() - TimeKick > 230 && isKick)
 	{
@@ -191,12 +194,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					coin->SetFinish(true);
 					x += dx;
 					y += dy;
+					score +=50;
+					CoinCollect++;
 				}
 				if (e->ny != 0)
 				{
 					vy = last_vy;
 					coin->SetFinish(true);
 					isOnGround = false;
+					score += 50;
+					CoinCollect++;
 				}
 			}
 			if (e->obj->GetType() == BLOCK_COLOR)
@@ -204,6 +211,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (e->nx != 0)
 				{
 					x += dx;
+				}
+				if (e->ny > 0)
+				{
+					vy = last_vy;
+					y+=dy;
 				}
 			}
 			if (e->obj->GetType() == QUESTION_BRICK)
@@ -693,6 +705,7 @@ break;
 		break;
 	}
 	case MARIO_STATE_RACCOON_ATTACK:
+		isAttack = true;
 		break;
 	case MARIO_STATE_SHOOT_FIRE:
 	{
@@ -709,7 +722,7 @@ break;
 bool CMario::CheckTrampleEnemy(CGameObject* obj)
 {
 	LPCOLLISIONEVENT e = SweptAABBEx(obj);
-	if (e->ny != 0)
+	if (e->ny < 0)
 	{
 		return true;
 	}
@@ -883,6 +896,7 @@ void CMario::GetMushRoomBig()
 	ListEffect.push_back(new PointEffect(x, y, POINT_EFFECT_TYPE_ONE_THOUSAND));
 	score += 1000;
 	Health++;
+	y -= 20;
 }
 void CMario::GetLeaf()
 {

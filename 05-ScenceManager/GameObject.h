@@ -61,6 +61,8 @@ public:
 	bool isFinish;
 	float width;
 	float height;
+	bool isInCam;
+	bool isKilled;
 	DWORD dt; 
 
 
@@ -72,6 +74,8 @@ public:
 	void SetFinish(bool b) {
 		isFinish = b;
 	}
+	void SetVx(float Vx) { this->vx = Vx; }
+	float GetVx() { return vx; }
 	void SetX(float X) { x = X; }
 	float GetX() { return x; }
 	void SetY(float Y) { y = Y; }

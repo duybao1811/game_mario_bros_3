@@ -1,10 +1,13 @@
 #include "Goomba.h"
 #include "Fire.h"
-CGoomba::CGoomba(int Model, int d)
+CGoomba::CGoomba(float X,float Y,int Model, int d)
 {
+	this->x = X;
+	this->y = Y;
 	model = Model;
 	objType = ObjectType::ENEMY;
 	eType = Type::GOOMBA;
+	isKilled = false;
 	SetState(GOOMBA_STATE_WALKING);
 	direction = d;
 	TimeWalk = 0;
@@ -41,7 +44,7 @@ void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& botto
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	CGameObject::Update(dt, coObjects);
-	vy += 0.001f * dt;
+	vy += GOOMBA_GRAVITY * dt;
 	if (!checkObjInCamera(this))
 	{
 		SetFinish(true);

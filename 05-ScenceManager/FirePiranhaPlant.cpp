@@ -1,11 +1,10 @@
 ﻿#include "FirePiranhaPlant.h"
-#include "FirePlant.h"
-CFirePiranhaPlant::CFirePiranhaPlant(float X,float Y,int Model)
+CFirePiranhaPlant::CFirePiranhaPlant(float X,float Y,int Model, vector<FirePlant*>* listFireEnemy)
 {
-	//Model 1: hoa bắn lửa màu đỏ Model 2: hoa bắn lửa màu xanh
 	this->x = X;
 	this->y = Y;
 	this->model = Model;
+	this->ListFireEnemy = listFireEnemy;
 	TimeHidding = 0;
 	TimeAttack = 0;
 	TimeAttackDelay = 0;
@@ -13,7 +12,7 @@ CFirePiranhaPlant::CFirePiranhaPlant(float X,float Y,int Model)
 	maxY = Y;
 	SetState(PLANT_STATE_GROW_UP);
 	objType = ObjectType::ENEMY;
-	switch (model)
+	switch (model) 	//Model 1: hoa bắn lửa màu đỏ Model 2: hoa bắn lửa màu xanh
 	{
 	case 1:                //Fire piranha red
 		eType = Type::FIRE_PIRANHA_RED;
@@ -25,6 +24,7 @@ void CFirePiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
 	y += dy;
+	x += dx;
 	if (y <= minY)
 	{
 		y = minY;
@@ -44,9 +44,9 @@ void CFirePiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		SetState(PLANT_STATE_GROW_UP);
 		TimeHidding = 0;
 	}
-	if (TimeAttackDelay > TIME_ATTACK_DELAY) 
+	if (TimeAttackDelay > TIME_ATTACK_DELAY && Health > 0) 
 	{
-		if (ListFireEnemy.size() < 1)
+		if (ListFireEnemy->size() < 1)
 		{
 			CreateFire();
 		}
@@ -59,10 +59,10 @@ void CFirePiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (Health <= 0)
 	{
-		SetFinish(true);
+		isFinish = true;
 	}
 
-	for (UINT i = 0; i < ListFireEnemy.size(); i++)
+	/*for (UINT i = 0; i < ListFireEnemy.size(); i++)
 	{
 		ListFireEnemy[i]->Update(dt, coObjects);
 	}
@@ -72,10 +72,12 @@ void CFirePiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			ListFireEnemy.erase(ListFireEnemy.begin() + i);
 		}
-	}
+	}*/
 }
 void CFirePiranhaPlant::Render()
 {
+	if (isFinish)
+		return;
 	marioRange = GetMarioRangeCurrent();
 	int ani = FPLANT_ANI_LEFT_TOP;
 	if (state == PLANT_STATE_ATTACK)
@@ -116,10 +118,10 @@ void CFirePiranhaPlant::Render()
 			ani = FPLANT_ANI_RIGHT_BOTTOM;
 		}
 	}
-	for (int i = 0; i < ListFireEnemy.size(); i++)
+/*	for (int i = 0; i < ListFireEnemy.size(); i++)
 	{
 		ListFireEnemy[i]->Render();
-	}
+	}*/
 	animation_set->at(ani)->Render(x, y);
 }
 void CFirePiranhaPlant::SetState(int state)
@@ -149,6 +151,8 @@ void CFirePiranhaPlant::GetBoundingBox(float& left, float& top, float& right, fl
 	top = y;
 	right = x + FPLANT_BBOX_WIDTH;
 	bottom = y + FPLANT_BBOX_HEIGHT;
+	if (isFinish)
+		left = top = right = bottom = 0;
 }
 Range CFirePiranhaPlant::GetMarioRangeCurrent()
 {
@@ -171,7 +175,7 @@ Range CFirePiranhaPlant::GetMarioRangeCurrent()
 		{
 			return LEFT_BOTTOM_SIDE_NEAR;
 		}
-		if (this->x - mario->x >= DISTANCE_FROM_MARIO_TO_PLANT)
+		if (this->x - mario->x > DISTANCE_FROM_MARIO_TO_PLANT)
 		{
 			return LEFT_BOTTOM_SIDE_FAR;
 		}
@@ -212,7 +216,8 @@ bool CFirePiranhaPlant::GetSafeZone()
 }
 void CFirePiranhaPlant::CreateFire()
 {
+
 	marioRange = GetMarioRangeCurrent();
 	FirePlant* fireplant = new FirePlant(this->x + 5, this->y + 5, marioRange);
-	ListFireEnemy.push_back(fireplant);
+	ListFireEnemy->push_back(fireplant);
 }

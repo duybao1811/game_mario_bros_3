@@ -3,7 +3,6 @@ FirePlant::FirePlant(float X, float Y,Range marioRange)
 {
 	this->x = X;
 	this->y = Y;
-	objType = ObjectType::ENEMY;
 	eType = Type::FIRE_ENEMY;
 	SetAnimationSet(CAnimationSets::GetInstance()->Get(LOAD_FIRE_FROM_TXT));
 	isFinish = false;
@@ -11,13 +10,13 @@ FirePlant::FirePlant(float X, float Y,Range marioRange)
 }
 void FirePlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt);
+	CGameObject::Update(dt,coObjects);
+	x += dx;
+	y += dy;
 	if (!(checkObjInCamera(this))) // RA KHỎI CAM THÌ XÓA
 	{
 		SetFinish(true);
 	}
-	x += dx;
-	y += dy;
 }
 void FirePlant::Render()
 {

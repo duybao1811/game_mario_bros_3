@@ -1,0 +1,7 @@
+nếu trong cam thì bắt đầu update 
+nếu ngoài cam thì xóa
+đối với goomba và piranha thì nếu xóa sẽ hồi sinh chỉ khi bị giết thì mới không hồi sinh , giảm số lượng
+
+sửa lỗi firepiranha plant ra khỏi cam thì fire ngưng update (done)
+kéo mario lên chút xíu khi ăn nấm để tránh bị rơi
+

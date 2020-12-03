@@ -26,8 +26,8 @@ enum Type {
 	PORTAL = 23,
 	PORAL_SWITCH = 24,
 	BLOCK_COLOR = 25,
-	ESHORT_PIPE =26,
-	EMEDIUM_PIPE=27,
+	ESHORT_PIPE = 26,
+	EMEDIUM_PIPE = 27,
 
 
 	//ENEMY 
@@ -37,17 +37,17 @@ enum Type {
 	KOOPAS_JUMP = 33,
 	FIRE_PIRANHA_RED = 34,
 	PIRANHA_GREEN = 35,
-	FIRE_ENEMY=36,
+	FIRE_ENEMY = 36,
 	//WEAPON
 	FIRE = 40,
 
 	//ITEM
 	MUSHROOM_POWER = 50,
-	MUSHROOM_1_UP =51,
+	MUSHROOM_1_UP = 51,
 	LEAF = 52,
-	COIN = 53, 
-
-
+	COIN = 53,
+	//EFFECT
+	COIN_EFFECT = 1,
 };
 enum ObjectType
 {
@@ -108,6 +108,13 @@ enum Range
 #define QB_SPEED_UP 0.1f
 #define QB_STATE_UNBOX 100
 #define QB_STATE_EMPTY 200
+
+
+// Enemy
+ 
+#define ENEMY_ATTACKED // trạng thái của enemy khi bị bắn lửa, bị quẩy đuôi và bị đá rùa tấn công
+
+
 
 #define GAMEOVER_SELECT_CONTINUE 0
 #define GAME_OVER_SELECT_END 1

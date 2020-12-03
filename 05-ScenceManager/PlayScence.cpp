@@ -152,12 +152,14 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	int object_type = atoi(tokens[0].c_str());
 	float x = atof(tokens[1].c_str());
 	float y = atof(tokens[2].c_str());
-
 	int ani_set_id = atoi(tokens[3].c_str());
+
 
 	CAnimationSets * animation_sets = CAnimationSets::GetInstance();
 
+
 	CGameObject *obj = NULL;
+
 
 	switch (object_type)
 	{
@@ -176,7 +178,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		int model = atof(tokens[4].c_str());
 		int d = atof(tokens[5].c_str());
-		obj = new CGoomba(model, d);
+		obj = new CGoomba(x,y,model, d);
 		break;
 	}
 	case OBJECT_TYPE_PLATFORM: {
@@ -208,7 +210,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_FIRE_PLANT:
 	{
 		int model = atof(tokens[4].c_str());
-		obj = new CFirePiranhaPlant(x,y,model);
+		obj = new CFirePiranhaPlant(x,y,model,&listFireEnemy);
 		break;
 	}
 	case OBJECT_TYPE_PIPE:
@@ -245,6 +247,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 
 	obj->SetAnimationSet(ani_set);
+
 	objects.push_back(obj);
 }
 void CPlayScene::_ParseSection_TILEMAP(string line)
@@ -324,25 +327,23 @@ void CPlayScene::Load()
 }
 void CPlayScene::CheckCollistionMarioWithItem()
 {
-	LPSCENE scence = CGame::GetInstance()->GetCurrentScene();
-	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
 	for (UINT i = 0; i < ListItem.size(); i++)
 	{
 		if (ListItem[i]->GetFinish() == false)
 		{
-			if (mario->isCollisionWithItem(ListItem[i]) == true)
+			if (player->isCollisionWithItem(ListItem[i]) == true)
 			{
 				switch (ListItem[i]->GetType())
 				{
 				case Type::MUSHROOM_POWER:
 				{
-					mario->GetMushRoomBig();
+					player->GetMushRoomBig();
 					ListItem[i]->SetFinish(true);
 					break;
 				}
 				case Type::LEAF:
 				{
-					mario->GetLeaf();
+					player->GetLeaf();
 					ListItem[i]->SetFinish(true);
 					break;
 				}
@@ -353,33 +354,32 @@ void CPlayScene::CheckCollistionMarioWithItem()
 }
 void CPlayScene::MarioTrampleEnemy()
 {
-	LPSCENE scence = CGame::GetInstance()->GetCurrentScene();
-	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
 	for (UINT i = 0; i < objects.size(); i++)
 	{
 			CGameObject* enemy = objects[i];
 			if (enemy->GetHealth() > 0)
 			{
-				if (mario->CheckTrampleEnemy(enemy)==true)
+				if (player->CheckTrampleEnemy(enemy)==true)
 				{
 					switch (enemy->GetType())
 					{
 					case Type::GOOMBA:
 					{
-						mario->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
+						player->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
 						enemy->SubHealth(1);
+						enemy->isKilled = true;
 						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
-						mario->SetScore(mario->GetScore() + 100);
+						player->SetScore(player->GetScore() + 100);
 					}
 					case Type::KOOPAS:
 					{
-						mario->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
+						player->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
 						enemy->SubHealth(1);
 						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
-						mario->SetScore(mario->GetScore() + 100);
+						player->SetScore(player->GetScore() + 100);
 						if (enemy->GetState() == KOOPAS_STATE_DEFEND)
 						{
-							enemy->SetDirection(mario->nx);
+							enemy->SetDirection(player->nx);
 						}
 						if (enemy->GetState()==KOOPAS_STATE_BALL)
 						{
@@ -413,7 +413,6 @@ void CPlayScene::QuestionBrickDropItem(int model, float x,float y)
 		}
 	}
 	break;
-	
 	}
 }
 void CPlayScene::CheckCollision()
@@ -423,7 +422,7 @@ void CPlayScene::CheckCollision()
 	//CheckCollisionMarioWithEnemy();
 }
 void CPlayScene::Update(DWORD dt)
-{   
+{
 	CGameObject* obj = NULL;
 
 	vector<LPGAMEOBJECT> coObjects;
@@ -437,8 +436,8 @@ void CPlayScene::Update(DWORD dt)
 		if (objects[i]->checkObjInCamera(objects[i]))
 		{
 			objects[i]->Update(dt, &coObjects);
+			objects[i]->isInCam = true;
 		}
-
 		if (e->GetType() == QUESTION_BRICK)
 		{
 			CQuestionBrick* questionbrick = dynamic_cast<CQuestionBrick*>(e);
@@ -449,28 +448,69 @@ void CPlayScene::Update(DWORD dt)
 			}
 		}
 	}
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		if (objects[i]->GetObjType() == ENEMY)
+		{
+			if (objects[i]->isInCam == true && !(objects[i]->checkObjInCamera(objects[i])) && objects[i]->isKilled == false)  //đã đi qua cam 1 lần và bây giờ nằm ngoài cam
+			{
+				if(CGame::GetInstance()->GetCamX()+SCREEN_WIDTH > 512 && CGame::GetInstance()->GetCamX()<528)
+				switch (objects[i]->GetType())
+				{
+				case Type::GOOMBA:
+				{
+					objects[i]->isInCam = false;
+					objects[i]->SetPosition(512, 385); //set lại vị trí
+				}
+				}
+			}
+
+		}
+	}
 	for (int i = 0; i < ListEffect.size(); i++)
 	{
 		ListEffect[i]->Update(dt);
 	}
 	for (int i = 0; i < ListEffect.size(); i++)
 	{
-		if (ListEffect[i]->GetFinish())
+		CGameObject* effect = ListEffect[i];
+		if (effect->GetFinish())
 		{
-			ListEffect.erase(ListEffect.begin() + i);
+			if (effect->GetType() == COIN_EFFECT)
+			{
+				ListEffect.erase(ListEffect.begin() + i);
+				ListEffect.push_back(new PointEffect(effect->GetX(), effect->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
+				player->SetScore(player->GetScore() + 100);
+				player->SetCoinCollect(player->GetCoinCollect() + 1);
+			}
+			else
+				ListEffect.erase(ListEffect.begin() + i);
 		}
 	}
 	for (int i = 0; i < ListItem.size(); i++)
 	{
 		ListItem[i]->Update(dt,&coObjects);
 	}
-	for (int i = 0; i < ListItem.size(); i++)
+	for (UINT i = 0; i < ListItem.size(); i++)
 	{
-		if (ListItem[i]->GetFinish())
+		if (ListItem[i]->GetFinish() == true)
 		{
 			ListItem.erase(ListItem.begin() + i);
 		}
 	}
+	for (UINT i = 0; i < listFireEnemy.size(); i++)
+	{
+		listFireEnemy[i]->Update(dt, &coObjects);
+	}
+	for (UINT i = 0; i < listFireEnemy.size(); i++)
+	{
+		if (listFireEnemy[i]->GetFinish() == true)
+		{
+			listFireEnemy.erase(listFireEnemy.begin() + i);
+		}
+	}
+
+
 
 	CheckCollision();
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
@@ -524,6 +564,15 @@ void CPlayScene::Render()
 	{
 		ListItem[i]->Render();
 	}
+	for (int i = 0; i < ListEnemy.size(); i++)
+	{
+		ListEnemy[i]->Render();
+	}
+	for (int i = 0; i < listFireEnemy.size(); i++)
+	{
+		listFireEnemy[i]->Render();
+	}
+
 }
 
 /*

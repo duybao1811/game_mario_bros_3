@@ -29,6 +29,7 @@
 #define GOOMBA_ATTACKED_SPEED_Y 0.35f
 #define GOOMBA_BASE 1
 #define GOOMBA_RED_PARA 2
+#define GOOMBA_GRAVITY 0.001f
 class CGoomba : public CGameObject
 {
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
@@ -46,6 +47,6 @@ public:
 	bool isOnGround;
 	bool isFinish;
 	bool isAttacked;
-	CGoomba(int Model, int d);
+	CGoomba(float X,float Y,int Model, int d);
 	virtual void SetState(int state);
 };

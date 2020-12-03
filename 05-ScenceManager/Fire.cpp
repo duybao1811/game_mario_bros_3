@@ -22,8 +22,10 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vx = direction*FIRE_SPEED*dt;
 
 	// ra khỏi camera thì kết thúc
-	if (!(checkObjInCamera(this)))
+	if (!checkObjInCamera(this))
+	{
 		SetFinish(true);
+	}
 	CGameObject::Update(dt, coObjects);
 	//nảy lên khi va chạm đất
 	// chạm vào object thì kết thúc

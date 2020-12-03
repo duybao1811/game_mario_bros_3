@@ -35,6 +35,9 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	}
 	else
 		bottom = y + KOOPAS_BBOX_HEIGHT;
+
+	if (isFinish)
+		left = top = right = bottom = 0;
 	
 }
 
@@ -66,6 +69,8 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		SetState(KOOPAS_STATE_BALL);
 	}
+	if (Health <= 0)
+		isFinish = true;
 	if (!isHeld && isKicked)
 	{
 		SetHealth(1);
@@ -175,6 +180,13 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							direction *= -1;
 							vx *= -1;
 						}
+					}
+				}
+				if (e->obj->GetObjType() == ENEMY)
+				{
+					if (e->nx != 0)
+					{
+						x += dx;
 					}
 				}
 			}
@@ -298,6 +310,8 @@ void CKoopas::Render()
 			ani = KOOPAS_BASE_ANI_ATTACKED;
 		}
 	}
+	if (isFinish)
+		return;
 	animation_set->at(ani)->Render(x, y);
 
 	RenderBoundingBox();

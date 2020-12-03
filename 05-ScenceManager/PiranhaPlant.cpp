@@ -46,7 +46,7 @@ void CPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (Health <= 0)
 	{
-		SetFinish(true);
+		isFinish = true;
 	}
 
 	CGameObject::Update(dt);
@@ -54,6 +54,8 @@ void CPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 }
 void CPiranhaPlant::Render()
 {
+	if (isFinish)
+		return;
 	int ani = FPLANT_ANI_LEFT_TOP;
 	animation_set->at(ani)->Render(x, y);
 }
@@ -76,6 +78,8 @@ void CPiranhaPlant::SetState(int state)
 }
 void CPiranhaPlant::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
+	if (isFinish)
+		left = top = right = bottom = 0;
 	left = x;
 	top = y;
 	right = x + PLANT_BBOX_WIDTH;
