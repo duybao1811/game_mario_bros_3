@@ -452,18 +452,17 @@ void CPlayScene::Update(DWORD dt)
 	{
 		if (objects[i]->GetObjType() == ENEMY)
 		{
-			if (objects[i]->isInCam == true && !(objects[i]->checkObjInCamera(objects[i])) && objects[i]->isKilled == false)  //đã đi qua cam 1 lần và bây giờ nằm ngoài cam
+			if (objects[i]->isInCam == true && objects[i]->isKilled == false)  //đã đi qua cam 1 lần và bây giờ nằm ngoài cam
 			{
-				if(CGame::GetInstance()->GetCamX()+SCREEN_WIDTH > 512 && CGame::GetInstance()->GetCamX()<528)
-				switch (objects[i]->GetType())
+				if (objects[i]->GetType() == GOOMBA)
 				{
-				case Type::GOOMBA:
-				{
-					objects[i]->isInCam = false;
-					objects[i]->SetPosition(512, 385); //set lại vị trí
-				}
+					if (CGame::GetInstance()->GetCamX() + SCREEN_WIDTH == 512 || CGame::GetInstance()->GetCamX() == 528)
+					{
+						objects[i]->SetPosition(512, 385); //set lại vị trí
+					}
 				}
 			}
+					//objects[i]->isInCam = false;
 
 		}
 	}
