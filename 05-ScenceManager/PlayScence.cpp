@@ -433,10 +433,26 @@ void CPlayScene::Update(DWORD dt)
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		LPGAMEOBJECT e = objects[i];
-		if (objects[i]->checkObjInCamera(objects[i]))
+		if (objects[i]->checkObjInCamera(objects[i])==true)
 		{
 			objects[i]->Update(dt, &coObjects);
+			objects[i]->SetFinish(false);
 			objects[i]->isInCam = true;
+		}
+		if (objects[i]->GetObjType() == ENEMY && objects[i]->checkObjInCamera(objects[i])==false)
+		{
+			if (objects[i]->isInCam == true && !objects[i]->isKilled)  //đã đi qua cam 1 lần
+			{
+				objects[i]->SetFinish(true);
+				if (player->GetX() > 776)
+				{
+					if (objects[i]->GetType() == GOOMBA && objects[i]->GetStartX() == 512)
+					{
+						objects[i]->SetPosition(512, 385); //set lại vị trí
+					}
+				}
+			}
+			//objects[i]->isInCam = false;
 		}
 		if (e->GetType() == QUESTION_BRICK)
 		{
@@ -450,21 +466,7 @@ void CPlayScene::Update(DWORD dt)
 	}
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-		if (objects[i]->GetObjType() == ENEMY)
-		{
-			if (objects[i]->isInCam == true && objects[i]->isKilled == false)  //đã đi qua cam 1 lần và bây giờ nằm ngoài cam
-			{
-				if (objects[i]->GetType() == GOOMBA)
-				{
-					if (CGame::GetInstance()->GetCamX() + SCREEN_WIDTH == 512 || CGame::GetInstance()->GetCamX() == 528)
-					{
-						objects[i]->SetPosition(512, 385); //set lại vị trí
-					}
-				}
-			}
-					//objects[i]->isInCam = false;
-
-		}
+	
 	}
 	for (int i = 0; i < ListEffect.size(); i++)
 	{

@@ -45,7 +45,6 @@ public:
 	bool isDie;
 	DWORD start_die;
 	bool isOnGround;
-	bool isFinish;
 	bool isAttacked;
 	CGoomba(float X,float Y,int Model, int d);
 	virtual void SetState(int state);

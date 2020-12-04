@@ -63,6 +63,7 @@ public:
 	float height;
 	bool isInCam;
 	bool isKilled;
+	float startX, startY;
 	DWORD dt; 
 
 
@@ -90,6 +91,7 @@ public:
 	void SetDirection(int d);
 	int GetDirection();
 	int GetState() { return this->state; }
+	float GetStartX() { return startX; }
 	Type GetType();
 	void RenderBoundingBox();
 	ObjectType GetObjType();
