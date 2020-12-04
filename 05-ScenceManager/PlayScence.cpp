@@ -367,7 +367,6 @@ void CPlayScene::MarioTrampleEnemy()
 					{
 						player->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
 						enemy->SubHealth(1);
-						enemy->isKilled = true;
 						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
 						player->SetScore(player->GetScore() + 100);
 					}
@@ -439,19 +438,74 @@ void CPlayScene::Update(DWORD dt)
 			objects[i]->SetFinish(false);
 			objects[i]->isInCam = true;
 		}
-		if (objects[i]->GetObjType() == ENEMY && objects[i]->checkObjInCamera(objects[i])==false)
+		if (objects[i]->GetObjType() == ENEMY && objects[i]->checkObjInCamera(objects[i]) == false)
 		{
-			if (objects[i]->isInCam == true && !objects[i]->isKilled)  //đã đi qua cam 1 lần
+			if (objects[i]->isInCam == true && !objects[i]->isKilled)  //đã đi qua cam 1 lần và chưa bị kill
 			{
 				objects[i]->SetFinish(true);
-				if (player->GetX() > 776)
+
+#pragma region cơ chế hồi sinh của enemy khi ra khỏi cam không phải bị kill
+
+				if (objects[i]->GetType() == GOOMBA)
 				{
-					if (objects[i]->GetType() == GOOMBA && objects[i]->GetStartX() == 512)
+					if (objects[i]->GetStartX() == 512)
 					{
-						objects[i]->SetPosition(512, 385); //set lại vị trí
+						if (player->GetX() > 776)
+						{
+							objects[i]->SetPosition(512, 385); //set lại vị trí
+							objects[i]->SetDirection(1);
+
+						}
+						if (player->GetX() < 248)
+						{
+							objects[i]->SetPosition(512, 385); //set lại vị trí
+							objects[i]->SetDirection(-1);
+						}
+					}
+					if (objects[i]->GetStartX() == 816)
+					{
+						if (player->GetX() > 1080)
+						{
+							objects[i]->SetPosition(816, 369); //set lại vị trí
+							objects[i]->SetDirection(1);
+						
+						}
+						if (player->GetX() < 776)
+						{
+							objects[i]->SetPosition(816, 369); //set lại vị trí
+							objects[i]->SetDirection(-1);
+						}
+					}
+					if (objects[i]->GetStartX() == 864)
+					{
+						if (player->GetX() > 1128)
+						{
+							objects[i]->SetPosition(864, 369); //set lại vị trí
+							objects[i]->SetDirection(1);
+
+						}
+						if (player->GetX() < 600)
+						{
+							objects[i]->SetPosition(864, 369); //set lại vị trí
+							objects[i]->SetDirection(-1);
+						}
 					}
 				}
+				if (objects[i]->GetType() == FIRE_PIRANHA)
+				{
+					if (objects[i]->GetStartX() == 360)
+					{
+						if (player->GetX() < 96 || player->GetX() > 624)
+						{
+							objects[i]->SetPosition(360, 368); //set lại vị trí
+						}
+					}
+				}
+
+#pragma endregion		
+
 			}
+			
 			//objects[i]->isInCam = false;
 		}
 		if (e->GetType() == QUESTION_BRICK)

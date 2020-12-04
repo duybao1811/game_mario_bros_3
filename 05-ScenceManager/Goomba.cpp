@@ -26,15 +26,6 @@ CGoomba::CGoomba(float X,float Y,int Model, int d)
 }
 void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (isFinish || isAttacked)
-	{
-		left = 0;
-		top = 0;
-		right = 0;
-		bottom = 0;
-	}
-	else
-	{
 		left = x;
 		top = y;
 		right = x + GOOMBA_BBOX_WIDTH;
@@ -42,8 +33,13 @@ void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& botto
 			bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
 		else
 			bottom = y + GOOMBA_BBOX_HEIGHT;
-	}
-
+		if (isFinish || isAttacked)
+		{
+			left = 0;
+			top = 0;
+			right = 0;
+			bottom = 0;
+		}
 }
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
@@ -64,9 +60,9 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	if (Health == 0)
 	{
-		isDie = true;
+		isKilled = true;
 	}
-	if (isDie)
+	if (isKilled)
 	{
 		vx = 0;
 		state = GOOMBA_STATE_DIE;
@@ -111,7 +107,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				isOnGround = false;
 			}
-
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
 				LPCOLLISIONEVENT e = coEventsResult[i];

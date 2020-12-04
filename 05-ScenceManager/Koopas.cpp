@@ -43,11 +43,11 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	if (isFinish)
+		return;
 	vy += KOOPAS_GRAVITY * dt;
 	CGameObject::Update(dt, coObjects);
 	// ra khỏi camera thì kết thúc
-	if (!(checkObjInCamera(this)))
-		SetFinish(true);
 	if (model == KOOPAS_FLY && Health == 4 && isOnGround)
 	{
 		SetState(KOOPAS_STATE_FLY);
@@ -69,8 +69,6 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		SetState(KOOPAS_STATE_BALL);
 	}
-	if (Health <= 0)
-		isFinish = true;
 	if (!isHeld && isKicked)
 	{
 		SetHealth(1);
@@ -222,6 +220,8 @@ void CKoopas::SetPositionFollowMario()
 }
 void CKoopas::Render()
 {
+	if (isFinish)
+		return;
 	int ani = KOOPAS_BASE_ANI_WALKING_LEFT;
 	if (model == KOOPAS_BASE)
 	{
@@ -310,8 +310,6 @@ void CKoopas::Render()
 			ani = KOOPAS_BASE_ANI_ATTACKED;
 		}
 	}
-	if (isFinish)
-		return;
 	animation_set->at(ani)->Render(x, y);
 
 	RenderBoundingBox();

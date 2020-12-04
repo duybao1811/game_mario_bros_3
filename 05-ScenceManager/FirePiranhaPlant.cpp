@@ -10,12 +10,13 @@ CFirePiranhaPlant::CFirePiranhaPlant(float X,float Y,int Model, vector<FirePlant
 	TimeAttackDelay = 0;
 	minY = Y - FPLANT_BBOX_HEIGHT;
 	maxY = Y;
+	this->startX = X;
 	SetState(PLANT_STATE_GROW_UP);
+	eType = Type::FIRE_PIRANHA;
 	objType = ObjectType::ENEMY;
 	switch (model) 	//Model 1: hoa bắn lửa màu đỏ Model 2: hoa bắn lửa màu xanh
 	{
 	case 1:                //Fire piranha red
-		eType = Type::FIRE_PIRANHA_RED;
 		SetHealth(1);
 		break;
 	}
