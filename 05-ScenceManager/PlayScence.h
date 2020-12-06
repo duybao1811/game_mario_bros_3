@@ -25,6 +25,7 @@ protected:
 	Map* map;
 	Camera* camera;
 	CMushRoom* mushroom;
+	Board* board;
 	CQuestionBrick* questionbrick;
 	vector<CGameObject*> listObj;
 	vector<LPGAMEOBJECT> objects;

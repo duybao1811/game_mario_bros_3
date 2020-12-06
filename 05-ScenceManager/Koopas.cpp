@@ -43,8 +43,6 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	if (isFinish)
-		return;
 	vy += KOOPAS_GRAVITY * dt;
 	CGameObject::Update(dt, coObjects);
 	// ra khỏi camera thì kết thúc
@@ -52,9 +50,9 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		SetState(KOOPAS_STATE_FLY);
 	}
-	if (Health <= 0)
+	if (Health == 0)
 	{
-		SetFinish(true);
+		isFinish = true;
 	}
 	if (Health == 3)   //Koopas
 	{

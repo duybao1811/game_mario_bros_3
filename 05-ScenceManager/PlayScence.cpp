@@ -57,7 +57,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 
 #define MAX_SCENE_LINE 1024
 
-
+#define BOARD_DEFAULT_POSITION_X 32.0f
+#define BOARD_DEFAULT_POSITION_Y 440.0f
 void CPlayScene::_ParseSection_TEXTURES(string line)
 {
 	vector<string> tokens = split(line);
@@ -432,82 +433,80 @@ void CPlayScene::Update(DWORD dt)
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		LPGAMEOBJECT e = objects[i];
-		if (objects[i]->checkObjInCamera(objects[i])==true)
+		if (objects[i]->checkObjInCamera(objects[i]) == true)
 		{
 			objects[i]->Update(dt, &coObjects);
-			objects[i]->SetFinish(false);
 			objects[i]->isInCam = true;
+			objects[i]->SetFinish(false);
 		}
-		if (objects[i]->GetObjType() == ENEMY && objects[i]->checkObjInCamera(objects[i]) == false)
+		if (objects[i]->GetObjType() == ENEMY && !objects[i]->isKilled)
 		{
-			if (objects[i]->isInCam == true && !objects[i]->isKilled)  //đã đi qua cam 1 lần và chưa bị kill
-			{
-				objects[i]->SetFinish(true);
 
 #pragma region cơ chế hồi sinh của enemy khi ra khỏi cam không phải bị kill
-
-				if (objects[i]->GetType() == GOOMBA)
+			if (objects[i]->checkObjInCamera(objects[i]) == false && objects[i]->isInCam==true)
+			{
+				objects[i]->SetFinish(true);
+			}
+			if (objects[i]->GetType() == GOOMBA)
+			{
+				if (objects[i]->GetStartX() == 512)
 				{
-					if (objects[i]->GetStartX() == 512)
+					if (player->GetX() > 776)
 					{
-						if (player->GetX() > 776)
-						{
-							objects[i]->SetPosition(512, 385); //set lại vị trí
-							objects[i]->SetDirection(1);
+						objects[i]->SetPosition(512, 385); //set lại vị trí
+						objects[i]->SetDirection(1);
+						//objects[i]->SetFinish(false);
 
-						}
-						if (player->GetX() < 248)
-						{
-							objects[i]->SetPosition(512, 385); //set lại vị trí
-							objects[i]->SetDirection(-1);
-						}
 					}
-					if (objects[i]->GetStartX() == 816)
-					{
-						if (player->GetX() > 1080)
-						{
-							objects[i]->SetPosition(816, 369); //set lại vị trí
-							objects[i]->SetDirection(1);
-						
-						}
-						if (player->GetX() < 776)
-						{
-							objects[i]->SetPosition(816, 369); //set lại vị trí
-							objects[i]->SetDirection(-1);
-						}
-					}
-					if (objects[i]->GetStartX() == 864)
-					{
-						if (player->GetX() > 1128)
-						{
-							objects[i]->SetPosition(864, 369); //set lại vị trí
-							objects[i]->SetDirection(1);
 
-						}
-						if (player->GetX() < 600)
-						{
-							objects[i]->SetPosition(864, 369); //set lại vị trí
-							objects[i]->SetDirection(-1);
-						}
+				}
+				if (objects[i]->GetStartX() == 816)
+				{
+					if (player->GetX() > 1248)
+					{
+						objects[i]->SetPosition(816, 369); //set lại vị trí
+						objects[i]->SetDirection(1);
+
+					}
+					if (player->GetX() < 392)
+					{
+						objects[i]->SetPosition(816, 369); //set lại vị trí
+						objects[i]->SetDirection(-1);
 					}
 				}
-				if (objects[i]->GetType() == FIRE_PIRANHA)
+				if (objects[i]->GetStartX() == 864)
 				{
-					if (objects[i]->GetStartX() == 360)
+					if (player->GetX() > 1248)
 					{
-						if (player->GetX() < 96 || player->GetX() > 624)
-						{
-							objects[i]->SetPosition(360, 368); //set lại vị trí
-						}
+						objects[i]->SetPosition(864, 369); //set lại vị trí
+						objects[i]->SetDirection(1);
+
+					}
+					if (player->GetX() < 392)
+					{
+						objects[i]->SetPosition(864, 369); //set lại vị trí
+						objects[i]->SetDirection(-1);
 					}
 				}
+			}
+			if (objects[i]->GetType() == FIRE_PIRANHA)
+			{
+				if (objects[i]->GetStartX() == 360)
+				{
+					if (player->GetX() < 96 || player->GetX() > 624)
+					{
+						objects[i]->SetPosition(360, 368); //set lại vị trí
+					}
+				}
+			}
 
 #pragma endregion		
 
-			}
+		}
+	
 			
 			//objects[i]->isInCam = false;
-		}
+		
 		if (e->GetType() == QUESTION_BRICK)
 		{
 			CQuestionBrick* questionbrick = dynamic_cast<CQuestionBrick*>(e);
@@ -627,7 +626,8 @@ void CPlayScene::Render()
 	{
 		listFireEnemy[i]->Render();
 	}
-
+	board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
+	board->Render(player);
 }
 
 /*

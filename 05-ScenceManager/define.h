@@ -8,11 +8,9 @@
 #include <stdio.h>
 #include <iomanip>
 using namespace std;
-#define SCREEN_WIDTH 528
-#define SCREEN_HEIGHT 480
 #define GAME_TIME_LIMIT  300 // thoi gian dem nguoc khi ket thuc 1 man 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+#define SCREEN_WIDTH 278
+#define SCREEN_HEIGHT 230
 enum Type {
 	// MARIO 
 	MARIO_SMALL = 01,

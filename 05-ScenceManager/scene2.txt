@@ -11,6 +11,8 @@
 90	textures\misc2.png	0	117	255
 15	textures\misc1.png	166	185	255
 25	textures\font.png	255	0	255
+35	textures\board.png	255	0	255
+45	textures\Font1.png	255	0	255
 [TILEMAP]
 Resources\Tilemap\world1-1.txt
 # id	left	top	right	bottom	texture_id
@@ -423,7 +425,7 @@ Resources\Tilemap\world1-1.txt
 135	113	32	121	39	25
 136	123	32	131	39	25
 #BOARD
-137	3	3	155	31	25
+137	0	0	312	64	35
 ################ COIN EFFECT #################
 36	294	101	302	115	15
 37	389	101	395	115	15

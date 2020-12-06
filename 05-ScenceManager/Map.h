@@ -4,7 +4,7 @@
 #include<fstream>
 #include "Utils.h"
 #include <string>
-#include "Camera.h"
+#include "Textures.h"
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 16
 class Map

@@ -1,7 +1,6 @@
 #include "Map.h"
 #include <fstream>
 #include <iostream>
-#include "Textures.h"
 Map::Map(int TexID, int RowMap, int ColumnMap, int RowTile, int ColumnTile, int TotalTile)
 {
 	Tex = CTextures::GetInstance()->Get(TexID);
