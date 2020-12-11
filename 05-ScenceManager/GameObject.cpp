@@ -129,7 +129,7 @@ void CGameObject::RenderBoundingBox()
 	rect.right = (int)r - (int)l;
 	rect.bottom = (int)b - (int)t;
 
-	CGame::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 32);
+	CGame::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 150);
 }
 void CGameObject::SetDirection(int d)
 {
@@ -177,9 +177,9 @@ bool CGameObject::checkObjInCamera(CGameObject* obj)
 {
 	float w = 16.0f;
 	float h = 16.0f;
-	if (obj->x + w < (CGame::GetInstance()->GetCamX() - 16.0f) || (CGame::GetInstance()->GetCamX()) + SCREEN_WIDTH + 16.0f < obj->x)
+	if (obj->x + w < (CGame::GetInstance()->GetCamX()) || (CGame::GetInstance()->GetCamX()) + SCREEN_WIDTH< obj->x)
 		return false;
-	if (obj->y + h < (CGame::GetInstance()->GetCamY() - 16.0f) || (CGame::GetInstance()->GetCamY()) + SCREEN_HEIGHT +16.0f < obj->y)
+	if (obj->y + h < (CGame::GetInstance()->GetCamY() - 32.0f) || (CGame::GetInstance()->GetCamY()) + SCREEN_HEIGHT +32.0f < obj->y)
 		return false;
 	return true;
 }

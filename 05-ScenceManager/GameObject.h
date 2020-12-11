@@ -66,7 +66,7 @@ public:
 	float startX, startY;
 	DWORD dt; 
 
-
+	int ani;
 	LPANIMATION_SET animation_set;
 
 public: 

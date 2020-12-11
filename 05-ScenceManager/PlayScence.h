@@ -15,11 +15,13 @@
 #include "Board.h"
 #include "QuestionBrick.h"
 #include "FirePlant.h"
+#include "GameTime.h"
 class CPlayScene: public CScene
 {
 private:
 	vector <Item*> ListItem;
 	bool isGameOver;
+	GameTime* gametime;
 protected: 
 	CMario *player;					// A play scene has to have player, right? 
 	Map* map;

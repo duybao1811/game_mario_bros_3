@@ -137,6 +137,7 @@
     <ClCompile Include="FirePiranhaPlant.cpp" />
     <ClCompile Include="FirePlant.cpp" />
     <ClCompile Include="Font.cpp" />
+    <ClCompile Include="GameTime.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Leaf.cpp" />
@@ -148,6 +149,8 @@
     <ClCompile Include="PointEffect.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="QuestionBrick.cpp" />
+    <ClCompile Include="Tail.cpp" />
+    <ClCompile Include="TailHitEffect.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -173,6 +176,7 @@
     <ClInclude Include="FirePiranhaPlant.h" />
     <ClInclude Include="FirePlant.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="GameTime.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="Leaf.h" />
@@ -184,6 +188,8 @@
     <ClInclude Include="PointEffect.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="QuestionBrick.h" />
+    <ClInclude Include="Tail.h" />
+    <ClInclude Include="TailHitEffect.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />

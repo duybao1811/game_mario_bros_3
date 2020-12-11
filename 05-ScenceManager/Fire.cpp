@@ -106,6 +106,7 @@ void Fire::Render()
 		ani = SHOOT_FIRE_RIGHT;
 	}
 	animation_set->at(ani)->Render(x, y);
+	RenderBoundingBox();
 }
 void Fire::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {

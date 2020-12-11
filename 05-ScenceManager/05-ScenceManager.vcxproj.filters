@@ -147,6 +147,15 @@
     <ClCompile Include="QuestionBrick.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="GameTime.cpp">
+      <Filter>Scence</Filter>
+    </ClCompile>
+    <ClCompile Include="Tail.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="TailHitEffect.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Font.h">
@@ -250,6 +259,15 @@
     </ClInclude>
     <ClInclude Include="QuestionBrick.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTime.h">
+      <Filter>Scence</Filter>
+    </ClInclude>
+    <ClInclude Include="Tail.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="TailHitEffect.h">
+      <Filter>Effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

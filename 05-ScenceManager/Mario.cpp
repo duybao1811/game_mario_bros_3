@@ -21,7 +21,7 @@
 #include "PointEffect.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
-	level = MARIO_LEVEL_SMALL;
+	level = MARIO_LEVEL_BIG;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
 	start_x = x;
@@ -34,18 +34,20 @@ CMario::CMario(float x, float y) : CGameObject()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	now = GetTickCount();
+	now = GetTickCount64();
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
 	vy += MARIO_GRAVITY * dt;
 
-	if (isJumping ||isFlying)
+	if (isJumping)
 	{
+		state = MARIO_STATE_JUMP;
 		if (vy > 0)
 		{
 			if (!isFalling) {
 				isFalling = true;
 			}
+			state = MARIO_STATE_FALLING;
 		}
 	}
 	if (isFalling && isSitting)
@@ -58,15 +60,24 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (isFalling && level != MARIO_LEVEL_RACCOON)
 	{
-		isFalling = true;
+		state = MARIO_STATE_FALLING;
+	}
+	if (isFlying)
+	{
+		state = MARIO_STATE_FLY_UP;
+		if (isFalling && level == MARIO_LEVEL_RACCOON)
+		{
+			state = MARIO_STATE_FALL_FLY;
+		}
 	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
 #pragma region Set thời gian
-	if (level == MARIO_LEVEL_RACCOON && GetTickCount64() - TimeAttack > 450 && isAttack)
+	if (level == MARIO_LEVEL_RACCOON && GetTickCount64() - TimeAttack > 500 && isAttack)
 	{
+		tail->SetFinish(true);
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
 		TimeAttack = now;
@@ -80,6 +91,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (GetTickCount64() - TimeKick > 230 && isKick)
 	{
 		isKick = false;
+		TimeKick = now;
 	}
 	if (level == MARIO_LEVEL_RACCOON && TimeFly > 400 && isFlying)
 	{
@@ -97,9 +109,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			isAttack = false;
 		}
 	}
-	else if (isAttack && level == MARIO_LEVEL_RACCOON)
+	if (isAttack && level == MARIO_LEVEL_RACCOON)
 	{
-		state = MARIO_STATE_RACCOON_ATTACK;
+		TailAttack();
 	}
 
 #pragma endregion
@@ -144,6 +156,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				isFallFly = false;
 				isFallSlow = false;
 				isFlyup = false;
+				isFalling = false;
 				if (isFalling)
 				{
 					isFalling = false;
@@ -176,11 +189,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							koopas->isKicked = true;
 							koopas->SetDirection(this->nx);
 						}
-					}
-					if (level == MARIO_LEVEL_RACCOON && isAttack)
-					{
-						koopas->SetDirection(-nx);
-						koopas->SetState(KOOPAS_STATE_ATTACKED);
 					}
 				}
 
@@ -266,6 +274,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			ListEffect.erase(ListEffect.begin() + i);
 		}
 	}
+	tail->Update(dt,coObjects);
 #pragma endregion
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -273,7 +282,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CMario::Render()
 {
-	int ani = -1;
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
 	else
@@ -317,14 +325,14 @@ void CMario::Render()
 					ani = MARIO_ANI_SMALL_RUNMAXSPEED_LEFT;
 			}*/
 
-			if (isJumping)
+			if (state == MARIO_STATE_JUMP)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_SMALL_JUMP_RIGHT;
 				else if (nx < 0)
 					ani = MARIO_ANI_SMALL_JUMP_LEFT;
 			}
-		/*	if (isFalling)
+		/*	if (state = MARIO_STATE_FALLING)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_SMALL_FALL_RIGHT;
@@ -383,21 +391,21 @@ void CMario::Render()
 				else if (nx < 0)
 					ani = MARIO_ANI_BIG_RUNMAXSPEED_LEFT;
 			}
-			if (isJumping)
+			if (state==MARIO_STATE_JUMP)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_BIG_JUMP_RIGHT;
 				else if (nx < 0)
 					ani = MARIO_ANI_BIG_JUMP_LEFT;
 			}
-			if (isFalling)
+			if (state == MARIO_STATE_FALLING)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_BIG_FALL_RIGHT;
 				else if (nx < 0)
 					ani = MARIO_ANI_BIG_FALL_LEFT;
 			}
-			if (isFlying)
+			if (state == MARIO_STATE_FLY_UP)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_BIG_FLY_RIGHT;
@@ -475,7 +483,7 @@ void CMario::Render()
 				else if (nx < 0)
 					ani = MARIO_ANI_RACCOON_SIT_LEFT;
 			}
-			if (state == MARIO_STATE_RACCOON_ATTACK)
+			if (isAttack)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_RACCOON_ATTACK_RIGHT;
@@ -504,14 +512,7 @@ void CMario::Render()
 						ani = MARIO_RACCOON_ANI_HOLD_RUN_MAX_LEFT;
 				}
 			}
-			if (isFlyup)
-			{
-				if (nx > 0)
-					ani = MARIO_ANI_RACCOON_FLY_UP_RIGHT;
-				else if (nx < 0)
-					ani = MARIO_ANI_RACCOON_FLY_UP_LEFT;
-			}
-			if (isJumping)
+			if (state==MARIO_STATE_JUMP)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_RACCOON_JUMP_RIGHT;
@@ -526,14 +527,14 @@ void CMario::Render()
 					ani = MARIO_RACCOON_ANI_HOLD_JUMP_LEFT;
 				}
 			}
-			if (isFalling)
+			if (state == MARIO_STATE_FALLING)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_RACCOON_FALL_RIGHT;
 				else if (nx < 0)
 					ani = MARIO_ANI_RACCOON_FALL_LEFT;
 			}
-			if (isFlying)
+			if (state==MARIO_STATE_FLY_UP)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_RACCOON_FLY_RIGHT;
@@ -597,7 +598,7 @@ void CMario::Render()
 				else if (nx < 0)
 					ani = MARIO_ANI_FIRE_KICK_LEFT;
 			}
-			if (state == MARIO_STATE_SHOOT_FIRE)
+			if (isAttack)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_FIRE_SHOOT_RIGHT;
@@ -612,21 +613,21 @@ void CMario::Render()
 					ani = MARIO_ANI_FIRE_RUNMAXSPEED_LEFT;
 			}
 
-			if (isJumping)
+			if (state==MARIO_STATE_JUMP)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_FIRE_JUMP_RIGHT;
 				else if (nx < 0)
 					ani = MARIO_ANI_FIRE_JUMP_LEFT;
 			}
-			if (isFalling)
+			if (state == MARIO_STATE_FALLING)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_FIRE_FALL_RIGHT;
 				else if (nx < 0)
 					ani = MARIO_ANI_FIRE_FALL_LEFT;
 			}
-			if (isFlying)
+			if (state == MARIO_STATE_FLY_UP)
 			{
 				if (nx > 0)
 					ani = MARIO_ANI_FIRE_FLY_RIGHT;
@@ -647,7 +648,10 @@ void CMario::Render()
 	{
 			ListEffect[i]->Render();
 	}
-	RenderBoundingBox();
+
+	tail->Render();
+
+	//RenderBoundingBox();
 }
 
 void CMario::SetState(int state)
@@ -687,7 +691,6 @@ break;
 		{
 			this->state = MARIO_STATE_RUN_MAXSPEED;
 			vx = -MARIO_RUNNING_MAXSPEED;
-			isReadytoFly = true;
 		}
 		nx = -1;
 		break;
@@ -699,7 +702,6 @@ break;
 		{
 			this->state = MARIO_STATE_RUN_MAXSPEED;
 			vx = MARIO_RUNNING_MAXSPEED;
-			isReadytoFly = true;
 		}
 		nx = 1;
 		break;
@@ -712,9 +714,33 @@ break;
 		isAttack = true;
 		break;
 	}
-	case MARIO_STATE_FLY:
+	case MARIO_STATE_JUMP:
 	{
-
+		if (isOnGround)
+		{
+			vy = -MARIO_JUMP_SPEED_Y;
+			isJumping = true;
+			isOnGround = false;
+			if (abs(vx) >= MARIO_RUNNING_MAXSPEED)
+			{
+				isFlying = true;
+				isOnGround = false;
+				vy = -MARIO_JUMP_SPEED_RUNNING_MAXSPEED;
+			}
+		}
+		else
+		{
+			if (level == MARIO_LEVEL_RACCOON)
+			{
+				isOnAir = true;
+				if (isFlying)
+				{
+					isFalling = false;
+					isFlyup = true;
+				}
+			}
+		}
+		break;
 	}
 	}
 
@@ -764,28 +790,16 @@ void CMario::JumpSlow()
 void CMario::JumpHight()
 {
 
-	if (abs(vx) < MARIO_RUNNING_MAXSPEED && isOnGround == true)
-	{
-		vy = -MARIO_JUMP_SPEED_Y;
-		isJumping = true;
-		isOnGround = false;
-	}
-	if (abs(vx) >= MARIO_RUNNING_MAXSPEED && isOnGround == true)
-	{
-		vy = -MARIO_JUMP_SPEED_RUNNING_MAXSPEED;
-		isFlying = true;
-		isOnGround = false;
-	}
+
 }
 void CMario::Fly()
 {
 	vy = -MARIO_FLY_SPEED_Y * dt;
-	SetState(MARIO_RACCOON_STATE_FLY_UP);
 	if (!isOnGround)
 	{
 		TimeFly += dt;
 	}
-	isFlyup = true;
+
 }
 void CMario::FallSlow()
 {
@@ -812,6 +826,29 @@ void CMario::ShootFire()
 	Fire* fire = new Fire(x + 5, y + 5);
 	fire->SetDirection(this->nx);
 	ListFire.push_back(fire);
+}
+void CMario::TailAttack()
+{
+	if (ani == MARIO_ANI_RACCOON_ATTACK_RIGHT || ani == MARIO_ANI_RACCOON_ATTACK_LEFT)
+	{
+		LPANIMATION current_ani = animation_set->at(ani);
+		switch (current_ani->GetCurrentFrame())
+		{
+		case 3:
+			if (nx < 0)
+			{
+				tail->SetPosition(x - 2, y + 18);
+				tail->SetFinish(false);
+			}
+			if (nx > 0)
+			{
+				tail->SetPosition(x + 15, y + 18);
+				tail->SetFinish(false);
+			}
+			break;
+		}
+	}
+
 }
 void CMario::ResetSit()
 {
@@ -917,9 +954,14 @@ void CMario::GetLeaf()
 #pragma endregion
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-
-
-	if (level == MARIO_LEVEL_BIG || level == MARIO_LEVEL_FIRE || level == MARIO_LEVEL_RACCOON)
+	if(level==MARIO_LEVEL_SMALL)
+	{
+	left = x;
+	top = y;
+	right = x + MARIO_SMALL_BBOX_WIDTH;
+	bottom = y + MARIO_SMALL_BBOX_HEIGHT;
+	}
+	else if(level == MARIO_LEVEL_BIG || level ==MARIO_LEVEL_FIRE)
 	{
 		left = x;
 		top = y;
@@ -931,20 +973,21 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 			bottom = y + MARIO_SIT_BBOX_HEIGHT;
 		}
 	}
-	else
+	else if (level == MARIO_LEVEL_RACCOON)
 	{
-		left = x;
-		top = y;
-		right = x + MARIO_SMALL_BBOX_WIDTH;
-		bottom = y + MARIO_SMALL_BBOX_HEIGHT;
-	}
-	if (level == MARIO_LEVEL_RACCOON && nx > 0) //Raccoon khi quay qua phai sai bounding box
-	{
-		right = x + MARIO_BIG_BBOX_WIDTH + 5;
-		bottom = y + MARIO_BIG_BBOX_HEIGHT;
-		//	left = right - MARIO_BIG_BBOX_WIDTH;
-		if (isAttack) {
-			right = x + MARIO_BIG_BBOX_WIDTH + 15;
+		if (nx > 0)
+		{
+			left = x + 8;
+			top = y;
+			right = left + MARIO_BIG_BBOX_WIDTH ;
+			bottom = y + MARIO_BIG_BBOX_HEIGHT;
+		}
+		if (nx < 0)
+		{
+			left = x ;
+			top = y ;
+			right = left + MARIO_BIG_BBOX_WIDTH;
+			bottom = y + MARIO_BIG_BBOX_HEIGHT;
 		}
 	}
 }

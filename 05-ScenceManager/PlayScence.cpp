@@ -29,6 +29,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 	CScene(id, filePath)
 {
 	key_handler = new CPlayScenceKeyHandler(this);
+	gametime = new GameTime();
 }
 
 /*
@@ -322,7 +323,7 @@ void CPlayScene::Load()
 
 	f.close();
 
-	//CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
+	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
@@ -373,10 +374,14 @@ void CPlayScene::MarioTrampleEnemy()
 					}
 					case Type::KOOPAS:
 					{
-						player->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
+						
 						enemy->SubHealth(1);
 						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
 						player->SetScore(player->GetScore() + 100);
+						if (enemy->GetState() != KOOPAS_STATE_DEFEND)
+						{
+							player->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
+						}
 						if (enemy->GetState() == KOOPAS_STATE_DEFEND)
 						{
 							enemy->SetDirection(player->nx);
@@ -567,18 +572,12 @@ void CPlayScene::Update(DWORD dt)
 
 
 	CheckCollision();
+
+	gametime->Update(dt);
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
 	// Update camera to follow mario
-/*	float cx, cy;
-	player->GetPosition(cx, cy);
-
-	CGame* game = CGame::GetInstance();
-	cx -= game->GetScreenWidth() / 2;
-	cy -= game->GetScreenHeight() / 2;
-
-	CGame::GetInstance()->SetCamPos(cx, 280 cy);*/
 	float cx, cy, sw, sh, mw, mh, mx, my;
 	player->GetPosition(cx, cy);
 	CGame* game = CGame::GetInstance();
@@ -586,8 +585,9 @@ void CPlayScene::Update(DWORD dt)
 	sh = game->GetScreenHeight();
 	mw = map->GetMapWidth();
 	mh = map->GetMapHeight();
-
-	// Update camera to follow mario
+	bool isTopSide = false;
+	if (cy < mh / 2)
+		isTopSide = true;
 	if (cx >= sw / 2 //Left Edge
 		&& cx + sw / 2 <= mw) //Right Edge
 		cx -= sw / 2;
@@ -595,13 +595,14 @@ void CPlayScene::Update(DWORD dt)
 		cx = 0;
 	else if (cx + sw / 2 > mw)
 		cx = mw - sw + 1;
-	if (cy - sh / 2 <= 0)//Top Edge
+	if (cy - sh / 4 <= 0)//Top Edge
 		cy = 0;
-	else if (cy + sh / 2 >= mh)//Bottom Edge
+	else if (cy > mh / 2 )//Bottom Edge
+	{
 		cy = mh - sh;
-	else cy -= sh / 2;
+	}
+	else cy -= sh / 4;
 	CGame::GetInstance()->SetCamPos((int)cx, (int)cy);
-	//TileMap->SetCamPos((int)cx, (int)cy);
 	map->SetCamPos((int)cx, (int)cy);
 }
 
@@ -627,7 +628,7 @@ void CPlayScene::Render()
 		listFireEnemy[i]->Render();
 	}
 	board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
-	board->Render(player);
+	board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
 }
 
 /*
@@ -700,7 +701,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_4:
 		mario->SetLevel(MARIO_LEVEL_FIRE);
 		break;
-	case DIK_Z:
+	case DIK_A:
 	{
 		if (mario->level == MARIO_LEVEL_RACCOON)
 		{
@@ -718,10 +719,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	}
 	case DIK_S:
 	{
-		if (mario->isOnGround)
-		{
-			mario->JumpHight();	
-		}
+		mario->SetState(MARIO_STATE_JUMP);
 		break;
 	}
 	}
@@ -735,12 +733,12 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
 	// disable control key when Mario die 
 	if (mario->GetState() == MARIO_STATE_DIE) return;
-	else if (game->IsKeyDown(DIK_Z) && game->IsKeyDown(DIK_RIGHT))
+	else if (game->IsKeyDown(DIK_A) && game->IsKeyDown(DIK_RIGHT))
 	{
 		mario->isRunning = true;
 		mario->SetState(MARIO_STATE_RUN_RIGHT);
 	}
-	else if (game->IsKeyDown(DIK_Z) && game->IsKeyDown(DIK_LEFT))
+	else if (game->IsKeyDown(DIK_A) && game->IsKeyDown(DIK_LEFT))
 	{
 		mario->isRunning = true;
 		mario->SetState(MARIO_STATE_RUN_LEFT);
@@ -776,7 +774,6 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 		}
 		
 	}
-
 	else
 	{
 		if (mario->isOnGround)
@@ -791,7 +788,7 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
 	switch (KeyCode)
 	{
-	case DIK_Z:
+	case DIK_A:
 	{
 		mario->isRunning = false;
 		mario->isHoldTurtle = false;
@@ -809,16 +806,22 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_S:
 
 		if (mario->level == MARIO_LEVEL_RACCOON) {
-
-			if (!mario->isFlying && mario->vy >= 0)
+			if (mario->isOnAir)
 			{
-				mario->FallSlow();
-				break;
-			}
-			if (mario->isFlying)
-			{
-				mario->Fly();
-				break;
+				if (!mario->isFlying && mario->vy >= 0)
+				{
+					mario->FallSlow();
+					break;
+				}
+				if (mario->isFlying)
+				{
+					if (mario->isFlyup)
+					{
+						mario->Fly();
+						//mario->isFallFly=true;
+						break;
+					}
+				}
 			}
 		}
 		break;

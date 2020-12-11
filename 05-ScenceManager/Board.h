@@ -16,7 +16,7 @@ class Board
 public:
 	Board(float X,float Y);
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom) {}
-	void Render(CMario* mario);
+	void Render(CMario* mario, int RemainingTime);
 	string FillNumber(string s, UINT amoumt_of_number);
 	~Board(){}
 };

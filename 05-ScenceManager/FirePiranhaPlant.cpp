@@ -8,7 +8,6 @@ CFirePiranhaPlant::CFirePiranhaPlant(float X,float Y,int Model, vector<FirePlant
 	TimeHidding = 0;
 	TimeAttack = 0;
 	TimeAttackDelay = 0;
-	minY = Y - FPLANT_BBOX_HEIGHT;
 	maxY = Y;
 	this->startX = X;
 	SetState(PLANT_STATE_GROW_UP);
@@ -18,6 +17,11 @@ CFirePiranhaPlant::CFirePiranhaPlant(float X,float Y,int Model, vector<FirePlant
 	{
 	case 1:                //Fire piranha red
 		SetHealth(1);
+		minY = Y - FPLANT_RED_BBOX_HEIGHT;
+		break;
+	case 2:
+		SetHealth(1);
+
 		break;
 	}
 }
@@ -151,7 +155,7 @@ void CFirePiranhaPlant::GetBoundingBox(float& left, float& top, float& right, fl
 	left = x;
 	top = y;
 	right = x + FPLANT_BBOX_WIDTH;
-	bottom = y + FPLANT_BBOX_HEIGHT;
+	bottom = y + FPLANT_RED_BBOX_HEIGHT;
 	if (isFinish)
 		left = top = right = bottom = 0;
 }

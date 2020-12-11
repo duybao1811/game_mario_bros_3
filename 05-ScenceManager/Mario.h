@@ -3,6 +3,7 @@
 #include "Item.h"
 #include "define.h"
 #include "Coin.h"
+#include "Tail.h"
 #define MARIO_WALKING_SPEED		0.00015f 
 #define MARIO_RUNNING_SPEED     0.00015f
 #define MARIO_DECELERATE_SPEED 0.0005f
@@ -28,6 +29,9 @@
 #define MARIO_STATE_RACCOON_ATTACK  900
 #define MARIO_STATE_SHOOT_FIRE      901
 #define MARIO_STATE_FLY             300
+#define MARIO_STATE_JUMP            350
+#define MARIO_STATE_FLY_UP          450
+#define MARIO_STATE_FALLING         650
 #define MARIO_RACCOON_STATE_FALL_SLOW 550
 #define MARIO_STATE_KICK            1
 #define MARIO_STATE_FALL_FLY         4
@@ -166,6 +170,7 @@
 #define MARIO_DEFAULT_COIN 0
 #define MARIO_DEFAULT_LIVE 4
 #define MARIO_RACCOON_STATE_FLY_UP 1000
+
 class CMario : public CGameObject
 {
 
@@ -176,6 +181,8 @@ class CMario : public CGameObject
 	int score;
 	int Live;
 	CCoin* coin;
+	Tail* tail = new Tail();
+	int ani = -1;
 public:
 	DWORD TimeFly;
 	DWORD now;
@@ -199,6 +206,7 @@ public:
 	bool isFlyup;
 	bool isReadytoFly;
 	bool isHoldTurtle;
+	bool isOnAir;
 public:
 	bool untouchable;
 	DWORD untouchable_start;
@@ -229,6 +237,7 @@ public:
 	void JumpHight();
 	void FallSlow();
 
+	int GetAni() { return ani; }
 	bool CheckCollision(CGameObject* obj);
 	bool CheckTrampleEnemy(CGameObject* obj);
 	void SetHurt(LPCOLLISIONEVENT e);
@@ -236,7 +245,7 @@ public:
 	int GetLevel();
 	bool isCollisionWithItem(Item* objItem);
 	void ShootFire();
-
+	void TailAttack();
 	void GetMushRoomBig();
 	void GetLeaf();
 	void SetCoinCollect(int c);

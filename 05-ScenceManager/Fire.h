@@ -14,9 +14,9 @@
 class Fire : public CGameObject
 {
 public:
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
-	virtual void Render();
+	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	void Render();
 	Fire(float X,float Y);
 	~Fire() {}
 };
