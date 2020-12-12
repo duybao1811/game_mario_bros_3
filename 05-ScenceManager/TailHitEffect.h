@@ -1,7 +1,6 @@
 #pragma once
 #include "Effect.h"
-#define ID_LOAD_TAIL_HIT_EFFECT 19
-#define ANI_TAIL_HIT_EFFECT 0
+#include "define.h"
 class TailHitEffect : public Effect
 {
 public:

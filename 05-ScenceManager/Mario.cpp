@@ -34,7 +34,7 @@ CMario::CMario(float x, float y) : CGameObject()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	now = GetTickCount64();
+	now = GetTickCount();
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
 	vy += MARIO_GRAVITY * dt;
@@ -835,19 +835,23 @@ void CMario::TailAttack()
 		switch (current_ani->GetCurrentFrame())
 		{
 		case 3:
+		case 4:
 			if (nx < 0)
 			{
 				tail->SetPosition(x - 2, y + 18);
 				tail->SetFinish(false);
+				tail->SetDirection(nx);
 			}
 			if (nx > 0)
 			{
 				tail->SetPosition(x + 15, y + 18);
 				tail->SetFinish(false);
+				tail->SetDirection(nx);
 			}
 			break;
 		}
 	}
+
 
 }
 void CMario::ResetSit()

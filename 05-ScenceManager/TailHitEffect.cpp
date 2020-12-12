@@ -2,7 +2,7 @@
 TailHitEffect::TailHitEffect(float X, float Y)
 {
 	this->x = X;
-	this->y = Y;
+	this->y = Y; 
 
 	timeEffect = 1000;
 	SetAnimationSet(CAnimationSets::GetInstance()->Get(ID_LOAD_TAIL_HIT_EFFECT));

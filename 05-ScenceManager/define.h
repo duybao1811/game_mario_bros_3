@@ -141,6 +141,18 @@ enum Range
 #define GOOMBA_GRAVITY 0.001f
 #define ENEMY_ATTACKED 10 // trạng thái của enemy khi bị bắn lửa, bị quẩy đuôi và bị đá rùa tấn công
 
+// ################### TAIL
+#define TAIL_BBOX_WIDTH 10
+#define TAIL_BBOX_HEIGHT 4
+//##########################	EFFECT 
+
+//################### EFFECT TAIL HIT
+#define ID_LOAD_TAIL_HIT_EFFECT 19
+#define ANI_TAIL_HIT_EFFECT 0
+#define PULL_UP_EFFECT_TAIL_HIT 10
+#define EFFECT_TAIL_HIT_RIGHT_SIDE 10
+#define EFFECT_TAIL_HIT_LEFT_SIDE 15
+
 
 
 #define GAMEOVER_SELECT_CONTINUE 0

@@ -36,11 +36,35 @@ void Tail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (checkAABB(e))
 			{
 				e->SetState(GOOMBA_STATE_ATTACKED);
+				if (direction > 0)
+				{
+					ListEffect.push_back(new TailHitEffect(x + TAIL_BBOX_WIDTH, y));
+				}
+				if (direction < 0)
+				{
+					ListEffect.push_back(new TailHitEffect(x-TAIL_BBOX_WIDTH, y ));
+				}
 			}
+		}
+	}
+	for (UINT i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->SetDirection(this->direction);
+		ListEffect[i]->Update(dt,coObjects);
+	}
+	for (UINT i = 0; i < ListEffect.size(); i++)
+	{
+		if (ListEffect[i]->GetFinish() == true)
+		{
+			ListEffect.erase(ListEffect.begin() + i);
 		}
 	}
 }
 void Tail::Render()
 {
 	RenderBoundingBox();
+	for (UINT i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->Render();
+	}
 }
