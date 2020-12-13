@@ -29,7 +29,7 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	top = y;
 	right = x + KOOPAS_BBOX_WIDTH;
 
-	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND || state==KOOPAS_STATE_ATTACKED || isUpside )
+	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND || isAttacked || isUpside )
 	{
 		bottom = y + KOOPAS_BBOX_HEIGHT_DIE;
 	}
@@ -91,8 +91,8 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	if (isAttacked)
 	{
-		state = KOOPAS_STATE_ATTACKED;
-		vx = direction * 0.1f;
+		state = ENEMY_ATTACKED;
+		vx = direction * 0.05f;
 	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -126,7 +126,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			isOnGround = false;
 		}
 
-		if (state == KOOPAS_STATE_ATTACKED)
+		if (state == ENEMY_ATTACKED)
 		{
 			if (ny != 0)
 			{
@@ -154,7 +154,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					}
 				}
 			}
-			else
+			if (e->obj->GetType() == EMEDIUM_PIPE || e->obj->GetType() == ESHORT_PIPE || e->obj->GetType()==PLATFORM)
 			{
 				if (e->nx != 0)
 				{
@@ -183,6 +183,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					if (e->nx != 0)
 					{
 						x += dx;
+						e->obj->SetState(ENEMY_ATTACKED);
 					}
 				}
 			}
@@ -237,7 +238,7 @@ void CKoopas::Render()
 			else if (direction < 0)
 				ani = KOOPAS_BASE_ANI_WALKING_LEFT;
 		}
-		if (state == KOOPAS_STATE_ATTACKED)
+		if (state == ENEMY_ATTACKED)
 		{
 			ani = KOOPAS_BASE_ANI_ATTACKED;
 		}
@@ -262,7 +263,7 @@ void CKoopas::Render()
 			else if (direction < 0)
 				ani = KOOPAS_RED_ANI_WALKING_LEFT;
 		}
-		if (state == KOOPAS_STATE_ATTACKED)
+		if (state == ENEMY_ATTACKED)
 		{
 			ani = KOOPAS_RED_ANI_ATTACKED;
 		}
@@ -327,7 +328,7 @@ void CKoopas::SetState(int state)
 	case KOOPAS_STATE_BALL:
 		vx =  direction*KOOPAS_BALL_SPEED;
 		break;
-	case KOOPAS_STATE_ATTACKED:	
+	case ENEMY_ATTACKED:	
 		isAttacked = true;
 		vy = -KOOPAS_SPEED_Y_AFTER_ATTACKED;
 		break;

@@ -62,6 +62,7 @@ public:
 	float width;
 	float height;
 	bool isInCam;
+	bool isDeleted;
 	bool isKilled;
 	float startX, startY;
 	DWORD dt; 

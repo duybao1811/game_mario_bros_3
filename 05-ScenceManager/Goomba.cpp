@@ -11,9 +11,11 @@ CGoomba::CGoomba(float X,float Y,int Model, int d)
 	SetState(GOOMBA_STATE_WALKING);
 	direction = d;
 	this->startX = X;
+	this->startY = Y;
 	TimeWalk = 0;
 	TimeDisappear = 0;
 	JumpCount = 0;
+	SetAnimationSet(CAnimationSets::GetInstance()->Get(3));
 	switch (Model)
 	{
 	case GOOMBA_BASE:
@@ -33,7 +35,14 @@ void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& botto
 			bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
 		else
 			bottom = y + GOOMBA_BBOX_HEIGHT;
-		if (isFinish || isAttacked)
+		if (isFinish)
+		{
+			left = 0;
+			top = 0;
+			right = 0;
+			bottom = 0;
+		}
+		if (isAttacked)
 		{
 			left = 0;
 			top = 0;
@@ -192,7 +201,7 @@ void CGoomba::SetState(int state)
 		case GOOMBA_STATE_WALKING:
 			vx = direction * GOOMBA_WALKING_SPEED;
 			break;
-		case GOOMBA_STATE_ATTACKED:
+		case ENEMY_ATTACKED:
 			vx = direction*GOOMBA_ATTACKED_SPEED_X;
 			vy = -GOOMBA_ATTACKED_SPEED_Y;
 			isAttacked = true;

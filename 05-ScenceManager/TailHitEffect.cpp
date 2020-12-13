@@ -6,7 +6,6 @@ TailHitEffect::TailHitEffect(float X, float Y)
 
 	timeEffect = 1000;
 	SetAnimationSet(CAnimationSets::GetInstance()->Get(ID_LOAD_TAIL_HIT_EFFECT));
-
 }
 void TailHitEffect::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {

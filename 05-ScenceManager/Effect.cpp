@@ -13,6 +13,7 @@ void Effect::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else
 	{
+		startEffect = 0;
 		SetFinish(true);
 	}
 }

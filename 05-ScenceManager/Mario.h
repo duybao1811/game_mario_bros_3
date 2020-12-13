@@ -199,7 +199,6 @@ public:
 	bool isAttack;
 	bool isKick;
 	bool isFallFly;
-	bool isHurting;
 	bool isTrampleEnemy;
 	float last_vy;
 	bool isDeadth;

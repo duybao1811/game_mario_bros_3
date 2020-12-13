@@ -31,18 +31,20 @@ void Tail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 			}
 		}
-		if (e->GetType() == GOOMBA )
+		if (e->GetObjType() == ENEMY )
 		{
 			if (checkAABB(e))
 			{
-				e->SetState(GOOMBA_STATE_ATTACKED);
+				e->SetState(ENEMY_ATTACKED);
 				if (direction > 0)
 				{
-					ListEffect.push_back(new TailHitEffect(x + TAIL_BBOX_WIDTH, y));
+					e->SetDirection(direction);
+					ListEffect.push_back(new TailHitEffect(x + TAIL_BBOX_WIDTH, y-PULL_UP_EFFECT_TAIL_HIT));
 				}
 				if (direction < 0)
 				{
-					ListEffect.push_back(new TailHitEffect(x-TAIL_BBOX_WIDTH, y ));
+					e->SetDirection(direction);
+					ListEffect.push_back(new TailHitEffect(x-TAIL_BBOX_WIDTH, y- PULL_UP_EFFECT_TAIL_HIT));
 				}
 			}
 		}

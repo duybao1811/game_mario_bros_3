@@ -138,6 +138,8 @@
     <ClCompile Include="FirePlant.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="GameTime.cpp" />
+    <ClCompile Include="GoldBrick.cpp" />
+    <ClCompile Include="IceBrick.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Leaf.cpp" />
@@ -177,6 +179,8 @@
     <ClInclude Include="FirePlant.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="GameTime.h" />
+    <ClInclude Include="GoldBrick.h" />
+    <ClInclude Include="IceBrick.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="Leaf.h" />

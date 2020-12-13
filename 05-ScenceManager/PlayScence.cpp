@@ -30,6 +30,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 {
 	key_handler = new CPlayScenceKeyHandler(this);
 	gametime = new GameTime();
+	CountEnemy = 0;
 }
 
 /*
@@ -339,13 +340,24 @@ void CPlayScene::CheckCollistionMarioWithItem()
 				{
 				case Type::MUSHROOM_POWER:
 				{
-					player->GetMushRoomBig();
+					player->SetLevel(MARIO_LEVEL_BIG);
+					ListEffect.push_back(new PointEffect(player->GetX(),player->GetY(), POINT_EFFECT_TYPE_ONE_THOUSAND));
+					player->SetHealth(player->GetHealth() + 1);
+					player->y -= 20;
+					player->SetScore(player->GetScore() + 1000);
 					ListItem[i]->SetFinish(true);
 					break;
 				}
 				case Type::LEAF:
 				{
-					player->GetLeaf();
+					//player->GetLeaf();
+					player->SetLevel(MARIO_LEVEL_RACCOON);
+					ListEffect.push_back(new PointEffect(player->GetX(), player->GetY(), POINT_EFFECT_TYPE_ONE_THOUSAND));
+					player->SetScore(player->GetScore() + 1000);
+					if (player->GetLevel() == MARIO_LEVEL_BIG)
+					{
+						player->SetHealth(player->GetHealth()+1);
+					}
 					ListItem[i]->SetFinish(true);
 					break;
 				}
@@ -371,13 +383,13 @@ void CPlayScene::MarioTrampleEnemy()
 						enemy->SubHealth(1);
 						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
 						player->SetScore(player->GetScore() + 100);
+						break;
 					}
 					case Type::KOOPAS:
 					{
-						
 						enemy->SubHealth(1);
 						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
-						player->SetScore(player->GetScore() + 100);
+						//player->SetScore(player->GetScore() + 100);
 						if (enemy->GetState() != KOOPAS_STATE_DEFEND)
 						{
 							player->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
@@ -386,10 +398,11 @@ void CPlayScene::MarioTrampleEnemy()
 						{
 							enemy->SetDirection(player->nx);
 						}
-						if (enemy->GetState()==KOOPAS_STATE_BALL)
+						if (enemy->GetState() == KOOPAS_STATE_BALL)
 						{
 							enemy->SetHealth(2);
 						}
+						break;
 					}
 					}
 				}
@@ -442,76 +455,87 @@ void CPlayScene::Update(DWORD dt)
 		{
 			objects[i]->Update(dt, &coObjects);
 			objects[i]->isInCam = true;
-			objects[i]->SetFinish(false);
+			objects[i]->isDeleted = false;
 		}
+
 		if (objects[i]->GetObjType() == ENEMY && !objects[i]->isKilled)
 		{
 
-#pragma region cơ chế hồi sinh của enemy khi ra khỏi cam không phải bị kill
-			if (objects[i]->checkObjInCamera(objects[i]) == false && objects[i]->isInCam==true)
-			{
-				objects[i]->SetFinish(true);
-			}
-			if (objects[i]->GetType() == GOOMBA)
-			{
-				if (objects[i]->GetStartX() == 512)
-				{
-					if (player->GetX() > 776)
-					{
-						objects[i]->SetPosition(512, 385); //set lại vị trí
-						objects[i]->SetDirection(1);
-						//objects[i]->SetFinish(false);
+#pragma region cơ chế hồi sinh của enemy khi ra khỏi cam không phải bị 
 
+				//objects[i]->SetPosition(512, 385); //set lại vị trí
+				//	objects[i]->SetDirection(1);
+			//	objects.push_back(new CGoomba(objects[i]->GetStartX(), objects[i]->startY, 1, -1));
+			//	objects[i]->SetFinish(true);
+				//	objects[i]->isInCam == false;
+			/*	if (CountEnemy < 1)
+				{
+					if (player->GetX() > 512 + SCREEN_WIDTH / 2)
+					{
+						objects.push_back(new CGoomba(512, 385, 1, 1));
 					}
+					CountEnemy++;
+				}*/
+						if (player->GetX() > 400 + SCREEN_WIDTH / 2 )
+						{
+							if (objects[i]->GetStartX() == 512)
+							{
+								objects[i]->SetFinish(false);
+								objects[i]->SetPosition(512, 385);
+								objects[i]->SetDirection(1);
+								objects[i]->isInCam = true;
+							}
+						}
+						else
+						{
+							if (objects[i]->checkObjInCamera(objects[i]) == false && objects[i]->isInCam == true)
+							{
+								objects[i]->SetFinish(true);
+								objects[i]->isInCam = true;
+							}
+						}
+		/*	if (objects[i]->GetStartX() == 816)
+			{
+				if (player->GetX() > 1248)
+				{
+					objects[i]->SetPosition(816, 369); //set lại vị trí
+					objects[i]->SetDirection(1);
 
 				}
-				if (objects[i]->GetStartX() == 816)
+				if (player->GetX() < 392)
 				{
-					if (player->GetX() > 1248)
-					{
-						objects[i]->SetPosition(816, 369); //set lại vị trí
-						objects[i]->SetDirection(1);
-
-					}
-					if (player->GetX() < 392)
-					{
-						objects[i]->SetPosition(816, 369); //set lại vị trí
-						objects[i]->SetDirection(-1);
-					}
-				}
-				if (objects[i]->GetStartX() == 864)
-				{
-					if (player->GetX() > 1248)
-					{
-						objects[i]->SetPosition(864, 369); //set lại vị trí
-						objects[i]->SetDirection(1);
-
-					}
-					if (player->GetX() < 392)
-					{
-						objects[i]->SetPosition(864, 369); //set lại vị trí
-						objects[i]->SetDirection(-1);
-					}
-				}
-			}
-			if (objects[i]->GetType() == FIRE_PIRANHA)
-			{
-				if (objects[i]->GetStartX() == 360)
-				{
-					if (player->GetX() < 96 || player->GetX() > 624)
-					{
-						objects[i]->SetPosition(360, 368); //set lại vị trí
-					}
+					objects[i]->SetPosition(816, 369); //set lại vị trí
+					objects[i]->SetDirection(-1);
 				}
 			}
+			if (objects[i]->GetStartX() == 864)
+			{
+				if (player->GetX() > 1248)
+				{
+					objects[i]->SetPosition(864, 369); //set lại vị trí
+					objects[i]->SetDirection(1);
 
-#pragma endregion		
+				}
+				if (player->GetX() < 392)
+				{
+					objects[i]->SetPosition(864, 369); //set lại vị trí
+					objects[i]->SetDirection(-1);
+				}
 
+				if (objects[i]->GetType() == FIRE_PIRANHA)
+				{
+					if (objects[i]->GetStartX() == 360)
+					{
+						if (player->GetX() < 96 || player->GetX() > 624)
+						{
+							objects[i]->SetPosition(360, 368); //set lại vị trí
+						}
+					}
+				}
+
+			}*/
 		}
-	
-			
-			//objects[i]->isInCam = false;
-		
+#pragma endregion		
 		if (e->GetType() == QUESTION_BRICK)
 		{
 			CQuestionBrick* questionbrick = dynamic_cast<CQuestionBrick*>(e);
@@ -522,10 +546,7 @@ void CPlayScene::Update(DWORD dt)
 			}
 		}
 	}
-	for (size_t i = 0; i < objects.size(); i++)
-	{
-	
-	}
+
 	for (int i = 0; i < ListEffect.size(); i++)
 	{
 		ListEffect[i]->Update(dt);

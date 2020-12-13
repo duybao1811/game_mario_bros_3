@@ -22,6 +22,7 @@ private:
 	vector <Item*> ListItem;
 	bool isGameOver;
 	GameTime* gametime;
+	int CountEnemy;
 protected: 
 	CMario *player;					// A play scene has to have player, right? 
 	Map* map;
@@ -34,7 +35,7 @@ protected:
 	vector<LPGAMEOBJECT> ListEffect;
 	vector<LPGAMEOBJECT> ListPointEffect;
 	vector<LPGAMEOBJECT> ListItems;
-	vector<LPGAMEOBJECT> ListEnemy;
+	vector<LPGAMEOBJECT > ListEnemy;
 	vector<FirePlant*> listFireEnemy;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);

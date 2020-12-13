@@ -3,10 +3,6 @@
 #include "define.h"
 class CGoomba : public CGameObject
 {
-	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
-	virtual void Render();
-
 public: 	
 	float lastvx;
 	int model;
@@ -19,4 +15,7 @@ public:
 	bool isAttacked;
 	CGoomba(float X,float Y,int Model, int d);
 	virtual void SetState(int state);
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual void Render();
 };

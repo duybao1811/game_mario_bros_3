@@ -893,10 +893,9 @@ bool CMario::isCollisionWithItem(Item* objItem)
 }
 void CMario::SetHurt(LPCOLLISIONEVENT e)
 {
-	if (isHurting == true)
-		return;
 	if (e->nx == 0 && e->ny == 0)  //không có va chạm
 		return;
+	StartUntouchable();
 	SubHealth(1);
 }
 void CMario::SetLive(int l)
@@ -935,7 +934,6 @@ void CMario::GetMushRoomBig()
 {
 	level = MARIO_LEVEL_BIG;
 	ListEffect.push_back(new PointEffect(x, y, POINT_EFFECT_TYPE_ONE_THOUSAND));
-	score += 1000;
 	Health++;
 	y -= 20;
 }
@@ -943,14 +941,10 @@ void CMario::GetLeaf()
 {
 	if (level == MARIO_LEVEL_BIG)
 	{
-		level = MARIO_LEVEL_RACCOON;
-		ListEffect.push_back(new PointEffect(x, y, POINT_EFFECT_TYPE_ONE_THOUSAND));
-		score += 1000;
-		Health++;
+
 	}
 	if (level == MARIO_LEVEL_RACCOON)   // NẾU ĐANG Ở DẠNG RACCOON THÌ KHÔNG + HEALTH
 	{
-		level = MARIO_LEVEL_RACCOON;
 		ListEffect.push_back(new PointEffect(x, y, POINT_EFFECT_TYPE_ONE_THOUSAND));
 		score += 1000;
 	}
