@@ -42,6 +42,7 @@
 class CKoopas : public CGameObject
 {
 	CMario* player;
+	vector<LPGAMEOBJECT> ListEffect;
 public:
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

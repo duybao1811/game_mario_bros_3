@@ -84,6 +84,10 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			isFinish = true;
 		}
 	}
+	if (isAttacked)
+	{
+		state = ENEMY_ATTACKED;
+	}
 
 		vector<LPCOLLISIONEVENT> coEvents;
 		vector<LPCOLLISIONEVENT> coEventsResult;
@@ -154,7 +158,7 @@ void CGoomba::Render()
 			if (state == GOOMBA_STATE_DIE) {
 				ani = GOOMBA_ANI_DIE;
 			}
-			if (state == GOOMBA_STATE_ATTACKED)
+			if (state == ENEMY_ATTACKED)
 			{
 				ani = GOOMBA_ANI_ATTACKED;
 			}
