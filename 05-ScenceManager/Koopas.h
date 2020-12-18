@@ -4,6 +4,7 @@
 #include "BlockColor.h"
 #include "QuestionBrick.h"
 #include "Mario.h"
+#include "define.h"
 #define KOOPAS_WALKING_SPEED 0.02f
 #define KOOPAS_BALL_SPEED    0.1f
 #define KOOPAS_FLY_SPEED_X   0.02f
@@ -16,8 +17,10 @@
 #define KOOPAS_STATE_DIE 200
 #define KOOPAS_STATE_DEFEND 300
 #define KOOPAS_STATE_BALL  400
+#define KOOPAS_STATE_UPSIDE_BALL 450
 #define KOOPAS_STATE_ATTACKED 500
 #define KOOPAS_STATE_FLY 600
+#define KOOPAS_STATE_COMEBACK 700
 #define KOOPAS_BASE_ANI_WALKING_LEFT 0
 #define KOOPAS_BASE_ANI_WALKING_RIGHT 1
 #define KOOPAS_BASE_ANI_DEFEND 2
@@ -34,16 +37,22 @@
 #define KOOPAS_RED_ANI_COME_BACK 13
 #define KOOPAS_BASE_ANI_COME_BACK_UPSIDE 14
 #define KOOPAS_RED_ANI_COME_BACK_UPSIDE 15
+
 #define KOOPAS_GRAVITY 0.001f
 #define KOOPAS_BOUNCE_AFTER_LANDFALL 0.1f
 #define KOOPAS_BASE 1
 #define KOOPAS_RED 2
 #define KOOPAS_FLY 3
+#define TIME_DEFEND 4000
+#define TIME_COMEBACK 2000
 class CKoopas : public CGameObject
 {
 	CMario* player;
 	vector<LPGAMEOBJECT> ListEffect;
 public:
+	DWORD TimeDefend;
+	DWORD TimeComeBack;
+	DWORD now;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();

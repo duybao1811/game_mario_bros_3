@@ -1,6 +1,5 @@
 #pragma once
 #include "Effect.h"
-#include "PointEffect.h"
 #define COIN_EFFECT_ANI 0
 #define ID_LOAD_COIN_EFFECT 16
 #define TIME_EFFECT 300
@@ -16,11 +15,6 @@ private:
 	float minY;
 	float maxY;
 	bool isFalling;
-	vector<LPGAMEOBJECT> ListPointEffect;
-	bool effectPoint;
-	bool isDisappear;
-	PointEffect* effect;
-
 public:
 	CoinEffect(float X, float Y);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

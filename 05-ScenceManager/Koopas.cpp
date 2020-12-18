@@ -6,9 +6,9 @@ CKoopas::CKoopas(CMario* mario,int Model, int d)
 	model = Model;
 	objType = ObjectType::ENEMY;
 	eType = Type::KOOPAS;
-	SetState(KOOPAS_STATE_WALKING);
-	SetHealth(3);
 	direction = d;
+	TimeDefend = 0;
+	TimeComeBack = 0;
 	switch (Model)
 	{
 	case KOOPAS_BASE:
@@ -29,7 +29,7 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	top = y;
 	right = x + KOOPAS_BBOX_WIDTH;
 
-	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND || isAttacked || isUpside )
+	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND || isAttacked || isUpside|| state==KOOPAS_STATE_COMEBACK )
 	{
 		bottom = y + KOOPAS_BBOX_HEIGHT_DIE;
 	}
@@ -38,30 +38,30 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 
 	if (isFinish)
 		left = top = right = bottom = 0;
-	
 }
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	vy += KOOPAS_GRAVITY * dt;
 	CGameObject::Update(dt, coObjects);
-	// ra khỏi camera thì kết thúc
-	if (model == KOOPAS_FLY && Health == 4 && isOnGround)
-	{
-		SetState(KOOPAS_STATE_FLY);
-	}
+	vy += KOOPAS_GRAVITY * dt;
+	now = GetTickCount();
+	/*
 	if (Health == 0)
 	{
-		isFinish = true;
+		SetHealth(2);
 	}
+
+
+	//bị lật ngược thì nằm im
+*/
 	if (Health == 3)   //Koopas
 	{
 		SetState(KOOPAS_STATE_WALKING);
 	}
 	if (Health == 2)
 	{
+		vx = 0;
 		SetState(KOOPAS_STATE_DEFEND);
-
 	}
 	if (Health == 1)
 	{
@@ -71,7 +71,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		SetHealth(1);
 	}
-	if (isHeld && player->isHoldTurtle==true)
+	if (isHeld && player->isHoldTurtle == true)
 	{
 		SetPositionFollowMario();
 		vy = 0;
@@ -84,15 +84,34 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		SetHealth(1);
 		isHeld = false;
 	}
-	//bị lật ngược thì nằm im
+	if (TimeDefend > TIME_DEFEND)
+	{
+		SetState(KOOPAS_STATE_COMEBACK);
+		TimeComeBack += dt;
+	}
+	if (TimeComeBack > TIME_COMEBACK)
+	{
+		TimeDefend = 0;
+		TimeComeBack = 0;
+		y -= KOOPAS_BBOX_HEIGHT_DIE;
+		SetHealth(3);
+		isHeld = false;
+		isUpside = false;
+	}
 	if (isUpside)
 	{
 		vx = 0;
+		TimeDefend += dt;
 	}
 	if (isAttacked)
 	{
 		state = ENEMY_ATTACKED;
 		vx = direction * 0.05f;
+		TimeDefend = 0;
+	}
+	if (model == KOOPAS_FLY && Health == 4 && isOnGround)
+	{
+		SetState(KOOPAS_STATE_FLY);
 	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -147,7 +166,18 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				}
 				if(e->ny <0 && state==KOOPAS_STATE_WALKING && model==KOOPAS_RED)
 				{
-					if (x <= e->obj->GetX() || x >= e->obj->GetX() + e->obj->width-KOOPAS_BBOX_WIDTH)
+					if (x <= e->obj->GetX()-14  || x >= e->obj->GetX() + e->obj->width-KOOPAS_BBOX_WIDTH+14)
+					{
+						direction *= -1;
+						vx *= -1;
+					}
+				}
+			}
+			if (e->obj->GetType() == GOLD_BRICK)
+			{
+				if (e->ny < 0 && state == KOOPAS_STATE_WALKING && model == KOOPAS_RED)
+				{
+					if (x <= e->obj->GetX() -10|| x + KOOPAS_BBOX_WIDTH >= e->obj->GetX() + GB_BBOX_WIDTH + 10)
 					{
 						direction *= -1;
 						vx *= -1;
@@ -162,7 +192,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					vx *= -1;
 				}
 			}
-			if (state == KOOPAS_STATE_BALL)
+			if (state == KOOPAS_STATE_BALL || state==KOOPAS_STATE_UPSIDE_BALL)
 			{
 				if (e->obj->GetType() == QUESTION_BRICK)
 				{
@@ -184,10 +214,44 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					{
 						x += dx;
 						e->obj->SetState(ENEMY_ATTACKED);
+						if (direction > 0)
+						{
+							ListEffect.push_back(new TailHitEffect(this->x+KOOPAS_BBOX_WIDTH,this->y));
+						}
+						if (direction < 0)
+						{
+							ListEffect.push_back(new TailHitEffect(this->x, this->y));
+						}
+					}
+				}
+				if (e->obj->GetType() == GOLD_BRICK)
+				{
+					if (state==KOOPAS_STATE_BALL || state==KOOPAS_STATE_UPSIDE_BALL)
+					{
+						if (e->nx != 0)
+						{
+							e->obj->SubHealth(1);
+							direction *= -1;
+							ListEffect.push_back(new BrokenBrickEffect(x, y, 1, 1));
+							ListEffect.push_back(new BrokenBrickEffect(x, y, 1, 1.5));
+							ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1));
+							ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1.5));
+						}
 					}
 				}
 			}
 	
+		}
+	}
+	for (UINT i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->Update(dt,coObjects);
+	}
+	for (UINT i = 0; i < ListEffect.size(); i++)
+	{
+		if (ListEffect[i]->GetFinish() == true)
+		{
+			ListEffect.erase(ListEffect.begin() + i);
 		}
 	}
 
@@ -212,9 +276,9 @@ void CKoopas::SetPositionFollowMario()
 	else if (player->GetLevel() == MARIO_LEVEL_BIG || player->GetLevel() == MARIO_FIRE)
 	{
 		if (player->nx > 0)
-			SetPosition(player->x + 19, player->y);
+			SetPosition(player->x + 12, player->y+3);
 		else
-			SetPosition(player->x - 3, player->y);
+			SetPosition(player->x-14, player->y+3);
 	}
 }
 void CKoopas::Render()
@@ -246,6 +310,12 @@ void CKoopas::Render()
 		{
 			ani = KOOPAS_BASE_ANI_ATTACKED;
 		}
+		if (state == KOOPAS_STATE_COMEBACK)
+		{
+			ani = KOOPAS_BASE_ANI_COME_BACK;
+			if (isUpside)
+				ani = KOOPAS_BASE_ANI_COME_BACK_UPSIDE;
+		}
 	}
 	else if (model == KOOPAS_RED)
 	{
@@ -270,6 +340,12 @@ void CKoopas::Render()
 		if (isUpside)
 		{
 			ani = KOOPAS_RED_ANI_ATTACKED;
+		}
+		if (state == KOOPAS_STATE_COMEBACK)
+		{
+			ani = KOOPAS_RED_ANI_COME_BACK;
+			if (isUpside)
+				ani = KOOPAS_RED_ANI_COME_BACK_UPSIDE;
 		}
 
 	}
@@ -308,6 +384,14 @@ void CKoopas::Render()
 		{
 			ani = KOOPAS_BASE_ANI_ATTACKED;
 		}
+		if (state == KOOPAS_STATE_COMEBACK)
+		{
+			ani = KOOPAS_BASE_ANI_COME_BACK;
+		}
+	}
+	for (UINT i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->Render();
 	}
 	animation_set->at(ani)->Render(x, y);
 
@@ -324,9 +408,11 @@ void CKoopas::SetState(int state)
 		break;
 	case KOOPAS_STATE_DEFEND:
 		vx = 0;
+		TimeDefend += dt;
 		break;
 	case KOOPAS_STATE_BALL:
 		vx =  direction*KOOPAS_BALL_SPEED;
+		TimeDefend = 0;
 		break;
 	case ENEMY_ATTACKED:	
 		isAttacked = true;
@@ -336,6 +422,9 @@ void CKoopas::SetState(int state)
 		vx = direction * KOOPAS_FLY_SPEED_X;
 		isOnGround = false;
 		vy = -KOOPAS_FLY_SPEED_Y;
+		break;
+	case KOOPAS_STATE_COMEBACK:
+		vx = 0;
 		break;
 	}
 

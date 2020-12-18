@@ -60,8 +60,8 @@ public:
 	//Check collision
 	void CheckCollision();
 	void CheckCollistionMarioWithItem();
-	void MarioTrampleEnemy();
 	void QuestionBrickDropItem(int model,float x,float y);
+	void GoldBrickDestroy(int model, float x, float y);
 //	void CheckCollisionMarioWithEnemy();
 };
 

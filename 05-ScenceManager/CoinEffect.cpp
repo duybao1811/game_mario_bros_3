@@ -35,5 +35,4 @@ void CoinEffect::Render()
 {
 	int ani = COIN_EFFECT_ANI;
 	animation_set->at(ani)->Render(x, y);
-	
 }

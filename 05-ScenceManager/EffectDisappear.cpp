@@ -13,6 +13,8 @@ void EffectDisappear::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 }
 void EffectDisappear::Render()
 {
+	if (isFinish)
+		return;
 	int ani = EFFECT_DISAPPEAR_ANI;
 	animation_set->at(ani)->Render(x, y);
 }

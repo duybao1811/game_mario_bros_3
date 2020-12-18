@@ -12,5 +12,5 @@ class CCoin : public CGameObject
 public:
 	bool isFinish;
 	void SetFinish(bool b);
-	CCoin();
+	CCoin(float X,float Y);
 };

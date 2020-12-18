@@ -23,6 +23,9 @@
 #include "CoinEffect.h"
 #include "PointEffect.h"
 #include "define.h"
+#include "GoldBrick.h"
+#include "P_Switch.h"
+#include "Floor.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -55,6 +58,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 #define OBJECT_TYPE_PLANT 8
 #define OBJECT_TYPE_QUESTIONBRICK 9
 #define OBJECT_TYPE_BLOCK_COLOR 10
+#define OBJECT_TYPE_GOLD_BRICK 11
+#define OBJECT_TYPE_FLOOR 12
 #define OBJECT_TYPE_PORTAL	50
 
 #define MAX_SCENE_LINE 1024
@@ -207,7 +212,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		}
 	case OBJECT_TYPE_COIN:
 	{
-		obj = new CCoin();
+		obj = new CCoin(x,y);
 		break;
 	}
 	case OBJECT_TYPE_FIRE_PLANT:
@@ -241,6 +246,17 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CBlockColor(w, h);
 		break;
 	}
+	case OBJECT_TYPE_GOLD_BRICK:
+	{
+		int model = atof(tokens[4].c_str());
+		obj = new GoldBrick(x, y,model);
+		break;
+	}
+	case OBJECT_TYPE_FLOOR:
+	{
+		obj = new Floor(x, y);
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -258,8 +274,7 @@ void CPlayScene::_ParseSection_TILEMAP(string line)
 	//đọc Map từ file txt
 	int ID, rowmap, columnmap, rowtile, columntile, totaltile;
 	LPCWSTR path = ToLPCWSTR(line);
-	ifstream f;
-	f.open(path);
+	ifstream f(path, ios::in);
 	f >> ID >> rowmap >> columnmap >> rowtile >> columntile >> totaltile;
 	int** tilemapdata = new int* [rowmap];
 	for (int i = 0; i < rowmap; i++)
@@ -303,8 +318,11 @@ void CPlayScene::Load()
 		if (line == "[OBJECTS]") {
 			section = SCENE_SECTION_OBJECTS; continue;
 		}
-		if (line == "[TILEMAP]") {
-			section = SCENE_SECTION_DRAWMAP; continue;
+		if(CGame::GetInstance()->GetScene()!=1)
+		{ 
+			if (line == "[TILEMAP]") {
+				section = SCENE_SECTION_DRAWMAP; continue;
+			}
 		}
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }	
 
@@ -360,13 +378,14 @@ void CPlayScene::CheckCollistionMarioWithItem()
 					}
 					ListItem[i]->SetFinish(true);
 					break;
+
 				}
 				}
 			}
 		}
 	}
 }
-void CPlayScene::MarioTrampleEnemy()
+/*void CPlayScene::MarioTrampleEnemy()
 {
 	for (UINT i = 0; i < objects.size(); i++)
 	{
@@ -387,29 +406,27 @@ void CPlayScene::MarioTrampleEnemy()
 					}
 					case Type::KOOPAS:
 					{
-						enemy->SubHealth(1);
 						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
-						//player->SetScore(player->GetScore() + 100);
-						if (enemy->GetState() != KOOPAS_STATE_DEFEND)
-						{
-							player->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
-						}
-						if (enemy->GetState() == KOOPAS_STATE_DEFEND)
-						{
-							enemy->SetDirection(player->nx);
-						}
-						if (enemy->GetState() == KOOPAS_STATE_BALL)
-						{
-							enemy->SetHealth(2);
-						}
-						break;
+						player->SetScore(player->GetScore() + 100);
+					if (enemy->GetState() == KOOPAS_STATE_WALKING)
+					{
+						enemy->SubHealth(1);
+						player->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
 					}
+					if (enemy->GetState() == KOOPAS_STATE_DEFEND)
+					{
+						enemy->SetDirection(player->nx);
+						enemy->SubHealth(1);
+						player->y+
 					}
-				}
-			}
-
-	}
-}
+					if (enemy->GetState() == KOOPAS_STATE_BALL)
+					{
+						//koopas->SetState(KOOPAS_STATE_DEFEND);
+						enemy->SetHealth(2);
+					}
+					break;
+					}*/
+					
 void CPlayScene::QuestionBrickDropItem(int model, float x,float y)
 {
 	switch (model)
@@ -433,10 +450,20 @@ void CPlayScene::QuestionBrickDropItem(int model, float x,float y)
 	break;
 	}
 }
+void CPlayScene::GoldBrickDestroy(int model, float x, float y)
+{
+	switch (model)
+	{
+	case GB_CONTAIN_PSWITCH:
+	{
+		objects.push_back(new P_Switch(x, y));
+		break;
+	}
+	}
+}
 void CPlayScene::CheckCollision()
 {
 	CheckCollistionMarioWithItem();
-	MarioTrampleEnemy();
 	//CheckCollisionMarioWithEnemy();
 }
 void CPlayScene::Update(DWORD dt)
@@ -463,77 +490,31 @@ void CPlayScene::Update(DWORD dt)
 
 #pragma region cơ chế hồi sinh của enemy khi ra khỏi cam không phải bị 
 
-				//objects[i]->SetPosition(512, 385); //set lại vị trí
-				//	objects[i]->SetDirection(1);
-			//	objects.push_back(new CGoomba(objects[i]->GetStartX(), objects[i]->startY, 1, -1));
-			//	objects[i]->SetFinish(true);
-				//	objects[i]->isInCam == false;
-			/*	if (CountEnemy < 1)
-				{
-					if (player->GetX() > 512 + SCREEN_WIDTH / 2)
-					{
-						objects.push_back(new CGoomba(512, 385, 1, 1));
-					}
-					CountEnemy++;
-				}*/
-						if (player->GetX() > 400 + SCREEN_WIDTH / 2 )
-						{
-							if (objects[i]->GetStartX() == 512)
-							{
-								objects[i]->SetFinish(false);
-								objects[i]->SetPosition(512, 385);
-								objects[i]->SetDirection(1);
-								objects[i]->isInCam = true;
-							}
-						}
-						else
-						{
-							if (objects[i]->checkObjInCamera(objects[i]) == false && objects[i]->isInCam == true)
-							{
-								objects[i]->SetFinish(true);
-								objects[i]->isInCam = true;
-							}
-						}
-		/*	if (objects[i]->GetStartX() == 816)
-			{
-				if (player->GetX() > 1248)
-				{
-					objects[i]->SetPosition(816, 369); //set lại vị trí
-					objects[i]->SetDirection(1);
 
-				}
-				if (player->GetX() < 392)
+			if (objects[i]->GetType() == GOOMBA)
+			{
+				if (player->GetX() > objects[i]->GetStartX() + SCREEN_WIDTH / 2 || player->GetX() + SCREEN_WIDTH / 2 < objects[i]->GetStartX())
 				{
-					objects[i]->SetPosition(816, 369); //set lại vị trí
-					objects[i]->SetDirection(-1);
+					if (objects[i]->isFinish)
+					{
+						if (objects[i]->GetStartX() == 512 || objects[i]->GetStartX() == 208 || objects[i]->GetStartX() == 816 || objects[i]->GetStartX() == 864)
+						{
+							objects[i]->SetFinish(false);
+							objects[i]->SetPosition(objects[i]->GetStartX(), objects[i]->GetStartY());
+							objects[i]->SetDirection(player->nx);
+							objects[i]->isInCam = true;
+						}
+					}
+				}
+				else
+				{
+					if (objects[i]->checkObjInCamera(objects[i]) == false && objects[i]->isInCam == true)
+					{
+						objects[i]->SetFinish(true);
+						objects[i]->isInCam = true;
+					}
 				}
 			}
-			if (objects[i]->GetStartX() == 864)
-			{
-				if (player->GetX() > 1248)
-				{
-					objects[i]->SetPosition(864, 369); //set lại vị trí
-					objects[i]->SetDirection(1);
-
-				}
-				if (player->GetX() < 392)
-				{
-					objects[i]->SetPosition(864, 369); //set lại vị trí
-					objects[i]->SetDirection(-1);
-				}
-
-				if (objects[i]->GetType() == FIRE_PIRANHA)
-				{
-					if (objects[i]->GetStartX() == 360)
-					{
-						if (player->GetX() < 96 || player->GetX() > 624)
-						{
-							objects[i]->SetPosition(360, 368); //set lại vị trí
-						}
-					}
-				}
-
-			}*/
 		}
 #pragma endregion		
 		if (e->GetType() == QUESTION_BRICK)
@@ -543,6 +524,37 @@ void CPlayScene::Update(DWORD dt)
 			{
 				QuestionBrickDropItem(questionbrick->GetModel(), questionbrick->GetX(), questionbrick->GetY());
 				questionbrick->isUnbox = false;
+			}
+		}
+		if (e->GetType() == GOLD_BRICK)
+		{
+			GoldBrick* goldbrick = dynamic_cast<GoldBrick*>(e);
+			if (goldbrick->isUnbox)
+			{
+				GoldBrickDestroy(goldbrick->GetModel(), goldbrick->GetX(), goldbrick->GetY()-GB_BBOX_HEIGHT);
+				goldbrick->isUnbox = false;
+			}
+		}
+		if (e->GetType() == P_SWITCH)
+		{
+			P_Switch* pswitch = dynamic_cast<P_Switch*>(e);
+			if (pswitch->isUsed)
+			{
+				for (UINT i = 0; i < objects.size(); i++)
+				{
+					if (objects[i]->GetType() == GOLD_BRICK)
+					{
+						GoldBrick* goldbrick = dynamic_cast<GoldBrick*>(objects[i]);
+						if (goldbrick->GetModel()==GB_CONTAIN_COIN)
+						{
+							if (goldbrick->checkObjInCamera(objects[i]))
+							{
+								ListItem.push_back(new CMushRoom(goldbrick->x, goldbrick->y + 10, MUSHROOM_RED));
+							}
+						//	objects.push_back(new CCoin(goldbrick->GetX(), goldbrick->GetY()));
+						}
+					}
+				}
 			}
 		}
 	}

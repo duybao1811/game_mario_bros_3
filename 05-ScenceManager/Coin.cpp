@@ -1,6 +1,8 @@
 #include "Coin.h"
-CCoin::CCoin()
+CCoin::CCoin(float X,float Y)
 {
+	this->x = X;
+	this->y = Y;
 	eType = Type::COIN;
 	isFinish = 0;
 }

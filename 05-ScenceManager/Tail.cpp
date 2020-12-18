@@ -35,17 +35,37 @@ void Tail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			if (checkAABB(e))
 			{
-				e->SetState(ENEMY_ATTACKED);
-				if (direction > 0)
+				if (e->GetType() == FIRE_PIRANHA || e->GetType() == PIRANHA_GREEN)
 				{
-					e->SetDirection(direction);
-					ListEffect.push_back(new TailHitEffect(x + TAIL_BBOX_WIDTH, y-PULL_UP_EFFECT_TAIL_HIT));
+					e->SubHealth(1);
+					ListEffect.push_back(new EffectDisappear(e->GetX(), e->GetY()+FPLANT_RED_BBOX_HEIGHT/2));
+					ListEffect.push_back(new TailHitEffect(x - TAIL_BBOX_WIDTH, y - PULL_UP_EFFECT_TAIL_HIT));
 				}
-				if (direction < 0)
+				else
 				{
-					e->SetDirection(direction);
-					ListEffect.push_back(new TailHitEffect(x-TAIL_BBOX_WIDTH, y- PULL_UP_EFFECT_TAIL_HIT));
+					e->SetState(ENEMY_ATTACKED);
+					if (direction > 0)
+					{
+						e->SetDirection(direction);
+						ListEffect.push_back(new TailHitEffect(x + TAIL_BBOX_WIDTH, y - PULL_UP_EFFECT_TAIL_HIT));
+					}
+					if (direction < 0)
+					{
+						e->SetDirection(direction);
+						ListEffect.push_back(new TailHitEffect(x - TAIL_BBOX_WIDTH, y - PULL_UP_EFFECT_TAIL_HIT));
+					}
 				}
+			}
+		}
+		if (e->GetType() == GOLD_BRICK)
+		{
+			if (checkAABB(e))
+			{
+				e->SubHealth(1);
+				ListEffect.push_back(new BrokenBrickEffect(x, y, 1, 1));
+				ListEffect.push_back(new BrokenBrickEffect(x, y, 1, 1.5));
+				ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1));
+				ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1.5));
 			}
 		}
 	}

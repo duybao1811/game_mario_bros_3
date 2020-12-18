@@ -66,7 +66,7 @@ public:
 	bool isKilled;
 	float startX, startY;
 	DWORD dt; 
-
+	int model;
 	int ani;
 	LPANIMATION_SET animation_set;
 
@@ -75,6 +75,9 @@ public:
 	bool GetFinish() { return isFinish; }
 	void SetFinish(bool b) {
 		isFinish = b;
+	}
+	int GetModel() {
+		return model;
 	}
 	void SetVx(float Vx) { this->vx = Vx; }
 	float GetVx() { return vx; }
@@ -93,6 +96,7 @@ public:
 	int GetDirection();
 	int GetState() { return this->state; }
 	float GetStartX() { return startX; }
+	float GetStartY() { return startY; }
 	Type GetType();
 	void RenderBoundingBox();
 	ObjectType GetObjType();

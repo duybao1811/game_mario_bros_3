@@ -2,7 +2,8 @@
 #include "GameObject.h"
 #include "define.h"
 #include "TailHitEffect.h"
-
+#include "BrokenBrickEffect.h"
+#include "EffectDisappear.h"
 class Tail : public CGameObject
 {
 	vector<LPGAMEOBJECT> ListEffect;

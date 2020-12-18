@@ -8,7 +8,6 @@ CGoomba::CGoomba(float X,float Y,int Model, int d)
 	objType = ObjectType::ENEMY;
 	eType = Type::GOOMBA;
 	isKilled = false;
-	SetState(GOOMBA_STATE_WALKING);
 	direction = d;
 	this->startX = X;
 	this->startY = Y;
@@ -42,13 +41,6 @@ void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& botto
 			right = 0;
 			bottom = 0;
 		}
-		if (isAttacked)
-		{
-			left = 0;
-			top = 0;
-			right = 0;
-			bottom = 0;
-		}
 }
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
@@ -56,9 +48,19 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	vy += GOOMBA_GRAVITY * dt;
 	if(model == GOOMBA_RED_PARA && Health == 2 && isOnGround)
 	{
-
-
+		TimeWalk += dt;
+		SetState(GOOMBA_RED_PARA_STATE_JUMP_SLOW);
 	}
+	if (model == GOOMBA_RED_PARA && Health == 2 && isOnGround)
+	{
+		if (TimeWalk > 200)
+		{
+			TimeWalk = 0;
+			SetState(GOOMBA_STATE_JUMP);
+		}
+	}
+	
+
 	if(isOnGround==false)
 	{
 		TimeWalk = 0;
@@ -84,13 +86,9 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			isFinish = true;
 		}
 	}
-	if (isAttacked)
-	{
-		state = ENEMY_ATTACKED;
-	}
 
-		vector<LPCOLLISIONEVENT> coEvents;
-		vector<LPCOLLISIONEVENT> coEventsResult;
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
 
 		coEvents.clear();
 		CalcPotentialCollisions(coObjects, coEvents);
@@ -109,7 +107,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-			x += min_tx * dx + nx * 0.4f;
+			x += min_tx * dx + nx * 0.1f;
 			y += min_ty * dy + ny * 0.4f;
 			if (ny < 0)
 			{
@@ -120,17 +118,18 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				isOnGround = false;
 			}
+
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
 				LPCOLLISIONEVENT e = coEventsResult[i];
-				if (e->obj->GetType() == BLOCK_COLOR) // if e->obj is Goomba 
+				if (e->obj->GetType() == BLOCK_COLOR || e->obj->GetObjType()==ENEMY) // if e->obj is Goomba 
 				{
 					if (e->nx != 0)
 					{
 						x += dx;
 					}
 				}
-				if (e->obj->GetType() != BLOCK_COLOR)
+				else
 				{
 					if (e->nx != 0)
 					{
@@ -165,7 +164,7 @@ void CGoomba::Render()
 		}
 		if (model == GOOMBA_RED_PARA)
 		{
-			if (state == GOOMBA_RED_PARA_STATE_WALKING)
+			if (state == GOOMBA_RED_PARA_STATE_JUMP_SLOW)
 			{
 				ani = GOOMBA_RED_PARA_ANI_WALKING;
 			}
@@ -198,29 +197,37 @@ void CGoomba::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
-		case GOOMBA_STATE_DIE:
-			y += GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE + 1;
-			isDie = true;
-			break;
-		case GOOMBA_STATE_WALKING:
-			vx = direction * GOOMBA_WALKING_SPEED;
-			break;
-		case ENEMY_ATTACKED:
-			vx = direction*GOOMBA_ATTACKED_SPEED_X;
-			vy = -GOOMBA_ATTACKED_SPEED_Y;
-			isAttacked = true;
-			break;
-		case GOOMBA_STATE_JUMP:
-			isOnGround = false;
-			vy = -GOOMBA_JUMP_SPEED_Y;
-			break;
-		case GOOMBA_RED_PARA_STATE_WALKING:
+	case GOOMBA_STATE_DIE:
+	{	y += GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE + 1;
+		isDie = true;
+		break;
+	}
+	case GOOMBA_STATE_WALKING:
+	{	vx = direction * GOOMBA_WALKING_SPEED;
+		break;
+	}
+	case GOOMBA_STATE_JUMP:
+	{	isOnGround = false;
+		vy = -GOOMBA_JUMP_SPEED_Y;
+		break;
+	}
+	case GOOMBA_RED_PARA_STATE_JUMP_SLOW:
+		vy = -0.02f;
 			vx = direction*GOOMBA_RED_WALKING_SPEED;
 			break;
-		case GOOMBA_RED_PARA_STATE_FALLING:
+	case GOOMBA_RED_PARA_STATE_FALLING:
 			break;
-		case GOOMBA_RED_STATE_WALKING:
-			vx = direction * GOOMBA_RED_WALKING_SPEED;
-			break;
+	case GOOMBA_RED_STATE_WALKING:
+	{
+		vx = direction * GOOMBA_RED_WALKING_SPEED;
+		break;
+	}
+	/*case ENEMY_ATTACKED:
+	{   
+		vx = direction * GOOMBA_ATTACKED_SPEED_X;
+		vy = -GOOMBA_ATTACKED_SPEED_Y;
+		isAttacked = true;
+		break;
+	}*/
 	}
 }

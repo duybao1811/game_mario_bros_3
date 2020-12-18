@@ -43,6 +43,9 @@
     <Filter Include="Main">
       <UniqueIdentifier>{83b6fc6c-2ef5-4e0e-88a8-1c54ebc376e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ScreenIntro">
+      <UniqueIdentifier>{55bb43ce-efa0-4c09-9e8a-f24857af1a14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp">
@@ -157,10 +160,40 @@
       <Filter>Effect</Filter>
     </ClCompile>
     <ClCompile Include="GoldBrick.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="BrokenBrickEffect.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
     <ClCompile Include="IceBrick.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Floor.cpp">
+      <Filter>ScreenIntro</Filter>
+    </ClCompile>
+    <ClCompile Include="P_Switch.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect_1_UP.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="FlowerSymbol.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="FullPower.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="MushRoomSymbol.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformSceneIntro.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="Power.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="StarSymbol.cpp">
+      <Filter>Board</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -275,11 +308,41 @@
     <ClInclude Include="TailHitEffect.h">
       <Filter>Effect</Filter>
     </ClInclude>
+    <ClInclude Include="BrokenBrickEffect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
     <ClInclude Include="GoldBrick.h">
-      <Filter>Header Files</Filter>
+      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="IceBrick.h">
-      <Filter>Header Files</Filter>
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Floor.h">
+      <Filter>ScreenIntro</Filter>
+    </ClInclude>
+    <ClInclude Include="P_Switch.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect_1_UP.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Power.h">
+      <Filter>Board</Filter>
+    </ClInclude>
+    <ClInclude Include="FlowerSymbol.h">
+      <Filter>Board</Filter>
+    </ClInclude>
+    <ClInclude Include="FullPower.h">
+      <Filter>Board</Filter>
+    </ClInclude>
+    <ClInclude Include="MushRoomSymbol.h">
+      <Filter>Board</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformSceneIntro.h">
+      <Filter>ScreenIntro</Filter>
+    </ClInclude>
+    <ClInclude Include="StarSymbol.h">
+      <Filter>Board</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
