@@ -10,8 +10,6 @@
 class Font
 {
 public:
-
-	static Font* __instance;
     LPDIRECT3DTEXTURE9 Tex;
 	void Draw(float x,float y,const string &s);
 	Font();

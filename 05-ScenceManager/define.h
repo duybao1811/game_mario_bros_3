@@ -11,6 +11,7 @@ using namespace std;
 #define GAME_TIME_LIMIT  300 // thoi gian dem nguoc khi ket thuc 1 man 
 #define SCREEN_WIDTH 278
 #define SCREEN_HEIGHT 280
+#define TexID_BOARD 25
 enum Type {
 	// MARIO 
 	MARIO_SMALL = 01,
@@ -116,6 +117,7 @@ enum Range
 #define GB_ANI_UNBOX 1
 #define GB_CONTAIN_COIN 1
 #define GB_CONTAIN_PSWITCH 2
+#define GB_CONTAIN_MUSHROOM_1_UP 3
 #define GB_STATE_EMPTY 100
 
 // Enemy
@@ -127,7 +129,7 @@ enum Range
 #define GOOMBA_RED_BBOX_WIDTH 20
 #define GOOMBA_RED_BBOX_HEIGHT 21 
 #define GOOMBA_BBOX_HEIGHT_DIE 9
-#define GOOMBA_JUMP_SPEED_Y 0.2f
+#define GOOMBA_JUMP_SPEED_Y 0.3f
 #define GOOMBA_STATE_WALKING 100
 #define GOOMBA_STATE_DIE 200
 #define GOOMBA_STATE_ATTACKED 300

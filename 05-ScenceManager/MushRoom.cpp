@@ -71,14 +71,6 @@ void CMushRoom::Update(DWORD dt, vector<LPGAMEOBJECT>* listObject)
 					x += dx;
 				}
 			}
-			else
-			{
-				if (e->nx != 0)
-				{
-					direction *= -1;
-					vx *= -1;
-				}
-			}
 			if (e->obj->GetObjType() == ENEMY)
 			{
 				if (e->nx != 0)
@@ -88,6 +80,14 @@ void CMushRoom::Update(DWORD dt, vector<LPGAMEOBJECT>* listObject)
 				if (e->ny != 0)
 				{
 					y += dy;
+				}
+			}
+			if (e->obj->GetType() == EMEDIUM_PIPE || e->obj->GetType() == ESHORT_PIPE || e->obj->GetType() == PLATFORM)
+			{
+				if (e->nx != 0)
+				{
+					direction *= -1;
+					vx *= -1;
 				}
 			}
 		}
@@ -108,8 +108,10 @@ void CMushRoom::SetState(int state)
 void CMushRoom::Render()
 {
 	int ani = -1;
-	if(model==MUSHROOM_RED)
+	if (model == MUSHROOM_RED)
+	{
 		ani = MUSHROOM_RED_ANI;
+	}
 	if (model == MUSHROOM_GREEN)
 	{
 		ani = MUSHROOM_GREEN_ANI;

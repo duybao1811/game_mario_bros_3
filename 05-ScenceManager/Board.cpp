@@ -1,5 +1,6 @@
 ﻿#include "Board.h"
 #include "Font.h"
+#include "Power.h"
 #include <string>
 Board::Board(float X,float Y)
 {
@@ -16,9 +17,43 @@ string Board::FillNumber(string s, UINT amoumt_of_number)
 }
 void Board::Render(CMario * mario, int RemainingTime )
 {
+	now = GetTickCount64();
 	Sprite->Draw(x, y);
 	font.Draw(x + 70, y + 20, FillNumber(std::to_string(mario->GetScore()), 7)); //score
 	font.Draw(x + 141, y + 20, FillNumber(std::to_string(RemainingTime), 3)); //remain time
 	font.Draw(x + 150, y + 12, FillNumber(std::to_string(mario->GetCoinCollect()), 2));  //coin
-	font.Draw(x + 47, y + 20, FillNumber(std::to_string(20), 2)); // mạng
+	//font.Draw(x + 47, y + 20, FillNumber(std::to_string(20), 2)); // mạng
+	font.Draw(x + 47, y + 20, FillNumber(std::to_string(mario->GetLive()), 1));
+	if (mario->isRunning || mario->isFlying)
+	{
+		if (abs(mario->vx) >= MARIO_RUNNING_MAXSPEED / 7)
+		{
+			power.Draw(x + 70, y + 12);
+		}
+		if (abs(mario->vx) >= MARIO_RUNNING_MAXSPEED / 6)
+		{
+			power.Draw(x + 78, y + 12);
+		}
+		if (abs(mario->vx) >= MARIO_RUNNING_MAXSPEED / 5)
+		{
+			power.Draw(x + 86, y + 12);
+		}
+		if (abs(mario->vx) >= MARIO_RUNNING_MAXSPEED / 4)
+		{
+			power.Draw(x + 94, y + 12);
+		}
+		if (abs(mario->vx) >= MARIO_RUNNING_MAXSPEED / 3)
+		{
+			power.Draw(x + 102, y + 12);
+		}
+		if (abs(mario->vx) >= MARIO_RUNNING_MAXSPEED / 2)
+		{
+			power.Draw(x + 110, y + 12);
+		}
+		if (abs(mario->vx) >= MARIO_RUNNING_MAXSPEED / 1)
+		{
+			fpower.Draw(x + 118, y + 12);
+			//timeDraw = 0;
+		}
+	}
 }

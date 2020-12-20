@@ -15,6 +15,7 @@
 45	textures\Font1.png	255	0	255
 50	textures\effect.png	176	224	248
 55	textures\misc-4.png	255	216	154
+65	textures\worldmap.png	255	255	255
 [TILEMAP]
 Resources\Tilemap\world1-1.txt
 # id	left	top	right	bottom	texture_id
@@ -436,6 +437,11 @@ Resources\Tilemap\world1-1.txt
 #=================SCREEN INTRO ============
 #FLOOR
 201	23	19	255	213	55
+#================= WORLD MAP ==============
+301	0	0	224	152	65
+302	226	0	450	152	65
+303	452	0	676	152	65
+304	678	0	902	152	65
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 
@@ -816,6 +822,8 @@ Resources\Tilemap\world1-1.txt
 151	60	100
 #SCREEN INTRO
 2001	201	100
+#WORLD MAP 
+2002	301	200	302	200	303	200	304	200
 #
 # id	ani1	ani2	ani3
 #
@@ -860,14 +868,25 @@ Resources\Tilemap\world1-1.txt
 #PSWITCH
 22	150	151
 #SCREEN INTRO
+#FLOOR
 50	2001
+#World Map 
+51	2002
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3=KOOPAS, 4=COIN, 5:Piranha fire plant 6:piranha plant 7:pipe
 
-# MARIO
-0	80	385	1
-#0	560	344	1
-
+1	20	40	2	58	42
+1	20	86	2	58	106
+1	84	40	2	48	10
+1	82	54	2	60	60
+1	82	118	2	65	28
+1	82	150	2	60	28
+1	78	182	2	71	10	
 #FLOOR
 #12	80	385	50
+#WORLD MAP
+13	20	40	51
+# MARIO
+#0	0		1
+0	36	0	1

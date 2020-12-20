@@ -7,6 +7,7 @@ public:
 	float lastvx;
 	int model;
 	int JumpCount;
+	bool isOnAir;
 	DWORD TimeWalk;
 	DWORD TimeDisappear;
 	bool isDie;

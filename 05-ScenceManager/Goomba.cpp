@@ -19,9 +19,11 @@ CGoomba::CGoomba(float X,float Y,int Model, int d)
 	{
 	case GOOMBA_BASE:
 		SetHealth(1);
+		this->fullhealth = 1;
 		break;
 	case GOOMBA_RED_PARA:
 		SetHealth(2);
+		this->fullhealth = 2;
 		break;
 	}
 }
@@ -46,21 +48,22 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	CGameObject::Update(dt, coObjects);
 	vy += GOOMBA_GRAVITY * dt;
-	if(model == GOOMBA_RED_PARA && Health == 2 && isOnGround)
+	if(model == GOOMBA_RED_PARA && Health == 2 && isOnGround && TimeWalk==0&&JumpCount!=3)
 	{
 		TimeWalk += dt;
 		SetState(GOOMBA_RED_PARA_STATE_JUMP_SLOW);
 	}
-	if (model == GOOMBA_RED_PARA && Health == 2 && isOnGround)
-	{
-		if (TimeWalk > 200)
-		{
-			TimeWalk = 0;
-			SetState(GOOMBA_STATE_JUMP);
-		}
-	}
 	
-
+	if (isOnAir && isOnGround)
+	{
+		JumpCount++;
+		isOnAir = false;
+	}
+	if (JumpCount == 3)
+	{
+		SetState(GOOMBA_STATE_JUMP);
+		JumpCount = 0;
+	}
 	if(isOnGround==false)
 	{
 		TimeWalk = 0;
@@ -112,6 +115,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			if (ny < 0)
 			{
 				isOnGround = true;
+				TimeWalk = 0;
 				vy = 0;
 			}
 			if (ny > 0)
@@ -122,7 +126,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
 				LPCOLLISIONEVENT e = coEventsResult[i];
-				if (e->obj->GetType() == BLOCK_COLOR || e->obj->GetObjType()==ENEMY) // if e->obj is Goomba 
+				if (e->obj->GetType() == BLOCK_COLOR|| e->obj->GetObjType() == ENEMY) // if e->obj is Goomba 
 				{
 					if (e->nx != 0)
 					{
@@ -209,11 +213,14 @@ void CGoomba::SetState(int state)
 	case GOOMBA_STATE_JUMP:
 	{	isOnGround = false;
 		vy = -GOOMBA_JUMP_SPEED_Y;
+		
 		break;
 	}
 	case GOOMBA_RED_PARA_STATE_JUMP_SLOW:
-		vy = -0.02f;
+		vy = -0.2f;
 			vx = direction*GOOMBA_RED_WALKING_SPEED;
+			isOnAir = true;
+			
 			break;
 	case GOOMBA_RED_PARA_STATE_FALLING:
 			break;

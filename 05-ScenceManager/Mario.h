@@ -206,6 +206,7 @@ public:
 	bool isReadytoFly;
 	bool isHoldTurtle;
 	bool isOnAir;
+	bool isFullPower;
 public:
 	bool untouchable;
 	DWORD untouchable_start;
@@ -238,7 +239,6 @@ public:
 
 	int GetAni() { return ani; }
 	bool CheckCollision(CGameObject* obj);
-	bool CheckTrampleEnemy(CGameObject* obj);
 	void SetHurt(LPCOLLISIONEVENT e);
 	void Reset();
 	int GetLevel();
@@ -251,6 +251,7 @@ public:
 	int GetCoinCollect();
 	void SetScore(int s);
 	int GetScore();
+	
 	bool GetIsDeadth();
 	void SetIsDeadth(bool b);
 	void SetLive(int l);

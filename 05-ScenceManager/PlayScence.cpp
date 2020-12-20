@@ -26,6 +26,7 @@
 #include "GoldBrick.h"
 #include "P_Switch.h"
 #include "Floor.h"
+#include "WorldMap.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -60,8 +61,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 #define OBJECT_TYPE_BLOCK_COLOR 10
 #define OBJECT_TYPE_GOLD_BRICK 11
 #define OBJECT_TYPE_FLOOR 12
+#define OBJECT_TYPE_WORLD_MAP 13
 #define OBJECT_TYPE_PORTAL	50
-
 #define MAX_SCENE_LINE 1024
 
 #define BOARD_DEFAULT_POSITION_X 32.0f
@@ -257,6 +258,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new Floor(x, y);
 		break;
 	}
+	case OBJECT_TYPE_WORLD_MAP:
+	{
+		obj = new WorldMap(x, y);
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -318,11 +324,8 @@ void CPlayScene::Load()
 		if (line == "[OBJECTS]") {
 			section = SCENE_SECTION_OBJECTS; continue;
 		}
-		if(CGame::GetInstance()->GetScene()!=1)
-		{ 
-			if (line == "[TILEMAP]") {
-				section = SCENE_SECTION_DRAWMAP; continue;
-			}
+		if (line == "[TILEMAP]") {
+			section = SCENE_SECTION_DRAWMAP; continue;
 		}
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }	
 
@@ -379,6 +382,12 @@ void CPlayScene::CheckCollistionMarioWithItem()
 					ListItem[i]->SetFinish(true);
 					break;
 
+				}
+				case Type::MUSHROOM_1_UP:
+				{
+					player->SetLive(player->GetLive() + 1);
+					ListItem[i]->SetFinish(true);
+					break;
 				}
 				}
 			}
@@ -459,6 +468,11 @@ void CPlayScene::GoldBrickDestroy(int model, float x, float y)
 		objects.push_back(new P_Switch(x, y));
 		break;
 	}
+	case GB_CONTAIN_MUSHROOM_1_UP:
+	{
+		ListItem.push_back(new CMushRoom(x, y + 10, MUSHROOM_GREEN));
+		break;
+	}
 	}
 }
 void CPlayScene::CheckCollision()
@@ -497,12 +511,13 @@ void CPlayScene::Update(DWORD dt)
 				{
 					if (objects[i]->isFinish)
 					{
-						if (objects[i]->GetStartX() == 512 || objects[i]->GetStartX() == 208 || objects[i]->GetStartX() == 816 || objects[i]->GetStartX() == 864)
+						if (objects[i]->GetStartX() == 512 || objects[i]->GetStartX() == 208 || objects[i]->GetStartX() == 816 || objects[i]->GetStartX() == 864 || objects[i]->GetStartX()==928)
 						{
 							objects[i]->SetFinish(false);
 							objects[i]->SetPosition(objects[i]->GetStartX(), objects[i]->GetStartY());
 							objects[i]->SetDirection(player->nx);
 							objects[i]->isInCam = true;
+							objects[i]->SetHealth(objects[i]->fullhealth);
 						}
 					}
 				}
@@ -607,36 +622,44 @@ void CPlayScene::Update(DWORD dt)
 	CheckCollision();
 
 	gametime->Update(dt);
-	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
-	if (player == NULL) return;
-
-	// Update camera to follow mario
-	float cx, cy, sw, sh, mw, mh, mx, my;
-	player->GetPosition(cx, cy);
-	CGame* game = CGame::GetInstance();
-	sw = game->GetScreenWidth();
-	sh = game->GetScreenHeight();
-	mw = map->GetMapWidth();
-	mh = map->GetMapHeight();
-	bool isTopSide = false;
-	if (cy < mh / 2)
-		isTopSide = true;
-	if (cx >= sw / 2 //Left Edge
-		&& cx + sw / 2 <= mw) //Right Edge
-		cx -= sw / 2;
-	else if (cx < sw / 2)
-		cx = 0;
-	else if (cx + sw / 2 > mw)
-		cx = mw - sw + 1;
-	if (cy - sh / 4 <= 0)//Top Edge
-		cy = 0;
-	else if (cy > mh / 2 )//Bottom Edge
+	if (CGame::GetInstance()->GetScene() ==1)
 	{
-		cy = mh - sh;
+		CGame::GetInstance()->SetCamPos(0, 0);
 	}
-	else cy -= sh / 4;
-	CGame::GetInstance()->SetCamPos((int)cx, (int)cy);
-	map->SetCamPos((int)cx, (int)cy);
+	
+	else
+	{
+		// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
+		if (player == NULL) return;
+
+		// Update camera to follow mario
+		float cx, cy, sw, sh, mw, mh, mx, my;
+		player->GetPosition(cx, cy);
+		CGame* game = CGame::GetInstance();
+		sw = game->GetScreenWidth();
+		sh = game->GetScreenHeight();
+		mw = map->GetMapWidth();
+		mh = map->GetMapHeight();
+		bool isTopSide = false;
+		if (cy < mh / 2)
+			isTopSide = true;
+		if (cx >= sw / 2 //Left Edge
+			&& cx + sw / 2 <= mw) //Right Edge
+			cx -= sw / 2;
+		else if (cx < sw / 2)
+			cx = 0;
+		else if (cx + sw / 2 > mw)
+			cx = mw - sw + 1;
+		if (cy - sh / 4 <= 0)//Top Edge
+			cy = 0;
+		else if (cy > mh / 2)//Bottom Edge
+		{
+			cy = mh - sh;
+		}
+		else cy -= sh / 4;
+		CGame::GetInstance()->SetCamPos((int)cx, (int)cy);
+		map->SetCamPos((int)cx, (int)cy);
+	}
 }
 
 void CPlayScene::Render()
@@ -660,8 +683,11 @@ void CPlayScene::Render()
 	{
 		listFireEnemy[i]->Render();
 	}
-	board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
-	board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
+	if (CGame::GetInstance()->GetScene() != 1)
+	{
+		board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
+		board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
+	}
 }
 
 /*

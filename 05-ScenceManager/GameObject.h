@@ -47,6 +47,7 @@ protected:
 	ObjectType objType;
 public:
 	int Health;
+	int fullhealth;
 	float x; 
 	float y;
 
@@ -79,6 +80,7 @@ public:
 	int GetModel() {
 		return model;
 	}
+	void SetFullHealth(int fh);
 	void SetVx(float Vx) { this->vx = Vx; }
 	float GetVx() { return vx; }
 	void SetX(float X) { x = X; }

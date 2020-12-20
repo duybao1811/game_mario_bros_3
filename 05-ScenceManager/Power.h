@@ -1,12 +1,16 @@
 #pragma once
 #include "GameObject.h"
+#include "Sprites.h"
+#include "Game.h"
+#include "Textures.h"
+#include "define.h"
 #define POWER_ANI 0
-#define ID_LOAD_POWER 24
-class Power : public CGameObject
+class Power
 {
+	LPSPRITE Sprite;
 public:
-	virtual void Render();
-	virtual void GetBoundingBox(float& l, float& t, float& r, float& b) { return; };
-	Power(float X, float Y);
+	LPDIRECT3DTEXTURE9 Tex;
+	void Draw(float x, float y);
+	Power();
 };
 

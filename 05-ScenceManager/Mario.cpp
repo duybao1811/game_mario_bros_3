@@ -294,6 +294,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1.5));
 						break;
 					case GB_CONTAIN_PSWITCH:
+					case GB_CONTAIN_MUSHROOM_1_UP:
 					{
 						if (goldbrick->GetState()!=GB_STATE_EMPTY)
 						{
@@ -860,6 +861,7 @@ break;
 		{
 			this->state = MARIO_STATE_RUN_MAXSPEED;
 			vx = -MARIO_RUNNING_MAXSPEED;
+			isFullPower = true;
 		}
 		nx = -1;
 		break;
@@ -871,6 +873,7 @@ break;
 		{
 			this->state = MARIO_STATE_RUN_MAXSPEED;
 			vx = MARIO_RUNNING_MAXSPEED;
+			isFullPower = true;
 		}
 		nx = 1;
 		break;
@@ -913,15 +916,6 @@ break;
 	}
 	}
 
-}
-bool CMario::CheckTrampleEnemy(CGameObject* obj)
-{
-	LPCOLLISIONEVENT e = SweptAABBEx(obj);
-	if (e->ny < 0)
-	{
-		return true;
-	}
-	return false;
 }
 #pragma region Set chuyển động
 void CMario::WalkRight()

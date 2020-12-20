@@ -1,12 +1,10 @@
 #include "Power.h"
-Power::Power(float X, float Y)
+Power::Power()
 {
-	this->x = X;
-	this->y = Y;
-	SetAnimationSet(CAnimationSets::GetInstance()->Get(ID_LOAD_POWER));
+	Tex = CTextures::GetInstance()->Get(TexID_BOARD);
+	Sprite = new CSprite(1,3,33,11,40, Tex);
 }
-void Power::Render()
+void Power::Draw(float x, float y)
 {
-	int ani = POWER_ANI;
-	animation_set->at(ani)->Render(x, y);
+	Sprite->Draw(x, y);
 }

@@ -1,12 +1,10 @@
 #include "FullPower.h"
-FullPower::FullPower(float X, float Y)
+FullPower::FullPower()
 {
-	this->x = X;
-	this->y = Y;
-	SetAnimationSet(CAnimationSets::GetInstance()->Get(ID_LOAD_FULL_POWER));
+	Tex = CTextures::GetInstance()->Get(TexID_BOARD);
+	Sprite = new CSprite(1, 12, 33, 27, 40, Tex);
 }
-void FullPower::Render()
+void FullPower::Draw(float x, float y)
 {
-	int ani = FULL_POWER_ANI;
-	animation_set->at(ani)->Render(x, y);
+	Sprite->Draw(x, y);
 }

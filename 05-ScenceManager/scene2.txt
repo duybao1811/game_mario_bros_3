@@ -918,7 +918,7 @@ Resources/Tilemap/world1-1.txt
 2	512	400	3	1	-1
 2	864	383	3	1	-1
 2	816	383	3	1	-1
-
+2	928	380	3	2	-1
 ########################## BRICK ####################
 # --- platform (hint: I created the list using Excel!) ----
 1	0	417	2	624	16
@@ -1006,6 +1006,6 @@ Resources/Tilemap/world1-1.txt
 9	240	304	18	2
 #GOLD BRick
 11	80	368	20	1
-11	96	368	20	2
+11	96	368	20	3
 #FLOOR
 #12	80	385	50
