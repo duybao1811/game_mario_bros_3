@@ -27,6 +27,7 @@
 #include "P_Switch.h"
 #include "Floor.h"
 #include "WorldMap.h"
+#include "Effect_1_UP.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -200,7 +201,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		int model = atof(tokens[4].c_str());
 		int d = atof(tokens[5].c_str());
-		obj = new CKoopas(player,model,d); 
+		obj = new CKoopas(x,y,player,model,d); 
 		break;
 	}
 	case OBJECT_TYPE_PORTAL:
@@ -387,6 +388,7 @@ void CPlayScene::CheckCollistionMarioWithItem()
 				{
 					player->SetLive(player->GetLive() + 1);
 					ListItem[i]->SetFinish(true);
+					ListEffect.push_back(new Effect_1_UP(player->GetX(), player->GetY()));
 					break;
 				}
 				}
@@ -478,7 +480,7 @@ void CPlayScene::GoldBrickDestroy(int model, float x, float y)
 void CPlayScene::CheckCollision()
 {
 	CheckCollistionMarioWithItem();
-	//CheckCollisionMarioWithEnemy();
+	CheckCollisionMarioWithEnemy();
 }
 void CPlayScene::Update(DWORD dt)
 {
@@ -496,22 +498,21 @@ void CPlayScene::Update(DWORD dt)
 		{
 			objects[i]->Update(dt, &coObjects);
 			objects[i]->isInCam = true;
-			objects[i]->isDeleted = false;
 		}
 
-		if (objects[i]->GetObjType() == ENEMY && !objects[i]->isKilled)
+		if (objects[i]->GetObjType() == ENEMY)
 		{
 
 #pragma region cơ chế hồi sinh của enemy khi ra khỏi cam không phải bị 
 
 
-			if (objects[i]->GetType() == GOOMBA)
+			if (objects[i]->GetType() == GOOMBA || objects[i]->GetType() == KOOPAS)
 			{
 				if (player->GetX() > objects[i]->GetStartX() + SCREEN_WIDTH / 2 || player->GetX() + SCREEN_WIDTH / 2 < objects[i]->GetStartX())
 				{
 					if (objects[i]->isFinish)
 					{
-						if (objects[i]->GetStartX() == 512 || objects[i]->GetStartX() == 208 || objects[i]->GetStartX() == 816 || objects[i]->GetStartX() == 864 || objects[i]->GetStartX()==928)
+						if (objects[i]->GetStartX() == 512 || objects[i]->GetStartX() == 208 || objects[i]->GetStartX() == 816 || objects[i]->GetStartX() == 864 || objects[i]->GetStartX()==928 || objects[i]->GetStartX()==560 || objects[i]->GetStartX() == 1456||objects[i]->GetStartX() == 1312|| objects[i]->GetStartX() == 1360|| objects[i]->GetStartX() == 1406)
 						{
 							objects[i]->SetFinish(false);
 							objects[i]->SetPosition(objects[i]->GetStartX(), objects[i]->GetStartY());
@@ -617,16 +618,15 @@ void CPlayScene::Update(DWORD dt)
 		}
 	}
 
-
-
 	CheckCollision();
 
 	gametime->Update(dt);
+
 	if (CGame::GetInstance()->GetScene() ==1)
 	{
 		CGame::GetInstance()->SetCamPos(0, 0);
+		player->SetState(MARIO_STATE_WORLDMAP);
 	}
-	
 	else
 	{
 		// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
@@ -664,30 +664,28 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+
 	map->DrawMap();
-	for (int i = 0; i < objects.size(); i++)
-		objects[i]->Render();
-	for (int i = 0; i < ListEffect.size(); i++)
-	{
-		ListEffect[i]->Render();
-	}
-	for (int i = 0; i < ListItem.size(); i++)
-	{
-		ListItem[i]->Render();
-	}
-	for (int i = 0; i < ListEnemy.size(); i++)
-	{
-		ListEnemy[i]->Render();
-	}
-	for (int i = 0; i < listFireEnemy.size(); i++)
-	{
-		listFireEnemy[i]->Render();
-	}
-	if (CGame::GetInstance()->GetScene() != 1)
-	{
-		board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
-		board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
-	}
+
+		for (int i = 0; i < objects.size(); i++)
+			objects[i]->Render();
+		for (int i = 0; i < ListEffect.size(); i++)
+		{
+			ListEffect[i]->Render();
+		}
+		for (int i = 0; i < ListItem.size(); i++)
+		{
+			ListItem[i]->Render();
+		}
+		for (int i = 0; i < listFireEnemy.size(); i++)
+		{
+			listFireEnemy[i]->Render();
+		}
+		if (CGame::GetInstance()->GetScene() != 1)
+		{
+			board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
+			board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
+		}
 }
 
 /*
@@ -700,41 +698,45 @@ void CPlayScene::Unload()
 
 	objects.clear();
 	player = NULL;
-
+	
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
-/*void CPlayScene::CheckCollisionMarioWithEnemy()
+void CPlayScene::CheckCollisionMarioWithEnemy()
 {
-	if (GetTickCount64() - mario->untouchable_start > MARIO_UNTOUCHABLE_TIME)
+	if (GetTickCount64() - player->untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
-		mario->untouchable_start = 0;
-		mario->untouchable = false;
+		player->untouchable_start = 0;
+		player->untouchable = false;
 	}
-	if (mario->untouchable == false)
+	if (player->untouchable == false)
 	{
-		for (UINT i = 0; i < ListEnemy.size(); i++)
+		for (UINT i = 0; i < objects.size(); i++)
 		{
-			CGameObject* gameobj = dynamic_cast<CGameObject*>(ListEnemy[i]);
-			if (gameobj->GetHealth() > 0)
+			if (objects[i]->GetObjType() == ENEMY)
 			{
-				LPCOLLISIONEVENT e = mario->SweptAABBEx(gameobj);
-				bool isCollision = false;
-				if (e->nx != 0)
+				CGameObject* gameobj = dynamic_cast<CGameObject*>(objects[i]);
+				if (gameobj->GetHealth() > 0)
 				{
-					mario->SetHurt(e);
-					isCollision = true;
-				}
-				if (isCollision == false && mario->checkAABB(gameobj) == true)
-				{
-					//LPCOLLISIONEVENT e = new CollisionEvent()
-					mario->SetHurt(e);
-					isCollision = true;
+					LPCOLLISIONEVENT e = player->SweptAABBEx(gameobj);
+					bool isCollision = false;
+					if (e->nx != 0)
+					{
+						player->SetHurt(e);
+						player->SetLevel(player->level-=1);
+						isCollision = true;
+					}
+					if (isCollision == false && player->checkAABB(gameobj) == true)
+					{
+						LPCOLLISIONEVENT e = new CCollisionEvent(1.0f, player->GetDirection(), 0.0f, 0.1f, 0.1f, NULL);
+						player->SetHurt(e);
+						isCollision = true;
+					}
 				}
 			}
 		}
 	}
-}*/
+}
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
@@ -838,6 +840,17 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 		if (mario->isOnGround)
 			mario->Idle();
 	}
+	if (CGame::GetInstance()->GetScene() == 1)
+	{
+		if (game->IsKeyDown(DIK_UP))
+		{
+			mario->vy = -0.05f;
+		}
+		if (game->IsKeyDown(DIK_DOWN))
+		{
+			mario->vy = 0.05f;
+		}
+	}
 
 }
 void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
@@ -860,8 +873,12 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 			float sx, sy;
 			mario->GetPosition(sx, sy);
 			mario->SetState(MARIO_STATE_IDLE);
-			break;
 		}
+		if (CGame::GetInstance()->GetScene() == 1)
+		{
+			mario->vy = 0;
+		}
+		break;
 	case DIK_S:
 
 		if (mario->level == MARIO_LEVEL_RACCOON) {
@@ -877,11 +894,23 @@ void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 					if (mario->isFlyup)
 					{
 						mario->Fly();
-						//mario->isFallFly=true;
 						break;
 					}
 				}
 			}
+		}
+		break;
+	case DIK_UP:
+		if (CGame::GetInstance()->GetScene() == 1)
+		{
+			mario->vy = 0;
+		}
+		break;
+	case DIK_RIGHT:
+	case DIK_LEFT:
+		if (CGame::GetInstance()->GetScene() == 1)
+		{
+			mario->vx = 0;
 		}
 		break;
 	}

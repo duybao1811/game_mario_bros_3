@@ -69,7 +69,7 @@ public:
 	bool isUpside;
 	bool isFlying;
 	bool isOnGround;
-	CKoopas(CMario* mario,int Model,int d);
+	CKoopas(float X,float Y,CMario* mario,int Model,int d);
 	void SetPositionFollowMario();
 	virtual void SetState(int state);
 };

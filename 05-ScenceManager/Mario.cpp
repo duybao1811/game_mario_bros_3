@@ -40,7 +40,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	now = GetTickCount();
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
-	vy += MARIO_GRAVITY * dt;
+	if (CGame::GetInstance()->GetScene() != 1)
+	{
+		vy += MARIO_GRAVITY * dt;
+	}
 
 	if (isJumping)
 	{
@@ -80,7 +83,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 #pragma region Set thời gian
 	if (level == MARIO_LEVEL_RACCOON && GetTickCount64() - TimeAttack > 500 && isAttack)
 	{
-		tail->SetFinish(true);
+	//	tail->SetFinish(true);
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
 		TimeAttack = now;
@@ -226,9 +229,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							isKick = true;
 							TimeKick = GetTickCount64();
-							koopas->isKicked = true;
 							koopas->SetDirection(this->nx);
-							koopas->SetHealth(1);
+							koopas->SubHealth(1);
 						}
 					}
 				}
@@ -350,7 +352,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			ListEffect.erase(ListEffect.begin() + i);
 		}
 	}
-	tail->Update(dt,coObjects);
+	//tail->Update(dt,coObjects);
 #pragma endregion
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -417,6 +419,8 @@ void CMario::Render()
 				else if (nx < 0)
 					ani = MARIO_ANI_SMALL_JUMP_LEFT;
 			}
+			if (state == MARIO_STATE_WORLDMAP)
+				ani = MARIO_SMALL_INTRO;
 		/*	if (state = MARIO_STATE_FALLING)
 			{
 				if (nx > 0)
@@ -436,7 +440,6 @@ void CMario::Render()
 	//       MARIO BIG
 		else if (level == MARIO_LEVEL_BIG)
 		{
-	
 			if (nx > 0)
 				ani = MARIO_ANI_BIG_IDLE_RIGHT;
 			else
@@ -543,6 +546,8 @@ void CMario::Render()
 				else if (nx < 0)
 					ani = MARIO_ANI_BIG_KICK_LEFT;
 			}
+			if (state == MARIO_STATE_WORLDMAP)
+				ani = MARIO_BIG_INTRO;
 		}
 
 	//MARIO RACCOON
@@ -680,6 +685,8 @@ void CMario::Render()
 				else if (nx < 0)
 					ani = MARIO_ANI_FALL_SLOW_LEFT;
 			}
+			if (state == MARIO_STATE_WORLDMAP)
+				ani = MARIO_RACCOON_INTRO;
 
 		}
 
@@ -819,7 +826,7 @@ void CMario::Render()
 			ListEffect[i]->Render();
 	}
 
-	tail->Render();
+	//tail->Render();
 
 	//RenderBoundingBox();
 }
@@ -1001,15 +1008,15 @@ void CMario::TailAttack()
 		case 4:
 			if (nx < 0)
 			{
-				tail->SetPosition(x - 2, y + 18);
-				tail->SetFinish(false);
-				tail->SetDirection(nx);
+			//	tail->SetPosition(x - 2, y + 18);
+			//	tail->SetFinish(false);
+			//	tail->SetDirection(nx);
 			}
 			if (nx > 0)
 			{
-				tail->SetPosition(x + 15, y + 18);
-				tail->SetFinish(false);
-				tail->SetDirection(nx);
+			//	tail->SetPosition(x + 15, y + 18);
+			//	tail->SetFinish(false);
+			//	tail->SetDirection(nx);
 			}
 			break;
 		}
@@ -1059,6 +1066,7 @@ void CMario::SetHurt(LPCOLLISIONEVENT e)
 	if (e->nx == 0 && e->ny == 0)  //không có va chạm
 		return;
 	StartUntouchable();
+	
 	SubHealth(1);
 }
 void CMario::SetLive(int l)

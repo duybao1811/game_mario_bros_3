@@ -2,8 +2,8 @@
 #include "Effect.h"
 #define EFFECT_1_UP_ANI 0
 #define ID_LOAD_EFFECT_1_UP 23
-#define EEFECT_1_UP_MIN_Y 65
-#define EEFECT_1_UP_SPEED_Y 0.005f
+#define EEFECT_1_UP_MIN_Y 30
+#define EEFECT_1_UP_SPEED_Y 0.05f
 class Effect_1_UP : public Effect
 {
 private:

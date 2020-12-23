@@ -25,6 +25,10 @@ void CMushRoom::GetBoundingBox(float& left, float& top, float& right, float& bot
 void CMushRoom::Update(DWORD dt, vector<LPGAMEOBJECT>* listObject)
 {
 	CGameObject::Update(dt);
+	if (checkObjInCamera(this)==false)
+	{
+		SetFinish(true);
+	}
 	if (y <= minY)
 	{
 		isWalking =true;

@@ -33,6 +33,7 @@
 #define MARIO_STATE_FLY_UP          450
 #define MARIO_STATE_FALLING         650
 #define MARIO_RACCOON_STATE_FALL_SLOW 550
+#define MARIO_STATE_WORLDMAP        850
 #define MARIO_STATE_KICK            1
 #define MARIO_STATE_FALL_FLY         4
 #define MARIO_ANI_BIG_IDLE_RIGHT		0    //400
@@ -150,6 +151,9 @@
 #define MARIO_FIRE_ANI_HOLD_IDLE_LEFT 112
 #define MARIO_FIRE_ANI_HOLD_RUN_MAX_RIGHT 113
 #define MARIO_FIRE_ANI_HOLD_RUN_MAX_LEFT 114
+#define MARIO_SMALL_INTRO 115
+#define MARIO_BIG_INTRO 116
+#define MARIO_RACCOON_INTRO 117
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 #define MARIO_LEVEL_RACCOON 3
@@ -181,9 +185,10 @@ class CMario : public CGameObject
 	int score;
 	int Live;
 	CCoin* coin;
-	Tail* tail = new Tail();
+	
 	int ani = -1;
 public:
+//	Tail* tail = new Tail();
 	DWORD TimeFly;
 	DWORD now;
 	int level;

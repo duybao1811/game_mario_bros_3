@@ -26,16 +26,11 @@ private:
 protected: 
 	CMario *player;					// A play scene has to have player, right? 
 	Map* map;
-	Camera* camera;
 	CMushRoom* mushroom;
 	Board* board;
-	CQuestionBrick* questionbrick;
-	vector<CGameObject*> listObj;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> ListEffect;
 	vector<LPGAMEOBJECT> ListPointEffect;
-	vector<LPGAMEOBJECT> ListItems;
-	vector<LPGAMEOBJECT > ListEnemy;
 	vector<FirePlant*> listFireEnemy;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -62,7 +57,7 @@ public:
 	void CheckCollistionMarioWithItem();
 	void QuestionBrickDropItem(int model,float x,float y);
 	void GoldBrickDestroy(int model, float x, float y);
-//	void CheckCollisionMarioWithEnemy();
+	void CheckCollisionMarioWithEnemy();
 };
 
 class CPlayScenceKeyHandler : public CScenceKeyHandler

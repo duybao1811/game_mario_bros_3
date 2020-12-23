@@ -1,6 +1,6 @@
 ﻿#include "Koopas.h"
 #include "Goomba.h"
-CKoopas::CKoopas(CMario* mario,int Model, int d)
+CKoopas::CKoopas(float X, float Y, CMario* mario,int Model, int d)
 {
 	player = mario;
 	model = Model;
@@ -9,16 +9,21 @@ CKoopas::CKoopas(CMario* mario,int Model, int d)
 	direction = d;
 	TimeDefend = 0;
 	TimeComeBack = 0;
+	this->startX = X;
+	this->startY = Y;
 	switch (Model)
 	{
 	case KOOPAS_BASE:
 		SetHealth(3);
+		this->fullhealth = 3;
 		break;
 	case KOOPAS_RED:
 		SetHealth(3);
+		this->fullhealth = 3;
 		break;
 	case KOOPAS_FLY:
 		SetHealth(4);
+		this->fullhealth = 4;
 		break;
 	}
 }
@@ -37,7 +42,12 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 		bottom = y + KOOPAS_BBOX_HEIGHT;
 
 	if (isFinish)
-		left = top = right = bottom = 0;
+	{
+		left = 0;
+		top = 0;
+		right = 0;
+		bottom = 0;
+	}
 }
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
@@ -45,15 +55,8 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	CGameObject::Update(dt, coObjects);
 	vy += KOOPAS_GRAVITY * dt;
 	now = GetTickCount();
-	/*
-	if (Health == 0)
-	{
-		SetHealth(2);
-	}
 
 
-	//bị lật ngược thì nằm im
-*/
 	if (Health == 3)   //Koopas
 	{
 		SetState(KOOPAS_STATE_WALKING);
@@ -66,10 +69,6 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (Health == 1)
 	{
 		SetState(KOOPAS_STATE_BALL);
-	}
-	if (!isHeld && isKicked)
-	{
-		SetHealth(1);
 	}
 	if (isHeld && player->isHoldTurtle == true)
 	{
@@ -199,12 +198,12 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					CQuestionBrick* questionbrick = dynamic_cast<CQuestionBrick*>(e->obj);
 					if (e->nx != 0)
 					{
+						direction *= -1;
+						vx *= -1;
 						if (questionbrick->GetState() != QB_STATE_EMPTY)
 						{
 							questionbrick->SetState(QB_STATE_UNBOX);
 							questionbrick->SubHealth(1);
-							direction *= -1;
-							vx *= -1;
 						}
 					}
 				}
@@ -414,10 +413,7 @@ void CKoopas::SetState(int state)
 		vx =  direction*KOOPAS_BALL_SPEED;
 		TimeDefend = 0;
 		break;
-	case ENEMY_ATTACKED:	
-		isAttacked = true;
-		vy = -KOOPAS_SPEED_Y_AFTER_ATTACKED;
-		break;
+
 	case KOOPAS_STATE_FLY:
 		vx = direction * KOOPAS_FLY_SPEED_X;
 		isOnGround = false;
