@@ -395,49 +395,7 @@ void CPlayScene::CheckCollistionMarioWithItem()
 			}
 		}
 	}
-}
-/*void CPlayScene::MarioTrampleEnemy()
-{
-	for (UINT i = 0; i < objects.size(); i++)
-	{
-			CGameObject* enemy = objects[i];
-			if (enemy->GetHealth() > 0)
-			{
-				if (player->CheckTrampleEnemy(enemy)==true)
-				{
-					switch (enemy->GetType())
-					{
-					case Type::GOOMBA:
-					{
-						player->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
-						enemy->SubHealth(1);
-						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
-						player->SetScore(player->GetScore() + 100);
-						break;
-					}
-					case Type::KOOPAS:
-					{
-						ListEffect.push_back(new PointEffect(enemy->GetX(), enemy->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
-						player->SetScore(player->GetScore() + 100);
-					if (enemy->GetState() == KOOPAS_STATE_WALKING)
-					{
-						enemy->SubHealth(1);
-						player->vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
-					}
-					if (enemy->GetState() == KOOPAS_STATE_DEFEND)
-					{
-						enemy->SetDirection(player->nx);
-						enemy->SubHealth(1);
-						player->y+
-					}
-					if (enemy->GetState() == KOOPAS_STATE_BALL)
-					{
-						//koopas->SetState(KOOPAS_STATE_DEFEND);
-						enemy->SetHealth(2);
-					}
-					break;
-					}*/
-					
+}			
 void CPlayScene::QuestionBrickDropItem(int model, float x,float y)
 {
 	switch (model)
@@ -480,7 +438,7 @@ void CPlayScene::GoldBrickDestroy(int model, float x, float y)
 void CPlayScene::CheckCollision()
 {
 	CheckCollistionMarioWithItem();
-	CheckCollisionMarioWithEnemy();
+	//CheckCollisionMarioWithEnemy();
 }
 void CPlayScene::Update(DWORD dt)
 {
@@ -500,10 +458,8 @@ void CPlayScene::Update(DWORD dt)
 			objects[i]->isInCam = true;
 		}
 
-		if (objects[i]->GetObjType() == ENEMY)
-		{
 
-#pragma region cơ chế hồi sinh của enemy khi ra khỏi cam không phải bị 
+#pragma region cơ chế hồi sinh của enemy khi ra khỏi cam không phải bị giết 
 
 
 			if (objects[i]->GetType() == GOOMBA || objects[i]->GetType() == KOOPAS)
@@ -517,7 +473,6 @@ void CPlayScene::Update(DWORD dt)
 							objects[i]->SetFinish(false);
 							objects[i]->SetPosition(objects[i]->GetStartX(), objects[i]->GetStartY());
 							objects[i]->SetDirection(player->nx);
-							objects[i]->isInCam = true;
 							objects[i]->SetHealth(objects[i]->fullhealth);
 						}
 					}
@@ -527,11 +482,9 @@ void CPlayScene::Update(DWORD dt)
 					if (objects[i]->checkObjInCamera(objects[i]) == false && objects[i]->isInCam == true)
 					{
 						objects[i]->SetFinish(true);
-						objects[i]->isInCam = true;
 					}
 				}
 			}
-		}
 #pragma endregion		
 		if (e->GetType() == QUESTION_BRICK)
 		{
@@ -565,7 +518,7 @@ void CPlayScene::Update(DWORD dt)
 						{
 							if (goldbrick->checkObjInCamera(objects[i]))
 							{
-								ListItem.push_back(new CMushRoom(goldbrick->x, goldbrick->y + 10, MUSHROOM_RED));
+								goldbrick->Transform();
 							}
 						//	objects.push_back(new CCoin(goldbrick->GetX(), goldbrick->GetY()));
 						}
@@ -617,11 +570,25 @@ void CPlayScene::Update(DWORD dt)
 			listFireEnemy.erase(listFireEnemy.begin() + i);
 		}
 	}
-
-	CheckCollision();
+	if (!player->GetIsDeadth())
+	{
+		CheckCollision();
+	}
 
 	gametime->Update(dt);
-
+	if (gametime->GetTime() >= GAME_TIME_LIMIT || player->GetHealth() <= 0)
+	{
+		if (player->GetIsDeadth())
+		{
+			return;
+		}
+		else
+		{
+			isGameOver = true;
+			player->SetIsDeadth(true);
+			player->SetState(MARIO_STATE_DIE);
+		}
+	}
 	if (CGame::GetInstance()->GetScene() ==1)
 	{
 		CGame::GetInstance()->SetCamPos(0, 0);
@@ -667,25 +634,25 @@ void CPlayScene::Render()
 
 	map->DrawMap();
 
-		for (int i = 0; i < objects.size(); i++)
-			objects[i]->Render();
-		for (int i = 0; i < ListEffect.size(); i++)
-		{
-			ListEffect[i]->Render();
-		}
-		for (int i = 0; i < ListItem.size(); i++)
-		{
-			ListItem[i]->Render();
-		}
-		for (int i = 0; i < listFireEnemy.size(); i++)
-		{
-			listFireEnemy[i]->Render();
-		}
-		if (CGame::GetInstance()->GetScene() != 1)
-		{
-			board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
-			board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
-		}
+	for (int i = 0; i < objects.size(); i++)
+		objects[i]->Render();
+	for (int i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->Render();
+	}
+	for (int i = 0; i < ListItem.size(); i++)
+	{
+		ListItem[i]->Render();
+	}
+	for (int i = 0; i < listFireEnemy.size(); i++)
+	{
+		listFireEnemy[i]->Render();
+	}
+	if (CGame::GetInstance()->GetScene() != 1)
+	{
+		board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
+		board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
+	}
 }
 
 /*
@@ -693,12 +660,26 @@ void CPlayScene::Render()
 */
 void CPlayScene::Unload()
 {
-	for (int i = 0; i < objects.size(); i++)
+	for (UINT i = 0; i < objects.size(); i++)
+	{
 		delete objects[i];
-
-	objects.clear();
-	player = NULL;
-	
+	}
+	for (UINT i = 0; i < ListItem.size(); i++)
+	{
+		delete ListItem[i];
+	}
+	for (UINT i = 0; i < ListEffect.size(); i++)
+	{
+		delete ListEffect[i];
+	}
+	for (UINT i = 0; i < ListPointEffect.size(); i++)
+	{
+		delete ListPointEffect[i];
+	}
+	for (UINT i = 0; i < listFireEnemy.size(); i++)
+	{
+		delete listFireEnemy[i];
+	}
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
@@ -720,15 +701,27 @@ void CPlayScene::CheckCollisionMarioWithEnemy()
 				{
 					LPCOLLISIONEVENT e = player->SweptAABBEx(gameobj);
 					bool isCollision = false;
-					if (e->nx != 0)
+					if (e->nx != 0 || e->ny >0)
 					{
-						player->SetHurt(e);
-						player->SetLevel(player->level-=1);
-						isCollision = true;
+						if (!(objects[i]->GetType()==KOOPAS && objects[i]->GetState()==KOOPAS_STATE_DEFEND))
+						{
+							player->SetHurt(e);
+							player->SetLevel(player->level -= 1);
+							isCollision = true;
+						}
+					}
+					if (e->ny < 0)
+					{
+						if ((objects[i]->GetType() == PIRANHA_GREEN && objects[i]->GetState() != PLANT_STATE_HIDDING || objects[i]->GetType() == FIRE_PIRANHA && objects[i]->GetState() != PLANT_STATE_HIDDING))
+						{
+							player->SetHurt(e);
+							player->SetLevel(player->level -= 1);
+							isCollision = true;
+						}
 					}
 					if (isCollision == false && player->checkAABB(gameobj) == true)
 					{
-						LPCOLLISIONEVENT e = new CCollisionEvent(1.0f, player->GetDirection(), 0.0f, 0.1f, 0.1f, NULL);
+						//LPCOLLISIONEVENT e = new CCollisionEvent(1.0f, player->GetDirection(), 0.0f, 0.1f, 0.1f, NULL);
 						player->SetHurt(e);
 						isCollision = true;
 					}
@@ -838,7 +831,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	else
 	{
 		if (mario->isOnGround)
-			mario->Idle();
+			mario->SetState(MARIO_STATE_IDLE);
 	}
 	if (CGame::GetInstance()->GetScene() == 1)
 	{

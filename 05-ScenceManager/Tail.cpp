@@ -1,7 +1,6 @@
 #include "Tail.h"
 Tail::Tail()
 {
-
 }
 void Tail::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
@@ -16,7 +15,7 @@ void Tail::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 }
 void Tail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt); 
+	CGameObject::Update(dt, coObjects);
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
 		LPGAMEOBJECT e = coObjects->at(i);
@@ -31,21 +30,22 @@ void Tail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 			}
 		}
-		if (e->GetObjType() == ENEMY )
+		if (e->GetObjType() == ENEMY)
 		{
 			if (checkAABB(e))
 			{
 				if (e->GetType() == FIRE_PIRANHA || e->GetType() == PIRANHA_GREEN)
 				{
 					e->SubHealth(1);
-					ListEffect.push_back(new EffectDisappear(e->GetX(), e->GetY()+FPLANT_RED_BBOX_HEIGHT/2));
+					ListEffect.push_back(new EffectDisappear(e->GetX(), e->GetY() + FPLANT_RED_BBOX_HEIGHT / 2));
 					ListEffect.push_back(new TailHitEffect(x - TAIL_BBOX_WIDTH, y - PULL_UP_EFFECT_TAIL_HIT));
 				}
 				else
 				{
-					e->SetState(ENEMY_ATTACKED);
+
 					if (direction > 0)
 					{
+						e->SetState(ENEMY_ATTACKED);
 						e->SetDirection(direction);
 						ListEffect.push_back(new TailHitEffect(x + TAIL_BBOX_WIDTH, y - PULL_UP_EFFECT_TAIL_HIT));
 					}
@@ -85,6 +85,8 @@ void Tail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void Tail::Render()
 {
 	RenderBoundingBox();
+	if(isFinish)
+		return;
 	for (UINT i = 0; i < ListEffect.size(); i++)
 	{
 		ListEffect[i]->Render();

@@ -104,8 +104,6 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	if (isAttacked)
 	{
-		state = ENEMY_ATTACKED;
-		vx = direction * 0.05f;
 		TimeDefend = 0;
 	}
 	if (model == KOOPAS_FLY && Health == 4 && isOnGround)
@@ -144,7 +142,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			isOnGround = false;
 		}
 
-		if (state == ENEMY_ATTACKED)
+		if (isAttacked)
 		{
 			if (ny != 0)
 			{
@@ -301,7 +299,7 @@ void CKoopas::Render()
 			else if (direction < 0)
 				ani = KOOPAS_BASE_ANI_WALKING_LEFT;
 		}
-		if (state == ENEMY_ATTACKED)
+		if (isAttacked)
 		{
 			ani = KOOPAS_BASE_ANI_ATTACKED;
 		}
@@ -332,7 +330,7 @@ void CKoopas::Render()
 			else if (direction < 0)
 				ani = KOOPAS_RED_ANI_WALKING_LEFT;
 		}
-		if (state == ENEMY_ATTACKED)
+		if (isAttacked)
 		{
 			ani = KOOPAS_RED_ANI_ATTACKED;
 		}

@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <iomanip>
 using namespace std;
-#define GAME_TIME_LIMIT  300 // thoi gian dem nguoc khi ket thuc 1 man 
+#define GAME_TIME_LIMIT 300 // thoi gian dem nguoc khi ket thuc 1 man 
 #define SCREEN_WIDTH 278
 #define SCREEN_HEIGHT 280
 #define TexID_BOARD 25
@@ -71,6 +71,7 @@ enum Range
 
 #define FPLANT_BBOX_WIDTH 16
 #define FPLANT_RED_BBOX_HEIGHT 32
+#define FPLANT_GREEN_BBOX_HEIGHT 24
 #define	FPLANT_ANI_LEFT_TOP 0
 #define FPLANT_ANI_LEFT_BOTTOM 1
 #define FPLANT_ANI_RIGHT_TOP 2
@@ -88,7 +89,7 @@ enum Range
 #define TIME_ATTACK_DELAY 1000
 #define TIME_ATTACK 1500
 #define DISTANCE_FROM_MARIO_TO_PLANT 75
-#define DISTANCE_SAFE_ZONE 24
+#define DISTANCE_SAFE_ZONE 25
 
 
 //############################# MARIO #####################

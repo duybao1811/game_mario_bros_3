@@ -23,6 +23,7 @@ private:
 	bool isGameOver;
 	GameTime* gametime;
 	int CountEnemy;
+	Font* Text = new Font();
 protected: 
 	CMario *player;					// A play scene has to have player, right? 
 	Map* map;

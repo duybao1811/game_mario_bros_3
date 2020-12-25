@@ -16,8 +16,6 @@
 50	textures\effect.png	176	224	248
 55	textures\misc-4.png	255	216	154
 65	textures\worldmap.png	255	255	255
-[TILEMAP]
-Resources\Tilemap\world1-1.txt
 # id	left	top	right	bottom	texture_id
 [SPRITES]
 # BIG MARIO 
@@ -904,4 +902,7 @@ Resources\Tilemap\world1-1.txt
 # MARIO
 #0	0		1
 0	36	66	1
+#50	68	40	0	84	56	2
 50	68	40	0	84	56	2
+[TILEMAP]
+Resources\Tilemap\world1-1.txt

@@ -64,6 +64,7 @@ public:
 	float height;
 	bool isInCam;
 	bool isKilled;
+	bool isAttacked;
 	float startX, startY;
 	DWORD dt; 
 	int model;

@@ -15,8 +15,6 @@
 45	textures\Font1.png	255	0	255
 50	textures\effect.png	176	224	248
 55	textures\misc-4.png	255	216	154
-[TILEMAP]
-Resources/Tilemap/world1-1.txt
 # id	left	top	right	bottom	texture_id
 [SPRITES]
 # BIG MARIO 
@@ -912,7 +910,7 @@ Resources/Tilemap/world1-1.txt
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3=KOOPAS, 4=COIN, 5:Piranha fire plant 6:piranha plant 7:pipe
 # MARIO
 0	80	385	1
-#0	560	344	1
+#0	2616	384	1
 
 ######################KOOPAS################ 3 ani_set_id 6 ## model 1: base 2: red 3:base fly
 
@@ -980,16 +978,14 @@ Resources/Tilemap/world1-1.txt
 
 #Fire Plant Red Model 1: Red 
 5	360	368	7	1
-
+5	1864	368	7	2
+# PIRANHA GREEN 
+8	1800	384	13	1
 ############## PIPE #########
 7	352	368	12	2
 7	1856	368	12	2
 7	1792	384	12	1
 
-
-
-# PIRANHA GREEN 
-6	1784	344	13	1
 #BLOCK COLOR
 10	240	368	2	48	48
 10	272	336	2	48	80
@@ -1017,8 +1013,10 @@ Resources/Tilemap/world1-1.txt
 9	240	304	18	2
 #GOLD BRick
 11	80	368	20	1
-11	96	368	20	3
+11	96	368	20	2
 #FLOOR
 #12	80	385	50
 #PORTAL
 #50	96	385	0	112	401	1
+[TILEMAP]
+Resources/Tilemap/world1-1.txt

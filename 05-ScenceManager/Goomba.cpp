@@ -14,7 +14,7 @@ CGoomba::CGoomba(float X,float Y,int Model, int d)
 	TimeWalk = 0;
 	TimeDisappear = 0;
 	JumpCount = 0;
-	SetAnimationSet(CAnimationSets::GetInstance()->Get(3));
+	SetState(GOOMBA_STATE_WALKING);
 	switch (Model)
 	{
 	case GOOMBA_BASE:
@@ -42,6 +42,10 @@ void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& botto
 			top = 0;
 			right = 0;
 			bottom = 0;
+		}
+		if (isAttacked)
+		{
+			left = top = right = bottom = 0;
 		}
 }
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
@@ -89,7 +93,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			isFinish = true;
 		}
 	}
-
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -161,7 +164,7 @@ void CGoomba::Render()
 			if (state == GOOMBA_STATE_DIE) {
 				ani = GOOMBA_ANI_DIE;
 			}
-			if (state == ENEMY_ATTACKED)
+			if (isAttacked)
 			{
 				ani = GOOMBA_ANI_ATTACKED;
 			}
@@ -213,28 +216,25 @@ void CGoomba::SetState(int state)
 	case GOOMBA_STATE_JUMP:
 	{	isOnGround = false;
 		vy = -GOOMBA_JUMP_SPEED_Y;
-		
 		break;
 	}
 	case GOOMBA_RED_PARA_STATE_JUMP_SLOW:
-		vy = -0.2f;
+		    vy = -0.2f;
 			vx = direction*GOOMBA_RED_WALKING_SPEED;
 			isOnAir = true;
-			
-			break;
-	case GOOMBA_RED_PARA_STATE_FALLING:
 			break;
 	case GOOMBA_RED_STATE_WALKING:
 	{
 		vx = direction * GOOMBA_RED_WALKING_SPEED;
+		isFinish = false;
 		break;
 	}
-	/*case ENEMY_ATTACKED:
-	{   
-		vx = direction * GOOMBA_ATTACKED_SPEED_X;
-		vy = -GOOMBA_ATTACKED_SPEED_Y;
+	case ENEMY_ATTACKED:
+	{
+		vx = -0.3f;
+		vy = -0.3f;
 		isAttacked = true;
 		break;
-	}*/
+	}
 	}
 }

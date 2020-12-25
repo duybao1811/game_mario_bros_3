@@ -185,10 +185,9 @@ class CMario : public CGameObject
 	int score;
 	int Live;
 	CCoin* coin;
-	
+	Tail* tail;
 	int ani = -1;
 public:
-//	Tail* tail = new Tail();
 	DWORD TimeFly;
 	DWORD now;
 	int level;
@@ -211,7 +210,6 @@ public:
 	bool isReadytoFly;
 	bool isHoldTurtle;
 	bool isOnAir;
-	bool isFullPower;
 public:
 	bool untouchable;
 	DWORD untouchable_start;
@@ -223,6 +221,7 @@ public:
 	void ResetSit();
 	vector<LPGAMEOBJECT> ListFire;
 	vector<LPGAMEOBJECT> ListEffect;
+	vector<LPGAMEOBJECT> ListTail;
 	CMario(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	virtual void Render();
@@ -233,7 +232,6 @@ public:
 	
 
 	void Decelerate();
-	void Idle();
 	void Sit();
 	void Fly();
 	void WalkRight();
@@ -250,8 +248,6 @@ public:
 	bool isCollisionWithItem(Item* objItem);
 	void ShootFire();
 	void TailAttack();
-	void GetMushRoomBig();
-	void GetLeaf();
 	void SetCoinCollect(int c);
 	int GetCoinCollect();
 	void SetScore(int s);

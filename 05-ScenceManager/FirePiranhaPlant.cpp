@@ -21,7 +21,7 @@ CFirePiranhaPlant::CFirePiranhaPlant(float X,float Y,int Model, vector<FirePlant
 		break;
 	case 2:
 		SetHealth(1);
-
+		minY=y-FPLANT_GREEN_BBOX_HEIGHT;
 		break;
 	}
 }
@@ -66,18 +66,6 @@ void CFirePiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		isFinish = true;
 	}
-
-	/*for (UINT i = 0; i < ListFireEnemy.size(); i++)
-	{
-		ListFireEnemy[i]->Update(dt, coObjects);
-	}
-	for (UINT i = 0; i < ListFireEnemy.size(); i++)
-	{
-		if (ListFireEnemy[i]->GetFinish() == true)
-		{
-			ListFireEnemy.erase(ListFireEnemy.begin() + i);
-		}
-	}*/
 }
 void CFirePiranhaPlant::Render()
 {
@@ -184,6 +172,7 @@ Range CFirePiranhaPlant::GetMarioRangeCurrent()
 		{
 			return LEFT_BOTTOM_SIDE_FAR;
 		}
+
 	}
 	if (mario->x > this->x && mario->y < this->y)
 	{
@@ -213,9 +202,19 @@ bool CFirePiranhaPlant::GetSafeZone()
 {
 	LPSCENE scence = CGame::GetInstance()->GetCurrentScene();
 	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
-	if (abs(mario->x - this->x) <= DISTANCE_SAFE_ZONE  )   // nếu khoảng cách từ mario đến plant trong vùng an toàn thì plant không grow up
+	if (mario->x < this->x)
 	{
-		return true;
+		if (this->x - mario->x <= DISTANCE_SAFE_ZONE)   // nếu khoảng cách từ mario đến plant trong vùng an toàn thì plant không grow up
+		{
+			return true;
+		}
+	}
+	if (mario->x > this->x)
+	{
+		if (mario->x - this->x <= DISTANCE_SAFE_ZONE)
+		{
+			return true;
+		}
 	}
 	return false;
 }

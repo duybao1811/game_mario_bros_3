@@ -25,6 +25,7 @@ public:
 	DWORD TimeHidding;
 	DWORD TimeGrowUp;
 	int model;
+	bool GetSafeZone();
 	CPiranhaPlant(float X, float Y, int Model);
 	virtual void SetState(int state);
 	int GetModel();

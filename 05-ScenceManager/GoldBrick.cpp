@@ -50,5 +50,6 @@ void GoldBrick::SetState(int state)
 }
 void GoldBrick::Transform()
 {
-	listObj.push_back(new CCoin(this->x, this->y));
+	//listObj.push_back(new CCoin(this->x, this->y));
+	isFinish = true;
 }

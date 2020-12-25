@@ -1,4 +1,4 @@
-#include "PiranhaPlant.h"
+﻿#include "PiranhaPlant.h"
 CPiranhaPlant::CPiranhaPlant(float X, float Y, int Model)
 {
 	this->x = X;
@@ -34,7 +34,7 @@ void CPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy = 0;
 		TimeHidding += dt;
 	}
-	if (TimeHidding > TIME_DELAY_GROW_UP)
+	if (GetSafeZone() == false && TimeHidding > TIME_DELAY_GROW_UP)
 	{
 		SetState(PLANT_STATE_GROW_UP);
 		TimeHidding = 0;
@@ -84,6 +84,26 @@ void CPiranhaPlant::GetBoundingBox(float& left, float& top, float& right, float&
 	top = y;
 	right = x + PLANT_BBOX_WIDTH;
 	bottom = y + PLANT_BBOX_HEIGHT;
+}
+bool CPiranhaPlant::GetSafeZone()
+{
+	LPSCENE scence = CGame::GetInstance()->GetCurrentScene();
+	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
+	if (mario->x < this->x)
+	{
+		if (this->x - mario->x <= DISTANCE_SAFE_ZONE)   // nếu khoảng cách từ mario đến plant trong vùng an toàn thì plant không grow up
+		{
+			return true;
+		}
+	}
+	if (mario->x > this->x)
+	{
+		if (mario->x - this->x <= DISTANCE_SAFE_ZONE)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 int CPiranhaPlant::GetModel()
 {

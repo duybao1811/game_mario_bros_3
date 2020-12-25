@@ -13,7 +13,6 @@ public:
 	bool isDie;
 	DWORD start_die;
 	bool isOnGround;
-	bool isAttacked;
 	CGoomba(float X,float Y,int Model, int d);
 	virtual void SetState(int state);
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

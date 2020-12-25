@@ -32,6 +32,7 @@ CMario::CMario(float x, float y) : CGameObject()
 	this->x = x;
 	this->y = y;
 	SetHealth(1);
+	tail = new Tail();
 	isKick = false;
 }
 
@@ -76,6 +77,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			state = MARIO_STATE_FALL_FLY;
 		}
 	}
+
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -83,7 +85,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 #pragma region Set thời gian
 	if (level == MARIO_LEVEL_RACCOON && GetTickCount64() - TimeAttack > 500 && isAttack)
 	{
-	//	tail->SetFinish(true);
+		tail->SetFinish(true);
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
 		TimeAttack = now;
@@ -316,12 +318,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					pswitch->SetPosition(pswitch->GetX(), pswitch->GetY()+PSWITCH_SMALLER);
 				}
 			}
-			else if (dynamic_cast<CPortal*>(e->obj))
+			else if (e->obj->GetType()==PORTAL)
 			{
 				CPortal* p = dynamic_cast<CPortal*>(e->obj);
 				CGame::GetInstance()->SwitchScene(p->GetSceneId());
 			}
-
 		}
 	}
 #pragma region Update Fire and Efecct
@@ -352,7 +353,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			ListEffect.erase(ListEffect.begin() + i);
 		}
 	}
-	//tail->Update(dt,coObjects);
+	tail->Update(dt, coObjects);
 #pragma endregion
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -825,9 +826,12 @@ void CMario::Render()
 	{
 			ListEffect[i]->Render();
 	}
-
-	//tail->Render();
-
+	for (UINT i = 0; i < ListTail.size(); i++)
+	{
+		ListTail[i]->Render();
+	}
+	
+	tail->Render();
 	//RenderBoundingBox();
 }
 
@@ -841,6 +845,7 @@ void CMario::SetState(int state)
 		Decelerate();
 		break;
 	case MARIO_STATE_DIE:
+		vx = 0;
 		vy = -MARIO_DIE_DEFLECT_SPEED;
 		break;
 	case MARIO_STATE_WALKING_RIGHT:
@@ -868,7 +873,7 @@ break;
 		{
 			this->state = MARIO_STATE_RUN_MAXSPEED;
 			vx = -MARIO_RUNNING_MAXSPEED;
-			isFullPower = true;
+
 		}
 		nx = -1;
 		break;
@@ -880,7 +885,6 @@ break;
 		{
 			this->state = MARIO_STATE_RUN_MAXSPEED;
 			vx = MARIO_RUNNING_MAXSPEED;
-			isFullPower = true;
 		}
 		nx = 1;
 		break;
@@ -942,10 +946,6 @@ void CMario::WalkLeft()
 	}
 	vx -= MARIO_WALKING_SPEED * dt;
 }
-void CMario::Idle()
-{
-	SetState(MARIO_STATE_IDLE);
-}
 void CMario::Sit()
 {
 	SetState(MARIO_STATE_SIT);
@@ -1004,25 +1004,25 @@ void CMario::TailAttack()
 		LPANIMATION current_ani = animation_set->at(ani);
 		switch (current_ani->GetCurrentFrame())
 		{
+		case 2:
 		case 3:
 		case 4:
 			if (nx < 0)
 			{
-			//	tail->SetPosition(x - 2, y + 18);
-			//	tail->SetFinish(false);
-			//	tail->SetDirection(nx);
+				tail->SetPosition(x - 2, y + 18);
+				tail->SetFinish(false);
+				tail->SetDirection(nx);
 			}
 			if (nx > 0)
 			{
-			//	tail->SetPosition(x + 15, y + 18);
-			//	tail->SetFinish(false);
-			//	tail->SetDirection(nx);
+				tail->SetPosition(x + 15, y + 18);
+				tail->SetFinish(false);
+				tail->SetDirection(nx);
 			}
 			break;
 		}
+		
 	}
-
-
 }
 void CMario::ResetSit()
 {
@@ -1066,7 +1066,7 @@ void CMario::SetHurt(LPCOLLISIONEVENT e)
 	if (e->nx == 0 && e->ny == 0)  //không có va chạm
 		return;
 	StartUntouchable();
-	
+
 	SubHealth(1);
 }
 void CMario::SetLive(int l)
@@ -1100,25 +1100,6 @@ bool CMario::GetIsDeadth()
 void CMario::SetIsDeadth(bool b)
 {
 	isDeadth = b;
-}
-void CMario::GetMushRoomBig()
-{
-	level = MARIO_LEVEL_BIG;
-	ListEffect.push_back(new PointEffect(x, y, POINT_EFFECT_TYPE_ONE_THOUSAND));
-	Health++;
-	y -= 20;
-}
-void CMario::GetLeaf()
-{
-	if (level == MARIO_LEVEL_BIG)
-	{
-
-	}
-	if (level == MARIO_LEVEL_RACCOON)   // NẾU ĐANG Ở DẠNG RACCOON THÌ KHÔNG + HEALTH
-	{
-		ListEffect.push_back(new PointEffect(x, y, POINT_EFFECT_TYPE_ONE_THOUSAND));
-		score += 1000;
-	}
 }
 #pragma endregion
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -1158,6 +1139,11 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 			right = left + MARIO_BIG_BBOX_WIDTH;
 			bottom = y + MARIO_BIG_BBOX_HEIGHT;
 		}
+		if (isSitting)
+		{
+			right = x + 10;
+			bottom = y + MARIO_SIT_BBOX_HEIGHT;
+		}
 	}
 }
 void CMario::Init()
@@ -1175,5 +1161,6 @@ void CMario::Reset()
 	SetLevel(MARIO_LEVEL_BIG);
 	SetPosition(start_x, start_y);
 	SetSpeed(0, 0);
+	SetHealth(1);
 }
 

@@ -64,7 +64,7 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 				if (e->nx != 0)
 				{
-					goomba->SetState(ENEMY_ATTACKED);
+					goomba->SetState(GOOMBA_STATE_ATTACKED);
 				}
 			}
 			else 

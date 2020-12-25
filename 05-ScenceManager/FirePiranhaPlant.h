@@ -16,7 +16,7 @@ public:
 	DWORD TimeAttack;
 	bool isHidding;
 	bool isGrowUp;
-	bool isShoot;
+	bool isSafe;
 	int model;
 	CFirePiranhaPlant(float X, float Y, int Model, vector<FirePlant*>* listFireEnemy);
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

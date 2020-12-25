@@ -5,6 +5,8 @@
 #include "QuestionBrick.h"
 #include "Mario.h"
 #include "define.h"
+#include "BrokenBrickEffect.h"
+#include "TailHitEffect.h"
 #define KOOPAS_WALKING_SPEED 0.02f
 #define KOOPAS_BALL_SPEED    0.1f
 #define KOOPAS_FLY_SPEED_X   0.02f
@@ -60,14 +62,8 @@ public:
 	int GetModel();
 	bool isHeld;
 	bool isKicked;
-	float KoopasGravity;
 	bool isWalking;
-	bool isDefend;
-	bool isBall;
-	bool IsDie;
-	bool isAttacked;
 	bool isUpside;
-	bool isFlying;
 	bool isOnGround;
 	CKoopas(float X,float Y,CMario* mario,int Model,int d);
 	void SetPositionFollowMario();
