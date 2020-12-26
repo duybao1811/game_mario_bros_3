@@ -438,7 +438,7 @@ void CPlayScene::GoldBrickDestroy(int model, float x, float y)
 void CPlayScene::CheckCollision()
 {
 	CheckCollistionMarioWithItem();
-	//CheckCollisionMarioWithEnemy();
+	CheckCollisionMarioWithEnemy();
 }
 void CPlayScene::Update(DWORD dt)
 {

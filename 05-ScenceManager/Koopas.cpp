@@ -50,7 +50,7 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	}
 }
 
-void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
+void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt, coObjects);
 	vy += KOOPAS_GRAVITY * dt;
@@ -392,7 +392,7 @@ void CKoopas::Render()
 	}
 	animation_set->at(ani)->Render(x, y);
 
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CKoopas::SetState(int state)
@@ -419,6 +419,11 @@ void CKoopas::SetState(int state)
 		break;
 	case KOOPAS_STATE_COMEBACK:
 		vx = 0;
+		break;
+	case ENEMY_ATTACKED:
+		vx = direction*0.5f;
+		vy = -0.3f;
+		isAttacked = true;
 		break;
 	}
 

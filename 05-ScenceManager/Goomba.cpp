@@ -231,7 +231,7 @@ void CGoomba::SetState(int state)
 	}
 	case ENEMY_ATTACKED:
 	{
-		vx = -0.3f;
+		vx = direction*0.3f;
 		vy = -0.3f;
 		isAttacked = true;
 		break;

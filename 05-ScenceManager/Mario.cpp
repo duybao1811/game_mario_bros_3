@@ -24,7 +24,7 @@
 #include "P_Switch.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
-	level = MARIO_LEVEL_BIG;
+	level = MARIO_LEVEL_SMALL;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
 	start_x = x;
@@ -218,7 +218,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						koopas->isKicked = false;
 					}
 				}
-				if (koopas->GetState() == KOOPAS_STATE_DEFEND || koopas->GetState() == KOOPAS_STATE_UPSIDE_BALL || koopas->GetState() == KOOPAS_STATE_COMEBACK)
+				if (koopas->GetState() == KOOPAS_STATE_DEFEND || koopas->GetState() == KOOPAS_STATE_UPSIDE_BALL || koopas->GetState() == KOOPAS_STATE_COMEBACK||koopas->isUpside)
 				{
 					if (e->nx != 0)
 					{
@@ -834,7 +834,10 @@ void CMario::Render()
 	tail->Render();
 	//RenderBoundingBox();
 }
-
+void CMario::SetLevel(int l)
+{
+	level = l;
+}
 void CMario::SetState(int state)
 {
 	CGameObject::SetState(state);

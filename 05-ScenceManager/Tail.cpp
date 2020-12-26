@@ -51,6 +51,7 @@ void Tail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 					if (direction < 0)
 					{
+						e->SetState(ENEMY_ATTACKED);
 						e->SetDirection(direction);
 						ListEffect.push_back(new TailHitEffect(x - TAIL_BBOX_WIDTH, y - PULL_UP_EFFECT_TAIL_HIT));
 					}
@@ -84,7 +85,7 @@ void Tail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 }
 void Tail::Render()
 {
-	RenderBoundingBox();
+	//RenderBoundingBox();
 	if(isFinish)
 		return;
 	for (UINT i = 0; i < ListEffect.size(); i++)
