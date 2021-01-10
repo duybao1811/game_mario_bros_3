@@ -4,6 +4,7 @@
 #include "define.h"
 #include "Coin.h"
 #include "Tail.h"
+#include "Camera.h"
 #define MARIO_WALKING_SPEED		0.00015f 
 #define MARIO_RUNNING_SPEED     0.00015f
 #define MARIO_DECELERATE_SPEED 0.0005f
@@ -187,6 +188,7 @@ class CMario : public CGameObject
 	CCoin* coin;
 	Tail* tail;
 	int ani = -1;
+	Camera* camera;
 public:
 	DWORD TimeFly;
 	DWORD now;
@@ -222,7 +224,7 @@ public:
 	vector<LPGAMEOBJECT> ListFire;
 	vector<LPGAMEOBJECT> ListEffect;
 	vector<LPGAMEOBJECT> ListTail;
-	CMario(float x = 0.0f, float y = 0.0f);
+	CMario(float x, float y, Camera *camera);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	virtual void Render();
 	

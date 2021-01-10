@@ -8,7 +8,7 @@
 #include "BrokenBrickEffect.h"
 #include "TailHitEffect.h"
 #define KOOPAS_WALKING_SPEED 0.02f
-#define KOOPAS_BALL_SPEED    0.1f
+#define KOOPAS_BALL_SPEED    0.12f
 #define KOOPAS_FLY_SPEED_X   0.02f
 #define KOOPAS_FLY_SPEED_Y 0.3f
 #define KOOPAS_SPEED_Y_AFTER_ATTACKED 0.4f
@@ -39,7 +39,8 @@
 #define KOOPAS_RED_ANI_COME_BACK 13
 #define KOOPAS_BASE_ANI_COME_BACK_UPSIDE 14
 #define KOOPAS_RED_ANI_COME_BACK_UPSIDE 15
-
+#define KOOPAS_RED_ANI_UPSIDE_BALL 16
+#define KOOPAS_BASE_ANI_UPSIDE_BALL 17
 #define KOOPAS_GRAVITY 0.001f
 #define KOOPAS_BOUNCE_AFTER_LANDFALL 0.1f
 #define KOOPAS_BASE 1
@@ -65,6 +66,7 @@ public:
 	bool isWalking;
 	bool isUpside;
 	bool isOnGround;
+	bool isReadyUpsideBall;
 	CKoopas(float X,float Y,CMario* mario,int Model,int d);
 	void SetPositionFollowMario();
 	virtual void SetState(int state);

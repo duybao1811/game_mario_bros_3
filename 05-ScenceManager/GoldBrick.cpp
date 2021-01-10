@@ -29,27 +29,36 @@ void GoldBrick::Render()
 {
 	if (isFinish)
 		return;
-	int ani = GB_ANI;
-	if (state==GB_STATE_EMPTY)
-		ani = GB_ANI_UNBOX;
-	animation_set->at(ani)->Render(x, y);
-	for (UINT i = 0; i < listObj.size(); i++)
+	if (eType == Type::GOLD_BRICK)
 	{
-		listObj[i]->Render();
+		ani = GB_ANI;
+		if (state == GB_STATE_EMPTY)
+			ani = GB_ANI_UNBOX;
 	}
+	else if (eType == Type::COIN)
+	{
+		ani = IDLE_COIN_ANI;
+	}
+	animation_set->at(ani)->Render(x, y);
 }
 void GoldBrick::SetState(int state)
 {
 	CGameObject::SetState(state);
-	switch (state)
+
+	if (state == GB_STATE_EMPTY)
 	{
-	case GB_STATE_EMPTY:
 		isUnbox = true;
-		break;
 	}
-}
-void GoldBrick::Transform()
-{
-	//listObj.push_back(new CCoin(this->x, this->y));
-	isFinish = true;
+	if (state == GB_STATE_TRANFORM)
+	{
+		if (eType == Type::GOLD_BRICK)
+		{
+			eType = Type::COIN;
+		}
+		else if (eType == Type::COIN)
+		{
+			eType = Type::GOLD_BRICK;
+		}
+
+	}
 }

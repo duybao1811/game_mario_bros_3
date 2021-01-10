@@ -22,9 +22,9 @@
 #include "d3dx9.h"
 #include "GoldBrick.h"
 #include "P_Switch.h"
-CMario::CMario(float x, float y) : CGameObject()
+CMario::CMario(float x, float y, Camera* camera) : CGameObject()
 {
-	level = MARIO_LEVEL_SMALL;
+	level = MARIO_LEVEL_RACCOON;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
 	start_x = x;
@@ -34,6 +34,7 @@ CMario::CMario(float x, float y) : CGameObject()
 	SetHealth(1);
 	tail = new Tail();
 	isKick = false;
+	this->camera = camera;
 }
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -212,9 +213,22 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						koopas->SubHealth(1);
 						y += dy;
 					}
+
 					if (koopas->GetState() == KOOPAS_STATE_BALL || koopas->isKicked)
 					{
 						koopas->SetHealth(2);
+						koopas->isKicked = false;
+					}
+					if (koopas->GetState() == KOOPAS_STATE_DEFEND)
+					{
+						koopas->SetDirection(this->nx);
+						koopas->SetState(KOOPAS_STATE_BALL);
+						y += dy;
+					}
+
+					if (koopas->GetState() == KOOPAS_STATE_UPSIDE_BALL|| koopas->isKicked)
+					{
+						koopas->isUpside = true;
 						koopas->isKicked = false;
 					}
 				}
@@ -241,10 +255,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (e->obj->GetType() == COIN)
 			{
 
-				CCoin* coin = dynamic_cast<CCoin*>(e->obj);
 				if (nx!= 0)
 				{
-					coin->SetFinish(true);
+					e->obj->SetFinish(true);
 					x += dx;
 					y += dy;
 					score +=50;
@@ -253,7 +266,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (e->ny != 0)
 				{
 					vy = last_vy;
-					coin->SetFinish(true);
+					e->obj->SetFinish(true);
 					isOnGround = false;
 					score += 50;
 					CoinCollect++;

@@ -9,6 +9,11 @@ Camera::Camera(float w, float h)
 	xCamBackup = 0;
 	yCamBackup = 0;
 	SetBorderBackup(BorderLeft, BorderRight);
+	vx = 0;
+}
+void Camera::Update(DWORD dt)
+{
+
 }
 Camera::~Camera()
 {

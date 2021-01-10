@@ -13,11 +13,13 @@ protected:
 	float BorderLeft;
 	float BorderRightBackup;
 	float BorderLeftBackup;
+	float vx;
 	//int Width;
 	//int Height;
 public: 
 	Camera(float w,float h);
 	~Camera();
+	void Update(DWORD dt);
 	D3DXVECTOR2 Transform(float, float);
 	void SetPosition(float x, float y);
 	float GetxCam();

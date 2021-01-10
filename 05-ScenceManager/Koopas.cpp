@@ -34,7 +34,7 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	top = y;
 	right = x + KOOPAS_BBOX_WIDTH;
 
-	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND || isAttacked || isUpside|| state==KOOPAS_STATE_COMEBACK )
+	if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_DEFEND || isAttacked || isUpside|| state==KOOPAS_STATE_COMEBACK||state==KOOPAS_STATE_UPSIDE_BALL )
 	{
 		bottom = y + KOOPAS_BBOX_HEIGHT_DIE;
 	}
@@ -69,6 +69,10 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (Health == 1)
 	{
 		SetState(KOOPAS_STATE_BALL);
+		if (isReadyUpsideBall)
+		{
+			SetState(KOOPAS_STATE_UPSIDE_BALL);
+		}
 	}
 	if (isHeld && player->isHoldTurtle == true)
 	{
@@ -96,11 +100,13 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		SetHealth(3);
 		isHeld = false;
 		isUpside = false;
+		isReadyUpsideBall = false;
 	}
 	if (isUpside)
 	{
 		vx = 0;
 		TimeDefend += dt;
+		isReadyUpsideBall = true;
 	}
 	if (isAttacked)
 	{
@@ -229,6 +235,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							e->obj->SubHealth(1);
 							direction *= -1;
+							vx *= -1;
 							ListEffect.push_back(new BrokenBrickEffect(x, y, 1, 1));
 							ListEffect.push_back(new BrokenBrickEffect(x, y, 1, 1.5));
 							ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1));
@@ -313,6 +320,10 @@ void CKoopas::Render()
 			if (isUpside)
 				ani = KOOPAS_BASE_ANI_COME_BACK_UPSIDE;
 		}
+		if (state == KOOPAS_STATE_UPSIDE_BALL)
+		{
+			ani = KOOPAS_BASE_ANI_UPSIDE_BALL;
+		}
 	}
 	else if (model == KOOPAS_RED)
 	{
@@ -343,6 +354,10 @@ void CKoopas::Render()
 			ani = KOOPAS_RED_ANI_COME_BACK;
 			if (isUpside)
 				ani = KOOPAS_RED_ANI_COME_BACK_UPSIDE;
+		}
+		if (state == KOOPAS_STATE_UPSIDE_BALL)
+		{
+			ani = KOOPAS_RED_ANI_UPSIDE_BALL;
 		}
 
 	}
@@ -409,6 +424,11 @@ void CKoopas::SetState(int state)
 		break;
 	case KOOPAS_STATE_BALL:
 		vx =  direction*KOOPAS_BALL_SPEED;
+		TimeDefend = 0;
+		break;
+	case KOOPAS_STATE_UPSIDE_BALL:
+		isUpside = false;
+		vx = direction * KOOPAS_BALL_SPEED;
 		TimeDefend = 0;
 		break;
 

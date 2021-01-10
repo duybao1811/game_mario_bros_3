@@ -36,6 +36,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 	key_handler = new CPlayScenceKeyHandler(this);
 	gametime = new GameTime();
 	CountEnemy = 0;
+	camera = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 /*
@@ -179,7 +180,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
 			return;
 		}
-		obj = new CMario(x,y); 
+		obj = new CMario(x,y,camera);
 		player = (CMario*)obj;  
 
 		DebugOut(L"[INFO] Player object created!\n");
@@ -438,7 +439,7 @@ void CPlayScene::GoldBrickDestroy(int model, float x, float y)
 void CPlayScene::CheckCollision()
 {
 	CheckCollistionMarioWithItem();
-	CheckCollisionMarioWithEnemy();
+	//CheckCollisionMarioWithEnemy();
 }
 void CPlayScene::Update(DWORD dt)
 {
@@ -518,7 +519,7 @@ void CPlayScene::Update(DWORD dt)
 						{
 							if (goldbrick->checkObjInCamera(objects[i]))
 							{
-								goldbrick->Transform();
+								goldbrick->SetState(GB_STATE_TRANFORM);
 							}
 						//	objects.push_back(new CCoin(goldbrick->GetX(), goldbrick->GetY()));
 						}
@@ -625,6 +626,7 @@ void CPlayScene::Update(DWORD dt)
 		}
 		else cy -= sh / 4;
 		CGame::GetInstance()->SetCamPos((int)cx, (int)cy);
+		camera->SetPosition(cx, cy);
 		map->SetCamPos((int)cx, (int)cy);
 	}
 }
@@ -759,6 +761,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	{
 		if (mario->level == MARIO_LEVEL_RACCOON)
 		{
+			mario->isJumping = false;
 			mario->SetState(MARIO_STATE_RACCOON_ATTACK);
 			mario->TimeAttack = GetTickCount64();
 			break;
@@ -766,6 +769,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		}
 		else if (mario->level == MARIO_LEVEL_FIRE)
 		{
+			mario->isJumping = false;
 			mario->SetState(MARIO_STATE_SHOOT_FIRE);
 			mario->TimeAttack = GetTickCount64();
 		}
@@ -777,8 +781,6 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	}
 	}
-
-
 }
 
 void CPlayScenceKeyHandler::KeyState(BYTE* states)

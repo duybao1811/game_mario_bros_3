@@ -116,10 +116,12 @@ enum Range
 #define GB_BBOX_HEIGHT 16
 #define GB_ANI 0
 #define GB_ANI_UNBOX 1
+#define IDLE_COIN_ANI 2
 #define GB_CONTAIN_COIN 1
 #define GB_CONTAIN_PSWITCH 2
 #define GB_CONTAIN_MUSHROOM_1_UP 3
 #define GB_STATE_EMPTY 100
+#define GB_STATE_TRANFORM 200
 
 // Enemy
 //GOOMBA 
