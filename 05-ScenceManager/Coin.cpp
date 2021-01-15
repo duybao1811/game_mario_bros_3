@@ -4,7 +4,6 @@ CCoin::CCoin(float X,float Y)
 	this->x = X;
 	this->y = Y;
 	eType = Type::COIN;
-	isFinish = 0;
 }
 void CCoin::Render()
 {
@@ -26,8 +25,4 @@ void CCoin::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 		right = 0;
 		bottom = 0;
 	}
-}
-void CCoin::SetFinish(bool b)
-{
-	isFinish = b;
 }

@@ -99,6 +99,8 @@ public:
 	int GetState() { return this->state; }
 	float GetStartX() { return startX; }
 	float GetStartY() { return startY; }
+	bool GetInCam() { return isInCam; }
+	void SetInCam(bool inCam) { isInCam = inCam; }
 	Type GetType();
 	void RenderBoundingBox();
 	ObjectType GetObjType();

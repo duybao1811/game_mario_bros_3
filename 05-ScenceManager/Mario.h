@@ -213,6 +213,7 @@ public:
 	bool isHoldTurtle;
 	bool isOnAir;
 public:
+	bool isSwitchScene;
 	bool untouchable;
 	DWORD untouchable_start;
 	DWORD Time;
@@ -224,7 +225,7 @@ public:
 	vector<LPGAMEOBJECT> ListFire;
 	vector<LPGAMEOBJECT> ListEffect;
 	vector<LPGAMEOBJECT> ListTail;
-	CMario(float x, float y, Camera *camera);
+	CMario(float x, float y);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	virtual void Render();
 	

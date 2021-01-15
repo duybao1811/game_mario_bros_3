@@ -10,7 +10,5 @@ class CCoin : public CGameObject
 	virtual void Render();
 
 public:
-	bool isFinish;
-	void SetFinish(bool b);
 	CCoin(float X,float Y);
 };

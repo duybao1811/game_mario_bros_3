@@ -22,7 +22,7 @@
 #include "d3dx9.h"
 #include "GoldBrick.h"
 #include "P_Switch.h"
-CMario::CMario(float x, float y, Camera* camera) : CGameObject()
+CMario::CMario(float x, float y) : CGameObject()
 {
 	level = MARIO_LEVEL_RACCOON;
 	untouchable = 0;
@@ -86,7 +86,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 #pragma region Set thời gian
 	if (level == MARIO_LEVEL_RACCOON && GetTickCount64() - TimeAttack > 500 && isAttack)
 	{
-		tail->SetFinish(true);
+	//	tail->SetFinish(true);
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
 		TimeAttack = now;
@@ -259,7 +259,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					e->obj->SetFinish(true);
 					x += dx;
-					y += dy;
 					score +=50;
 					CoinCollect++;
 				}
@@ -267,7 +266,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					vy = last_vy;
 					e->obj->SetFinish(true);
-					isOnGround = false;
 					score += 50;
 					CoinCollect++;
 				}
@@ -335,6 +333,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				CPortal* p = dynamic_cast<CPortal*>(e->obj);
 				CGame::GetInstance()->SwitchScene(p->GetSceneId());
+				isSwitchScene = true;
 			}
 		}
 	}
@@ -844,7 +843,7 @@ void CMario::Render()
 		ListTail[i]->Render();
 	}
 	
-	tail->Render();
+	//tail->Render();
 	//RenderBoundingBox();
 }
 void CMario::SetLevel(int l)
@@ -1031,7 +1030,7 @@ void CMario::TailAttack()
 			}
 			if (nx > 0)
 			{
-				tail->SetPosition(x + 15, y + 18);
+			tail->SetPosition(x + 15, y + 18);
 				tail->SetFinish(false);
 				tail->SetDirection(nx);
 			}

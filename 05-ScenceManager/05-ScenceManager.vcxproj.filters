@@ -198,6 +198,9 @@
     <ClCompile Include="WorldMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Wood.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Font.h">
@@ -348,6 +351,9 @@
       <Filter>Board</Filter>
     </ClInclude>
     <ClInclude Include="WorldMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Wood.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

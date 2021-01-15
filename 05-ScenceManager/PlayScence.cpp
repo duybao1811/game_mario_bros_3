@@ -34,9 +34,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 	CScene(id, filePath)
 {
 	key_handler = new CPlayScenceKeyHandler(this);
-	gametime = new GameTime();
 	CountEnemy = 0;
-	camera = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 /*
@@ -175,12 +173,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	switch (object_type)
 	{
 	case OBJECT_TYPE_MARIO:
-		if (player!=NULL) 
+	/*	if (player!=NULL) 
 		{
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
 			return;
-		}
-		obj = new CMario(x,y,camera);
+		}*/
+		obj = new CMario(x,y);
 		player = (CMario*)obj;  
 
 		DebugOut(L"[INFO] Player object created!\n");
@@ -456,37 +454,8 @@ void CPlayScene::Update(DWORD dt)
 		if (objects[i]->checkObjInCamera(objects[i]) == true)
 		{
 			objects[i]->Update(dt, &coObjects);
-			objects[i]->isInCam = true;
 		}
-
-
-#pragma region cơ chế hồi sinh của enemy khi ra khỏi cam không phải bị giết 
-
-
-			if (objects[i]->GetType() == GOOMBA || objects[i]->GetType() == KOOPAS)
-			{
-				if (player->GetX() > objects[i]->GetStartX() + SCREEN_WIDTH / 2 || player->GetX() + SCREEN_WIDTH / 2 < objects[i]->GetStartX())
-				{
-					if (objects[i]->isFinish)
-					{
-						if (objects[i]->GetStartX() == 512 || objects[i]->GetStartX() == 208 || objects[i]->GetStartX() == 816 || objects[i]->GetStartX() == 864 || objects[i]->GetStartX()==928 || objects[i]->GetStartX()==560 || objects[i]->GetStartX() == 1456||objects[i]->GetStartX() == 1312|| objects[i]->GetStartX() == 1360|| objects[i]->GetStartX() == 1406)
-						{
-							objects[i]->SetFinish(false);
-							objects[i]->SetPosition(objects[i]->GetStartX(), objects[i]->GetStartY());
-							objects[i]->SetDirection(player->nx);
-							objects[i]->SetHealth(objects[i]->fullhealth);
-						}
-					}
-				}
-				else
-				{
-					if (objects[i]->checkObjInCamera(objects[i]) == false && objects[i]->isInCam == true)
-					{
-						objects[i]->SetFinish(true);
-					}
-				}
-			}
-#pragma endregion		
+	
 		if (e->GetType() == QUESTION_BRICK)
 		{
 			CQuestionBrick* questionbrick = dynamic_cast<CQuestionBrick*>(e);
@@ -590,6 +559,13 @@ void CPlayScene::Update(DWORD dt)
 			player->SetState(MARIO_STATE_DIE);
 		}
 	}
+	if (CGame::GetInstance()->GetScene() == 2)
+	{
+		if (player->isSwitchScene)
+		{
+			player->SetPosition(2360, 381);
+		}
+	}
 	if (CGame::GetInstance()->GetScene() ==1)
 	{
 		CGame::GetInstance()->SetCamPos(0, 0);
@@ -618,15 +594,21 @@ void CPlayScene::Update(DWORD dt)
 			cx = 0;
 		else if (cx + sw / 2 > mw)
 			cx = mw - sw + 1;
-		if (cy - sh / 4 <= 0)//Top Edge
-			cy = 0;
-		else if (cy > mh / 2)//Bottom Edge
+		if (CGame::GetInstance()->GetScene() == 3)
 		{
-			cy = mh - sh;
+			cy = 0;
 		}
-		else cy -= sh / 4;
+		else
+		{
+			if (cy - sh / 4 <= 0)//Top Edge
+				cy = 0;
+			else if (cy > mh / 2)//Bottom Edge
+			{
+				cy = mh - sh;
+			}
+			else cy -= sh / 4;
+		}
 		CGame::GetInstance()->SetCamPos((int)cx, (int)cy);
-		camera->SetPosition(cx, cy);
 		map->SetCamPos((int)cx, (int)cy);
 	}
 }
@@ -662,26 +644,11 @@ void CPlayScene::Render()
 */
 void CPlayScene::Unload()
 {
-	for (UINT i = 0; i < objects.size(); i++)
-	{
-		delete objects[i];
-	}
-	for (UINT i = 0; i < ListItem.size(); i++)
-	{
-		delete ListItem[i];
-	}
-	for (UINT i = 0; i < ListEffect.size(); i++)
-	{
-		delete ListEffect[i];
-	}
-	for (UINT i = 0; i < ListPointEffect.size(); i++)
-	{
-		delete ListPointEffect[i];
-	}
-	for (UINT i = 0; i < listFireEnemy.size(); i++)
-	{
-		delete listFireEnemy[i];
-	}
+	objects.clear();
+	ListPointEffect.clear();
+	listFireEnemy.clear();
+	ListEffect.clear();
+	
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 

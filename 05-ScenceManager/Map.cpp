@@ -42,7 +42,6 @@ void Map::GetSpriteTile()
 			int bottom = top + TILE_HEIGHT;
 			LPSPRITE SpriteTile = new CSprite(id, left, top, right, bottom, Tex);
 			this->Tiles.push_back(SpriteTile);
-			//CGame::GetInstance()->Draw(j * TILE_WIDTH, i * TILE_HEIGHT, Tex, r.left, r.top, r.right, r.bottom);
 		}
 	}
 }

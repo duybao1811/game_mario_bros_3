@@ -21,14 +21,12 @@ class CPlayScene: public CScene
 private:
 	vector <Item*> ListItem;
 	bool isGameOver;
-	GameTime* gametime;
+	GameTime* gametime = new GameTime();
 	int CountEnemy;
 	Font* Text = new Font();
-	Camera* camera;
 protected: 
 	CMario *player;					// A play scene has to have player, right? 
 	Map* map;
-	CMushRoom* mushroom;
 	Board* board;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> ListEffect;
