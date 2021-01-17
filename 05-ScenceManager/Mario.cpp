@@ -39,7 +39,20 @@ CMario::CMario(float x, float y) : CGameObject()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	now = GetTickCount();
+	if (x < CGame::GetInstance()->GetCamX())
+	{
+		x = CGame::GetInstance()->GetCamX();
+	}
+	if (x + MARIO_BIG_BBOX_WIDTH > CGame::GetInstance()->GetCamX() - 16+SCREEN_WIDTH)
+	{
+		x = (float)(CGame::GetInstance()->GetCamX() - 16 + SCREEN_WIDTH - MARIO_BIG_BBOX_WIDTH);
+	}
+	if (y < CGame::GetInstance()->GetCamY())
+	{
+		y = CGame::GetInstance()->GetCamY();
+	}
+	// không cho ra khỏi camera
+	now = GetTickCount64();
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
 	if (CGame::GetInstance()->GetScene() != 1)
@@ -255,7 +268,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (e->obj->GetType() == COIN)
 			{
 
-				if (nx!= 0)
+				if (e-> nx!= 0)
 				{
 					e->obj->SetFinish(true);
 					x += dx;
@@ -329,11 +342,44 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					pswitch->SetPosition(pswitch->GetX(), pswitch->GetY()+PSWITCH_SMALLER);
 				}
 			}
+			if (e->obj->GetType() == BOX)
+			{
+				if (e->ny < 0)
+				{
+					vy = last_vy;
+					y += dy;
+				}
+				if (e->nx != 0)
+				{
+					x += dx;
+					
+					if (e->obj->ani == BOX_ANI_RANDOM)
+					{
+						LPANIMATION current_ani = animation_set->at(ani);
+						switch (current_ani->GetCurrentFrame())
+						{
+
+						case 0:
+
+							SetLevel(MARIO_LEVEL_FIRE);
+							break;
+						}
+						e->obj->SetFinish(true);
+					}
+				}
+
+			}
 			else if (e->obj->GetType()==PORTAL)
 			{
-				CPortal* p = dynamic_cast<CPortal*>(e->obj);
-				CGame::GetInstance()->SwitchScene(p->GetSceneId());
-				isSwitchScene = true;
+				if (e->ny != 0)
+				{
+					if (isSitting)
+					{
+						CPortal* p = dynamic_cast<CPortal*>(e->obj);
+						CGame::GetInstance()->SwitchScene(p->GetSceneId());
+						isSwitchScene = true;
+					}
+				}
 			}
 		}
 	}
@@ -843,7 +889,7 @@ void CMario::Render()
 		ListTail[i]->Render();
 	}
 	
-	//tail->Render();
+	tail->Render();
 	//RenderBoundingBox();
 }
 void CMario::SetLevel(int l)
@@ -971,11 +1017,6 @@ void CMario::JumpSlow()
 	vy = -MARIO_JUMP_SLOW_SPEED_Y;
 	isJumping = true;
 	isOnGround = false;
-}
-void CMario::JumpHight()
-{
-
-
 }
 void CMario::Fly()
 {

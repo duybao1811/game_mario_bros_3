@@ -905,4 +905,4 @@
 #50	68	40	0	84	56	2
 50	68	40	0	84	56	2
 [TILEMAP]
-Resources\Tilemap\world1-1.txt
+Resources\Tilemap\Map1-1.txt

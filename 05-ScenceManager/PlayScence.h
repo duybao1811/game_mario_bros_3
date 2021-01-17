@@ -24,6 +24,7 @@ private:
 	GameTime* gametime = new GameTime();
 	int CountEnemy;
 	Font* Text = new Font();
+	bool isSwitchScene;
 protected: 
 	CMario *player;					// A play scene has to have player, right? 
 	Map* map;

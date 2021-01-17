@@ -47,6 +47,7 @@ enum Type {
 	LEAF = 52,
 	COIN = 53,
 	P_SWITCH=54,
+	BOX=55,
 	//EFFECT
 	COIN_EFFECT = 1,
 };
@@ -168,11 +169,13 @@ enum Range
 #define EFFECT_TAIL_HIT_RIGHT_SIDE 10
 #define EFFECT_TAIL_HIT_LEFT_SIDE 15
 
-
+#define BOX_ANI_RANDOM 0
 
 #define GAMEOVER_SELECT_CONTINUE 0
 #define GAME_OVER_SELECT_END 1
-
+#define WORLD_MAP 1
+#define WORLD_1_1 2
+#define WORLD_1_1_1 3 
 /*#ifndef CHECK_OBJECT_IN_CAMERA // Kiểm tra GameObject có nằm trong camera ko?
 #define CHECK_OBJECT_IN_CAMERA(obj) \
 checkObjectInCamera(obj->GetX(), obj->GetY(),16.0f, 16.0f)

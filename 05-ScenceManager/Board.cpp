@@ -20,7 +20,14 @@ void Board::Render(CMario * mario, int RemainingTime )
 	now = GetTickCount64();
 	Sprite->Draw(x, y);
 	font.Draw(x + 70, y + 20, FillNumber(std::to_string(mario->GetScore()), 7)); //score
-	font.Draw(x + 141, y + 20, FillNumber(std::to_string(RemainingTime), 3)); //remain time
+	if (CGame::GetInstance()->GetScene() != 1)
+	{
+		font.Draw(x + 141, y + 20, FillNumber(std::to_string(RemainingTime), 3)); //remain time
+	}
+	else
+	{
+		font.Draw(x + 141, y + 20, FillNumber(std::to_string(000), 3)); //remain time
+	}
 	font.Draw(x + 150, y + 12, FillNumber(std::to_string(mario->GetCoinCollect()), 2));  //coin
 	font.Draw(x + 47, y + 20, FillNumber(std::to_string(mario->GetLive()), 1));// mạng
 	if (mario->isRunning || mario->isFlying)
@@ -52,7 +59,6 @@ void Board::Render(CMario * mario, int RemainingTime )
 		if (abs(mario->vx) >= MARIO_RUNNING_MAXSPEED / 1)
 		{
 			fpower.Draw(x + 118, y + 12);
-			//timeDraw = 0;
 		}
 	}
 }

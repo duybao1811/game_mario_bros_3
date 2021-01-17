@@ -190,6 +190,7 @@ class CMario : public CGameObject
 	int ani = -1;
 	Camera* camera;
 public:
+	DWORD TimeJump;
 	DWORD TimeFly;
 	DWORD now;
 	int level;
@@ -231,7 +232,7 @@ public:
 	
 	void SetState(int state);
 	void SetLevel(int l);
-	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
+	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 	
 
 	void Decelerate();
@@ -240,7 +241,6 @@ public:
 	void WalkRight();
 	void WalkLeft();
 	void JumpSlow();
-	void JumpHight();
 	void FallSlow();
 
 	int GetAni() { return ani; }

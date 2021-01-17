@@ -28,6 +28,7 @@
 #include "Floor.h"
 #include "WorldMap.h"
 #include "Effect_1_UP.h"
+#include "Box.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -62,6 +63,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 #define OBJECT_TYPE_GOLD_BRICK 11
 #define OBJECT_TYPE_FLOOR 12
 #define OBJECT_TYPE_WORLD_MAP 13
+#define OBJECT_TYPE_BOX 14
 #define OBJECT_TYPE_PORTAL	50
 #define MAX_SCENE_LINE 1024
 
@@ -263,6 +265,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new WorldMap(x, y);
 		break;
 	}
+	case OBJECT_TYPE_BOX:
+	{
+		obj = new Box();
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -277,6 +284,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 }
 void CPlayScene::_ParseSection_TILEMAP(string line)
 { 
+	
 	//đọc Map từ file txt
 	int ID, rowmap, columnmap, rowtile, columntile, totaltile;
 	LPCWSTR path = ToLPCWSTR(line);
@@ -295,6 +303,7 @@ void CPlayScene::_ParseSection_TILEMAP(string line)
 	map = new Map(ID, rowmap, columnmap, rowtile, columntile, totaltile);
 	map->GetSpriteTile();
 	map->SetMap(tilemapdata);
+
 }
 void CPlayScene::Load()
 {
@@ -632,11 +641,9 @@ void CPlayScene::Render()
 	{
 		listFireEnemy[i]->Render();
 	}
-	if (CGame::GetInstance()->GetScene() != 1)
-	{
-		board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
-		board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
-	}
+
+	board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
+	board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
 }
 
 /*
@@ -811,6 +818,41 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 		if (game->IsKeyDown(DIK_DOWN))
 		{
 			mario->vy = 0.05f;
+		}
+	}
+	if (CGame::GetInstance()->GetScene() == WORLD_1_1)
+	{
+		if (game->IsKeyDown(DIK_5))
+		{
+			mario->SetPosition(687, 357);
+		}
+		if (game->IsKeyDown(DIK_6))
+		{
+			mario->SetPosition(1224, 377);
+		}
+		if (game->IsKeyDown(DIK_7))
+		{
+			mario->SetPosition(1419, 155);
+		}
+		if (game->IsKeyDown(DIK_8))
+		{
+			mario->SetPosition(2265, 72);
+		}
+		if (game->IsKeyDown(DIK_9))
+		{
+			mario->SetPosition(2627, 357);
+		}
+		if (game->IsKeyDown(DIK_0))
+		{
+			CGame::GetInstance()->SwitchScene(3);
+		}
+	}
+	if (CGame::GetInstance()->GetScene() == WORLD_1_1_1)
+	{
+		if (game->IsKeyDown(DIK_5))
+		{
+			CGame::GetInstance()->SwitchScene(2);
+			mario->SetPosition(2627, 357);
 		}
 	}
 
