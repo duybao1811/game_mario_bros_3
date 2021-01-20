@@ -131,7 +131,8 @@ enum Range
 #define GB_CONTAIN_POWER_UP 5
 #define GB_STATE_EMPTY 100
 #define GB_STATE_TRANFORM 200
-
+#define GB_STATE_BACK 300
+#define TIME_BACK 8000
 // Enemy
 //GOOMBA 
 #define GOOMBA_WALKING_SPEED 0.025f

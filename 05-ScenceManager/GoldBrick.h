@@ -4,9 +4,9 @@
 class GoldBrick : public CGameObject
 {
 	vector<LPGAMEOBJECT> listObj;
+	DWORD TimeTranform;
 public:
 	float starty,startX, minY;
-	DWORD TimeTranform;
 	bool isTranform;
 	bool isUnbox;
 	bool isEmpty;

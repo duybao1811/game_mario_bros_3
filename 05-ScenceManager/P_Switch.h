@@ -11,11 +11,10 @@
 class P_Switch : public CGameObject
 {
 public:
-	bool isUsed;
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
-	virtual void Render();
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* listObject);
+	bool isUsed = true;
+	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	void Render();
+	void Update(DWORD dt, vector<LPGAMEOBJECT>* listObject);
 	P_Switch(float X, float Y);
-	virtual void SetState(int state);
 };
 

@@ -15,6 +15,7 @@ GoldBrick::GoldBrick(float X, float Y,int Model)
 		SetHealth(8);
 		this->fullhealth = 8;
 	}
+	TimeTranform = 0;
 }
 void GoldBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -41,6 +42,15 @@ void GoldBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y = starty;
 		vy = 0;
 	}
+	if (state == GB_STATE_TRANFORM)
+	{
+		TimeTranform += dt;
+	}
+	if (TimeTranform > TIME_BACK)
+	{
+		SetState(GB_STATE_BACK);
+	}
+
 }
 void GoldBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
@@ -76,7 +86,10 @@ void GoldBrick::SetState(int state)
 		{
 			eType = Type::COIN;
 		}
-		else if (eType == Type::COIN)
+	}
+	else if (state == GB_STATE_BACK)
+	{
+		if (model == 1)
 		{
 			eType = Type::GOLD_BRICK;
 		}

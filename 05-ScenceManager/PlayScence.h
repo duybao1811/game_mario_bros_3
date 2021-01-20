@@ -20,6 +20,7 @@
 class CPlayScene: public CScene
 {
 private:
+	DWORD TimeTranform=0;
 	vector <Item*> ListItem;
 	bool isGameOver;
 	GameTime* gametime = new GameTime();

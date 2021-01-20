@@ -315,52 +315,55 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				GoldBrick* goldbrick = dynamic_cast<GoldBrick*>(e->obj);
 				if (e->ny > 0)
 				{
-					switch (e->obj->GetModel())
+					if (level != MARIO_LEVEL_SMALL)
 					{
-					case GB_CONTAIN_COIN:
-						e->obj->SubHealth(1);
-						ListEffect.push_back(new BrokenBrickEffect(x, y, 1, 1));
-						ListEffect.push_back(new BrokenBrickEffect(x, y, 1, 1.5));
-						ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1));
-						ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1.5));
+						switch (e->obj->GetModel())
+						{
+						case GB_CONTAIN_COIN:
+							e->obj->SubHealth(1);
+							ListEffect.push_back(new BrokenBrickEffect(x, y, 1, 1));
+							ListEffect.push_back(new BrokenBrickEffect(x, y, 1, 1.5));
+							ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1));
+							ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1.5));
+							break;
+						case GB_CONTAIN_PSWITCH:
+						{
+							if (goldbrick->GetState() != GB_STATE_EMPTY)
+							{
+								goldbrick->SetState(GB_STATE_EMPTY);
+								goldbrick->isUnbox = true;
+							}
+						}
 						break;
-					case GB_CONTAIN_PSWITCH:
-					{
-						if (goldbrick->GetState() != GB_STATE_EMPTY)
+						case GB_CONTAIN_POWER_UP:
 						{
-							goldbrick->SetState(GB_STATE_EMPTY);
-							goldbrick->isUnbox = true;
+							if (goldbrick->GetHealth() != 0)
+							{
+								goldbrick->vy = -QB_SPEED_UP;
+								goldbrick->SubHealth(1);
+							}
 						}
-					}
-					break;
-					case GB_CONTAIN_POWER_UP:
-					{
-						if (goldbrick->GetHealth() != 0)
+						break;
+						case GB_CONTAIN_MUSHROOM_1_UP:
 						{
-							goldbrick->vy = -QB_SPEED_UP;
-							goldbrick->SubHealth(1);
+							if (goldbrick->GetHealth() != 0)
+							{
+								goldbrick->vy = -QB_SPEED_UP;
+								goldbrick->SubHealth(1);
+							}
 						}
-					}
-					break;
-					case GB_CONTAIN_MUSHROOM_1_UP:
-					{
-						if (goldbrick->GetHealth() != 0)
+						break;
+						case GB_MODEL_MANY_COIN:
 						{
-							goldbrick->vy = -QB_SPEED_UP;
-							goldbrick->SubHealth(1);
+							if (goldbrick->GetHealth() != 0)
+							{
+								goldbrick->vy = -QB_SPEED_UP;
+								goldbrick->SubHealth(1);
+								ListEffect.push_back(new CoinEffect(goldbrick->x, goldbrick->y));
+							}
 						}
-					}
-					break;
-					case GB_MODEL_MANY_COIN:
-					{
-						if (goldbrick->GetHealth() != 0)
-						{
-							goldbrick->vy = -QB_SPEED_UP;
-							goldbrick->SubHealth(1);
-							ListEffect.push_back(new CoinEffect(goldbrick->x, goldbrick->y));
+						break;
 						}
-					}
-					break;
 					}
 				}
 			}
@@ -369,7 +372,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				P_Switch* pswitch = dynamic_cast<P_Switch*>(e->obj);
 				if (e->ny < 0)
 				{
-					pswitch->isUsed = true;
+					pswitch->SetState(PSWITCH_STATE_USED);
 					pswitch->SetPosition(pswitch->GetX(), pswitch->GetY() + PSWITCH_SMALLER);
 				}
 			}

@@ -172,10 +172,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	CAnimationSets * animation_sets = CAnimationSets::GetInstance();
 
-
 	CGameObject *obj = NULL;
-
-
 	switch (object_type)
 	{
 	case OBJECT_TYPE_MARIO:
@@ -289,13 +286,15 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
 	}
-	// General object setup
-	obj->SetPosition(x, y);
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 
-	obj->SetAnimationSet(ani_set);
 
-	objects.push_back(obj);
+		// General object setup
+		obj->SetPosition(x, y);
+
+		obj->SetAnimationSet(ani_set);
+
+		objects.push_back(obj);
 }
 void CPlayScene::_ParseSection_TILEMAP(string line)
 { 
@@ -481,6 +480,7 @@ void CPlayScene::Update(DWORD dt)
 	CGameObject* obj = NULL;
 
 	vector<LPGAMEOBJECT> coObjects;
+
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
@@ -507,29 +507,32 @@ void CPlayScene::Update(DWORD dt)
 			GoldBrick* goldbrick = dynamic_cast<GoldBrick*>(e);
 			if (goldbrick->isUnbox)
 			{
-				GoldBrickDestroy(goldbrick->GetModel(), goldbrick->GetX(), goldbrick->GetY()-GB_BBOX_HEIGHT);
+				GoldBrickDestroy(goldbrick->GetModel(), goldbrick->GetX(), goldbrick->GetY() - GB_BBOX_HEIGHT);
 				goldbrick->isUnbox = false;
 			}
 		}
+
 		if (e->GetType() == P_SWITCH)
 		{
 			P_Switch* pswitch = dynamic_cast<P_Switch*>(e);
-			if (pswitch->isUsed)
+			if (pswitch->GetState()==PSWITCH_STATE_USED && pswitch->isUsed)
 			{
 				for (UINT i = 0; i < objects.size(); i++)
 				{
 					if (objects[i]->GetType() == GOLD_BRICK)
 					{
 						GoldBrick* goldbrick = dynamic_cast<GoldBrick*>(objects[i]);
-						if (goldbrick->GetModel()==GB_CONTAIN_COIN)
+						if (goldbrick->GetModel() == 1)
 						{
-							if (goldbrick->checkObjInCamera(objects[i]))
+							if (goldbrick->checkObjInCamera(goldbrick))
 							{
 								goldbrick->SetState(GB_STATE_TRANFORM);
 							}
 						}
 					}
 				}
+				pswitch->isUsed = false;
+
 			}
 		}
 	}
@@ -587,6 +590,8 @@ void CPlayScene::Update(DWORD dt)
 			listBoomerangEnemy.erase(listBoomerangEnemy.begin() + i);
 		}
 	}
+
+
 	if (!player->GetIsDeadth())
 	{
 		CheckCollision();
