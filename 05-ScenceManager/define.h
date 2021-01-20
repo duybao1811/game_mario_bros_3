@@ -28,6 +28,7 @@ enum Type {
 	ESHORT_PIPE = 26,
 	EMEDIUM_PIPE = 27,
 	GOLD_BRICK = 28,
+	WOOD = 29,
 
 
 	//ENEMY 
@@ -38,8 +39,11 @@ enum Type {
 	FIRE_PIRANHA = 34,
 	PIRANHA_GREEN = 35,
 	FIRE_ENEMY = 36,
+	BOOMERANG = 37,
+	BOOM_BROTHER = 38,
 	//WEAPON
 	FIRE = 40,
+
 
 	//ITEM
 	MUSHROOM_POWER = 50,
@@ -66,7 +70,9 @@ enum Range
 	RIGHT_TOP_SIDE_NEAR = 5,
 	RIGHT_TOP_SIDE_FAR = 6,
 	RIGHT_BOTTOM_SIDE_NEAR = 7,
-	RIGHT_BOTTOM_SIDE_FAR = 8	
+	RIGHT_BOTTOM_SIDE_FAR = 8,
+	LEFT_SIDE = 9,
+	RIGHT_SIDE = 10
 };
 
 
@@ -121,6 +127,8 @@ enum Range
 #define GB_CONTAIN_COIN 1
 #define GB_CONTAIN_PSWITCH 2
 #define GB_CONTAIN_MUSHROOM_1_UP 3
+#define GB_MODEL_MANY_COIN 4
+#define GB_CONTAIN_POWER_UP 5
 #define GB_STATE_EMPTY 100
 #define GB_STATE_TRANFORM 200
 
@@ -175,7 +183,9 @@ enum Range
 #define GAME_OVER_SELECT_END 1
 #define WORLD_MAP 1
 #define WORLD_1_1 2
-#define WORLD_1_1_1 3 
+#define WORLD_1_1_1 3
+#define WORLD_1_4 4
+#define WORLD_1_4_1 5
 /*#ifndef CHECK_OBJECT_IN_CAMERA // Kiểm tra GameObject có nằm trong camera ko?
 #define CHECK_OBJECT_IN_CAMERA(obj) \
 checkObjectInCamera(obj->GetX(), obj->GetY(),16.0f, 16.0f)

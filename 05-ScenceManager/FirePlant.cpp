@@ -6,7 +6,8 @@ FirePlant::FirePlant(float X, float Y,Range marioRange)
 	eType = Type::FIRE_ENEMY;
 	SetAnimationSet(CAnimationSets::GetInstance()->Get(LOAD_FIRE_FROM_TXT));
 	isFinish = false;
-	SetFireFly(marioRange); // SET ĐƯỜNG ĐẠN BAY
+	this->MarioRange = marioRange;
+
 }
 void FirePlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -17,6 +18,7 @@ void FirePlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		SetFinish(true);
 	}
+	SetFireFly(MarioRange); // SET ĐƯỜNG ĐẠN BAY
 }
 void FirePlant::Render()
 {
@@ -27,48 +29,48 @@ void FirePlant::Render()
 	}
 	animation_set->at(ani)->Render(x, y);
 }
-void FirePlant::SetFireFly(Range marioArea)
+void FirePlant::SetFireFly(Range marioRange)
 {
-	switch (marioArea)
+	switch (marioRange)
 	{
 	case LEFT_TOP_SIDE_NEAR:
-		vy = -FIRE_ENEMY_SPEED_Y_NEAR;
-		vx = -FIRE_ENEMY_SPEED_X_NEAR;
+		vy = -FIRE_ENEMY_SPEED_Y_NEAR*dt;
+		vx = -FIRE_ENEMY_SPEED_X_NEAR*dt;
 		direction = -1;
 		break;
 	case LEFT_TOP_SIDE_FAR:
-		vy = -FIRE_ENEMY_SPEED_Y_FAR ;
-		vx = -FIRE_ENEMY_SPEED_X_FAR;
+		vy = -FIRE_ENEMY_SPEED_Y_FAR * dt;
+		vx = -FIRE_ENEMY_SPEED_X_FAR * dt;
 		direction = -1;
 		break;
 	case LEFT_BOTTOM_SIDE_NEAR:
-		vy = FIRE_ENEMY_SPEED_Y_NEAR;
-		vx = -FIRE_ENEMY_SPEED_X_NEAR;
+		vy = FIRE_ENEMY_SPEED_Y_NEAR * dt;
+		vx = -FIRE_ENEMY_SPEED_X_NEAR * dt;
 		direction = -1;
 		break;
 	case LEFT_BOTTOM_SIDE_FAR:
-		vy = FIRE_ENEMY_SPEED_Y_FAR;
-		vx = -FIRE_ENEMY_SPEED_X_FAR;
+		vy = FIRE_ENEMY_SPEED_Y_FAR * dt;
+		vx = -FIRE_ENEMY_SPEED_X_FAR * dt;
 		direction = -1;
 		break;
 	case RIGHT_TOP_SIDE_NEAR:
-		vy = -FIRE_ENEMY_SPEED_Y_NEAR;
-		vx = FIRE_ENEMY_SPEED_X_NEAR;
+		vy = -FIRE_ENEMY_SPEED_Y_NEAR * dt;
+		vx = FIRE_ENEMY_SPEED_X_NEAR * dt;
 		direction = 1;
 		break;
 	case RIGHT_TOP_SIDE_FAR:
-		vy = -FIRE_ENEMY_SPEED_Y_FAR;
-		vx = FIRE_ENEMY_SPEED_X_FAR;
+		vy = -FIRE_ENEMY_SPEED_Y_FAR * dt;
+		vx = FIRE_ENEMY_SPEED_X_FAR * dt;
 		direction = 1;
 		break;
 	case RIGHT_BOTTOM_SIDE_NEAR:
-		vy = FIRE_ENEMY_SPEED_Y_NEAR;
-		vx = FIRE_ENEMY_SPEED_X_NEAR;
+		vy = FIRE_ENEMY_SPEED_Y_NEAR * dt;
+		vx = FIRE_ENEMY_SPEED_X_NEAR * dt;
 		direction = 1;
 		break;
 	case RIGHT_BOTTOM_SIDE_FAR:
-		vy = FIRE_ENEMY_SPEED_Y_FAR;
-		vx = FIRE_ENEMY_SPEED_X_FAR;
+		vy = FIRE_ENEMY_SPEED_Y_FAR * dt;
+		vx = FIRE_ENEMY_SPEED_X_FAR * dt;
 		direction = 1;
 		break;
 

@@ -2,6 +2,8 @@
 start	2
 #scene list
 [SCENES]
-1	scene1.txt
-2	scene2.txt
-3	scene-test.txt
+1	WorldMap.txt
+2	World1-1.txt
+3	World1-1-1.txt
+4	World1-4.txt
+5	World1-4-1.txt

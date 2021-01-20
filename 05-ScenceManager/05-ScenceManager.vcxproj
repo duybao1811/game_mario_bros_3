@@ -127,6 +127,8 @@
     <ClCompile Include="Animations.cpp" />
     <ClCompile Include="BlockColor.cpp" />
     <ClCompile Include="Board.cpp" />
+    <ClCompile Include="Boomerang.cpp" />
+    <ClCompile Include="BoomerangBrother.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="BrokenBrickEffect.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -181,6 +183,8 @@
     <ClInclude Include="Animations.h" />
     <ClInclude Include="BlockColor.h" />
     <ClInclude Include="Board.h" />
+    <ClInclude Include="Boomerang.h" />
+    <ClInclude Include="BoomerangBrother.h" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="BrokenBrickEffect.h" />
     <ClInclude Include="Camera.h" />

@@ -29,6 +29,8 @@
 #include "WorldMap.h"
 #include "Effect_1_UP.h"
 #include "Box.h"
+#include "wood.h"
+#include "BoomerangBrother.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -64,6 +66,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 #define OBJECT_TYPE_FLOOR 12
 #define OBJECT_TYPE_WORLD_MAP 13
 #define OBJECT_TYPE_BOX 14
+#define OBJECT_TYPE_WOOD 15
+#define OBJECT_TYPE_BOOM_BROTHER 16
 #define OBJECT_TYPE_PORTAL	50
 #define MAX_SCENE_LINE 1024
 
@@ -269,6 +273,17 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		obj = new Box();
 		break;
+	} 
+	case OBJECT_TYPE_BOOM_BROTHER:
+	{
+		int d = atof(tokens[4].c_str());
+		obj = new BoomerangBrother(d, &listBoomerangEnemy);
+		break;
+	}
+	case OBJECT_TYPE_WOOD:
+	{
+		obj = new Wood();
+		break;
 	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
@@ -441,6 +456,19 @@ void CPlayScene::GoldBrickDestroy(int model, float x, float y)
 		ListItem.push_back(new CMushRoom(x, y + 10, MUSHROOM_GREEN));
 		break;
 	}
+	case GB_CONTAIN_POWER_UP:
+	{
+		if (player->level == MARIO_LEVEL_SMALL)
+		{
+			ListItem.push_back(new CMushRoom(x, y + 10, MUSHROOM_RED));
+		}
+		else
+		{
+			ListItem.push_back(new Leaf(x, y));
+		}
+	}
+	break;
+
 	}
 }
 void CPlayScene::CheckCollision()
@@ -499,7 +527,6 @@ void CPlayScene::Update(DWORD dt)
 							{
 								goldbrick->SetState(GB_STATE_TRANFORM);
 							}
-						//	objects.push_back(new CCoin(goldbrick->GetX(), goldbrick->GetY()));
 						}
 					}
 				}
@@ -549,6 +576,17 @@ void CPlayScene::Update(DWORD dt)
 			listFireEnemy.erase(listFireEnemy.begin() + i);
 		}
 	}
+	for (UINT i = 0; i < listBoomerangEnemy.size(); i++)
+	{
+		listBoomerangEnemy[i]->Update(dt, &coObjects);
+	}
+	for (UINT i = 0; i < listBoomerangEnemy.size(); i++)
+	{
+		if (listBoomerangEnemy[i]->GetFinish() == true)
+		{
+			listBoomerangEnemy.erase(listBoomerangEnemy.begin() + i);
+		}
+	}
 	if (!player->GetIsDeadth())
 	{
 		CheckCollision();
@@ -575,10 +613,11 @@ void CPlayScene::Update(DWORD dt)
 			player->SetPosition(2360, 381);
 		}
 	}
-	if (CGame::GetInstance()->GetScene() ==1)
+	if (CGame::GetInstance()->GetScene() ==WORLD_1_4)
 	{
-		CGame::GetInstance()->SetCamPos(0, 0);
-		player->SetState(MARIO_STATE_WORLDMAP);
+		CamX += 0.04 * dt;
+		CGame::GetInstance()->SetCamPos(CamX, CamY);
+	//	player->SetState(MARIO_STATE_WORLDMAP);
 	}
 	else
 	{
@@ -641,7 +680,11 @@ void CPlayScene::Render()
 	{
 		listFireEnemy[i]->Render();
 	}
-
+	
+	for (int i = 0; i < listBoomerangEnemy.size(); i++)
+	{
+		listBoomerangEnemy[i]->Render();
+	}
 	board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
 	board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
 }
@@ -654,6 +697,7 @@ void CPlayScene::Unload()
 	objects.clear();
 	ListPointEffect.clear();
 	listFireEnemy.clear();
+	listBoomerangEnemy.clear();
 	ListEffect.clear();
 	
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
@@ -853,6 +897,33 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 		{
 			CGame::GetInstance()->SwitchScene(2);
 			mario->SetPosition(2627, 357);
+		}
+	}
+	if (CGame::GetInstance()->GetScene() == WORLD_1_4)
+	{
+		if (game->IsKeyDown(DIK_5))
+		{
+			mario->SetPosition(649, 111);
+		}
+		if (game->IsKeyDown(DIK_6))
+		{
+			mario->SetPosition(985, 138);
+		}
+		if (game->IsKeyDown(DIK_7))
+		{
+			mario->SetPosition(1213, 35);
+		}
+		if (game->IsKeyDown(DIK_8))
+		{
+			mario->SetPosition(1567, 126);
+		}
+		if (game->IsKeyDown(DIK_9))
+		{
+			mario->SetPosition(1946, 63);
+		}
+		if (game->IsKeyDown(DIK_0))
+		{
+			CGame::GetInstance()->SwitchScene(WORLD_1_1);
 		}
 	}
 

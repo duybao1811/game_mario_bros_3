@@ -23,27 +23,22 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	y += dy;
 	if (Health == 0 )
 	{
-		state = QB_STATE_EMPTY;
-	}
-	if (y <= minY)
-	{
-		vy = QB_SPEED_UP;
-		isUnbox = true;
-	}
-	if (y >= starty)
-	{
-		y = starty;
-		SetState(QB_STATE_EMPTY);
+		if (y <= minY)
+		{
+			vy = QB_SPEED_UP;
+			isUnbox = true;
+		}
+		if (y >= starty)
+		{
+			y = starty;
+			vy = 0;
+		}
 	}
 }
 void CQuestionBrick::Render()
 {
 	int ani = QB_ANI;
-	if (state == QB_STATE_UNBOX)
-	{
-		ani = QB_ANI_EMPTY;
-	}
-	if (state == QB_STATE_EMPTY)
+	if (Health == 0)
 	{
 		ani = QB_ANI_EMPTY;
 	}
@@ -55,18 +50,6 @@ void CQuestionBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
 	t = y;
 	r = x + QB_BBOX_WIDTH;
 	b = y + QB_BBOX_HEIGHT;
-}
-void CQuestionBrick::SetState(int state)
-{
-	switch (state)
-	{
-	case QB_STATE_UNBOX:
-		vy = -QB_SPEED_UP;
-		break;
-	case QB_STATE_EMPTY:
-		vy = 0;
-		break;
-	}
 }
 int CQuestionBrick::GetModel()
 {

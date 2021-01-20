@@ -23,13 +23,14 @@ void Map::DrawMap()
 	int LastColumn = ceil((CamX + CGame::GetInstance()->GetScreenWidth()) / TILE_WIDTH);
 	if (LastColumn >= RowMap)
 		LastColumn = ColumnMap - 1;
-	for (int CurrentRow = 0; CurrentRow < RowMap; CurrentRow++)
+	for (int CurrentRow = 0; CurrentRow < RowMap; CurrentRow++) {
 		for (int CurrentColumn = 0; CurrentColumn <= LastColumn; CurrentColumn++)
 		{
 			int index = TileMap[CurrentRow][CurrentColumn] - 1;
 			if (index < TotalTile)
 				Tiles.at(index)->Draw(CurrentColumn * TILE_WIDTH, CurrentRow * TILE_HEIGHT);
 		}
+	}
 }
 void Map::GetSpriteTile()
 {

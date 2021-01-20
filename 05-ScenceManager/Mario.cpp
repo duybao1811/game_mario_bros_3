@@ -22,6 +22,9 @@
 #include "d3dx9.h"
 #include "GoldBrick.h"
 #include "P_Switch.h"
+#include "Box.h"
+#include "wood.h"
+#include "CoinEffect.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
 	level = MARIO_LEVEL_RACCOON;
@@ -99,7 +102,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 #pragma region Set thời gian
 	if (level == MARIO_LEVEL_RACCOON && GetTickCount64() - TimeAttack > 500 && isAttack)
 	{
-	//	tail->SetFinish(true);
+		//tail->SetFinish(true);
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
 		TimeAttack = now;
@@ -210,7 +213,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					ListEffect.push_back(new PointEffect(koopas->GetX(), koopas->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
 					score += 100;
-					if (koopas->GetState() == KOOPAS_STATE_FLY)
+					if (koopas->GetHealth() ==4)
 					{
 						koopas->SubHealth(1);
 						vy = -MARIO_JUMP_DEFLECT_SPEED_AFTER_COLLISION;
@@ -300,9 +303,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				CQuestionBrick* questionbrick = dynamic_cast<CQuestionBrick*>(e->obj);
 				if (e->ny > 0)
 				{
-					if (questionbrick->GetState() != QB_STATE_EMPTY)
+					if (questionbrick->GetHealth() !=0)
 					{
-						questionbrick->SetState(QB_STATE_UNBOX);
+						questionbrick->vy = -QB_SPEED_UP;
 						questionbrick->SubHealth(1);
 					}
 				}
@@ -322,14 +325,42 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						ListEffect.push_back(new BrokenBrickEffect(x, y, -1, 1.5));
 						break;
 					case GB_CONTAIN_PSWITCH:
-					case GB_CONTAIN_MUSHROOM_1_UP:
 					{
-						if (goldbrick->GetState()!=GB_STATE_EMPTY)
+						if (goldbrick->GetState() != GB_STATE_EMPTY)
 						{
 							goldbrick->SetState(GB_STATE_EMPTY);
+							goldbrick->isUnbox = true;
 						}
 					}
-						break;
+					break;
+					case GB_CONTAIN_POWER_UP:
+					{
+						if (goldbrick->GetHealth() != 0)
+						{
+							goldbrick->vy = -QB_SPEED_UP;
+							goldbrick->SubHealth(1);
+						}
+					}
+					break;
+					case GB_CONTAIN_MUSHROOM_1_UP:
+					{
+						if (goldbrick->GetHealth() != 0)
+						{
+							goldbrick->vy = -QB_SPEED_UP;
+							goldbrick->SubHealth(1);
+						}
+					}
+					break;
+					case GB_MODEL_MANY_COIN:
+					{
+						if (goldbrick->GetHealth() != 0)
+						{
+							goldbrick->vy = -QB_SPEED_UP;
+							goldbrick->SubHealth(1);
+							ListEffect.push_back(new CoinEffect(goldbrick->x, goldbrick->y));
+						}
+					}
+					break;
 					}
 				}
 			}
@@ -339,11 +370,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (e->ny < 0)
 				{
 					pswitch->isUsed = true;
-					pswitch->SetPosition(pswitch->GetX(), pswitch->GetY()+PSWITCH_SMALLER);
+					pswitch->SetPosition(pswitch->GetX(), pswitch->GetY() + PSWITCH_SMALLER);
 				}
 			}
 			if (e->obj->GetType() == BOX)
 			{
+				Box* box = dynamic_cast<Box*>(e->obj);
 				if (e->ny < 0)
 				{
 					vy = last_vy;
@@ -353,21 +385,28 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					x += dx;
 					
-					if (e->obj->ani == BOX_ANI_RANDOM)
+					if (box->ani == BOX_ANI_RANDOM)
 					{
-						LPANIMATION current_ani = animation_set->at(ani);
+						LPANIMATION current_ani = animation_set->at(box->ani);
 						switch (current_ani->GetCurrentFrame())
 						{
-
 						case 0:
 
 							SetLevel(MARIO_LEVEL_FIRE);
 							break;
 						}
-						e->obj->SetFinish(true);
+						box->SetFinish(true);
 					}
 				}
 
+			}
+			if (e->obj->GetType() == WOOD)
+			{
+				Wood* wood = dynamic_cast<Wood*>(e->obj);
+				if (e->ny < 0)
+				{
+					wood->isCollisMario = true;
+				}
 			}
 			else if (e->obj->GetType()==PORTAL)
 			{
@@ -406,9 +445,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			ListEffect[i]->Update(dt);
 	for (int i = 0; i < ListEffect.size(); i++)
 	{
-		if (ListEffect[i]->GetFinish())
+		CGameObject* effect = ListEffect[i];
+		if (effect->GetFinish())
 		{
-			ListEffect.erase(ListEffect.begin() + i);
+			if (effect->GetType() == COIN_EFFECT)
+			{
+				ListEffect.erase(ListEffect.begin() + i);
+				ListEffect.push_back(new PointEffect(effect->GetX(), effect->GetY(), POINT_EFFECT_TYPE_ONE_HUNDRED));
+				SetScore(GetScore() + 100);
+				SetCoinCollect(GetCoinCollect() + 1);
+			}
+			else
+				ListEffect.erase(ListEffect.begin() + i);
 		}
 	}
 	tail->Update(dt, coObjects);

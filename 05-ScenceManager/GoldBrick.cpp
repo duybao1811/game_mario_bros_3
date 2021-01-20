@@ -6,14 +6,40 @@ GoldBrick::GoldBrick(float X, float Y,int Model)
 	this->y = Y;
 	this->model = Model;
 	SetHealth(1);
+	starty = Y;
+	startX = X;
+	minY = Y - QB_MINY;
 	eType = Type::GOLD_BRICK;
+	if (model == GB_MODEL_MANY_COIN)
+	{
+		SetHealth(8);
+		this->fullhealth = 8;
+	}
 }
 void GoldBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
+	y += dy;
 	if (Health == 0)
 	{
-		isFinish = true;
+		if (model == GB_CONTAIN_COIN)
+		{
+			isFinish = true;
+		}
+		if( model == GB_MODEL_MANY_COIN || model == GB_CONTAIN_MUSHROOM_1_UP || model == GB_CONTAIN_POWER_UP)
+		{
+			SetState(GB_STATE_EMPTY);
+		}
+	}
+	if (y <= minY)
+	{
+		vy = QB_SPEED_UP;
+		isUnbox = true;
+	}
+	if (y >= starty)
+	{
+		y = starty;
+		vy = 0;
 	}
 }
 void GoldBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -44,11 +70,6 @@ void GoldBrick::Render()
 void GoldBrick::SetState(int state)
 {
 	CGameObject::SetState(state);
-
-	if (state == GB_STATE_EMPTY)
-	{
-		isUnbox = true;
-	}
 	if (state == GB_STATE_TRANFORM)
 	{
 		if (eType == Type::GOLD_BRICK)
@@ -59,6 +80,5 @@ void GoldBrick::SetState(int state)
 		{
 			eType = Type::GOLD_BRICK;
 		}
-
 	}
 }

@@ -4,6 +4,7 @@
 class Box : public CGameObject
 {
 public:
+	int ani;
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();

@@ -15,6 +15,7 @@
 #include "Board.h"
 #include "QuestionBrick.h"
 #include "FirePlant.h"
+#include "Boomerang.h"
 #include "GameTime.h"
 class CPlayScene: public CScene
 {
@@ -23,6 +24,7 @@ private:
 	bool isGameOver;
 	GameTime* gametime = new GameTime();
 	int CountEnemy;
+	float CamX = 0, CamY=0;
 	Font* Text = new Font();
 	bool isSwitchScene;
 protected: 
@@ -33,6 +35,7 @@ protected:
 	vector<LPGAMEOBJECT> ListEffect;
 	vector<LPGAMEOBJECT> ListPointEffect;
 	vector<FirePlant*> listFireEnemy;
+	vector<Boomerang*>listBoomerangEnemy;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);

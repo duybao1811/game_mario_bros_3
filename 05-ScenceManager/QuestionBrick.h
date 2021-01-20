@@ -11,9 +11,8 @@ public:
 	bool isUnbox;
 	bool isEmpty;
 	CQuestionBrick(float X, float Y,int Model);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
-	virtual void Render();
-	virtual void GetBoundingBox(float& l, float& t, float& r, float& b);
-	virtual void SetState(int state);
+	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	void Render();
+	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	int GetModel();
 };

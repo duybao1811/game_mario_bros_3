@@ -111,10 +111,7 @@ void CFirePiranhaPlant::Render()
 			ani = FPLANT_ANI_RIGHT_BOTTOM;
 		}
 	}
-/*	for (int i = 0; i < ListFireEnemy.size(); i++)
-	{
-		ListFireEnemy[i]->Render();
-	}*/
+
 	animation_set->at(ani)->Render(x, y);
 }
 void CFirePiranhaPlant::SetState(int state)
@@ -220,7 +217,6 @@ bool CFirePiranhaPlant::GetSafeZone()
 }
 void CFirePiranhaPlant::CreateFire()
 {
-
 	marioRange = GetMarioRangeCurrent();
 	FirePlant* fireplant = new FirePlant(this->x + 5, this->y + 5, marioRange);
 	ListFireEnemy->push_back(fireplant);
