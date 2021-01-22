@@ -21,6 +21,8 @@ CPiranhaPlant::CPiranhaPlant(float X, float Y, int Model)
 void CPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
+	if (isFinish)
+		return;
 	y += dy;
 	if (y <= minY)
 	{
@@ -49,7 +51,6 @@ void CPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		isFinish = true;
 	}
 
-	CGameObject::Update(dt);
 
 }
 void CPiranhaPlant::Render()
@@ -74,16 +75,26 @@ void CPiranhaPlant::SetState(int state)
 		vy = PLANT_SPEED_HIDDING * dt;
 		break;
 	}
+	case ENEMY_STATE_FIRE_ATTACK:
+	{
+		isFinish = true;
+		break;
+	}
+	case ENEMY_ATTACKED:
+	{
+		isFinish = true;
+		break;
+	}
 	}
 }
 void CPiranhaPlant::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (isFinish)
-		left = top = right = bottom = 0;
 	left = x;
 	top = y;
 	right = x + PLANT_BBOX_WIDTH;
 	bottom = y + PLANT_BBOX_HEIGHT;
+	if (isFinish)
+		left = top = right = bottom = 0;
 }
 bool CPiranhaPlant::GetSafeZone()
 {

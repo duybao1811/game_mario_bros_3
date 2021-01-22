@@ -28,7 +28,7 @@
 #include "PlayScence.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
-	level = MARIO_LEVEL_RACCOON;
+	level = MARIO_LEVEL_SMALL;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
 	start_x = x;
@@ -45,7 +45,7 @@ CMario::CMario(float x, float y) : CGameObject()
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGame* game = CGame::GetInstance();
-	if (((CPlayScene*)game->GetCurrentScene())->isGameDone == false)
+	if (((CPlayScene*)game->GetCurrentScene())->section == 0)
 	{
 		if (x < CGame::GetInstance()->GetCamX())
 		{
@@ -108,7 +108,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 #pragma region Set thời gian
 	if (level == MARIO_LEVEL_RACCOON && GetTickCount64() - TimeAttack > 500 && isAttack)
 	{
-		//tail->SetFinish(true);
+		tail->SetFinish(true);
 		isAttack = false;
 		state = MARIO_STATE_IDLE;
 		TimeAttack = now;
@@ -393,9 +393,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (e->nx != 0)
 				{
 					int state1 = (rand() % 3 + 1) * 100;
-					box->vy = -0.1f;
 					box->SetState(state1);
-					((CPlayScene*)game->GetCurrentScene())->isGameDone = true;
+					((CPlayScene*)game->GetCurrentScene())->section = 1;
 					BackupX = x;
 				}
 
@@ -410,13 +409,21 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (e->obj->GetType()==PORTAL)
 			{
-				if (e->ny != 0)
+				CPortal* p = dynamic_cast<CPortal*>(e->obj);
+				if (CGame::GetInstance()->GetScene() == WORLD_MAP)
 				{
-					if (isSitting)
+					if (e->ny != 0)
 					{
-						CPortal* p = dynamic_cast<CPortal*>(e->obj);
-						CGame::GetInstance()->SwitchScene(p->GetSceneId());
-						isSwitchScene = true;
+			
+					}
+					if (e->nx != 0)
+					{
+
+					}
+					if (e->ny!=0)
+					{
+				
+							CGame::GetInstance()->SwitchScene(p->GetSceneId());
 					}
 				}
 			}
@@ -1171,7 +1178,7 @@ void CMario::SetHurt(LPCOLLISIONEVENT e)
 		return;
 	StartUntouchable();
 
-	SubHealth(1);
+	//SubHealth(1);
 }
 void CMario::SetLive(int l)
 {

@@ -981,7 +981,7 @@
 #type   x       y    ani_set_id model    direction
 3	1872	71	6	4	-1
 3	1984	115	6	2	-1
-3	1080	96	6	2	-1
+#3	1080	96	6	2	-1
 ###################GOOMBA###################
 #TYPE    X       Y  ANI_SET_ID  MODEL   DIRECTION 1:GOOMBA base 2:GOOMBA RED
 ########################## BRICK ####################
@@ -1114,6 +1114,6 @@
 15	1792	193	30
 #16	1996	316	32	-1
 #PORTAL
-50	2256	112	0	2287	305	3
+50	1936	113	0	1967	177	5
 [TILEMAP]
 Resources/Tilemap/Map1-4.txt

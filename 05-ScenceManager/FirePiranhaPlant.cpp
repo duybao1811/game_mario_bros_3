@@ -28,6 +28,8 @@ CFirePiranhaPlant::CFirePiranhaPlant(float X,float Y,int Model, vector<FirePlant
 void CFirePiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
+	if (isFinish)
+		return;
 	y += dy;
 	x += dx;
 	if (y <= minY)
@@ -129,8 +131,14 @@ void CFirePiranhaPlant::SetState(int state)
 		vy = PLANT_SPEED_HIDDING*dt;
 		break;
 	}
-	case PLANT_STATE_ATTACK:
+	case ENEMY_STATE_FIRE_ATTACK:
 	{
+		isFinish = true;
+		break;
+	}
+	case ENEMY_ATTACKED:
+	{
+		isFinish = true;
 		break;
 	}
 	}

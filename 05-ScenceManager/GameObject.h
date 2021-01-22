@@ -65,6 +65,7 @@ public:
 	bool isInCam;
 	bool isKilled;
 	bool isAttacked;
+	bool isFireAttack;
 	float startX, startY;
 	DWORD dt; 
 	int model;

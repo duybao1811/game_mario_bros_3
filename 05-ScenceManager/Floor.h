@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#define FLOOR_SPEED_Y 0.05f
+#define FLOOR_SPEED_Y 0.1f
 #define FLOOR_HEIGHT 183
 class Floor : public CGameObject
 {

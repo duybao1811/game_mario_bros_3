@@ -39,8 +39,8 @@ void CKoopas::GetBoundingBox(float &left, float &top, float &right, float &botto
 	}
 	else
 		bottom = y + KOOPAS_BBOX_HEIGHT;
-
-	if (isFinish)
+	
+	if (isFinish || isFireAttack)
 	{
 		left = 0;
 		top = 0;
@@ -113,9 +113,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (model == KOOPAS_FLY && Health == 4 && isOnGround)
 	{
-		vx = direction * KOOPAS_FLY_SPEED_X;
-		isOnGround = false;
-		vy = -KOOPAS_FLY_SPEED_Y;
+		SetState(KOOPAS_STATE_FLY);
 	}
 	if (isUp)
 	{
@@ -217,7 +215,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 			}
-			if (e->obj->GetType() == EMEDIUM_PIPE || e->obj->GetType() == ESHORT_PIPE || e->obj->GetType()==PLATFORM)
+			if (e->obj->GetType() == EMEDIUM_PIPE || e->obj->GetType() == ESHORT_PIPE || e->obj->GetType()==PLATFORM || e->obj->GetType()==PORTAL)
 			{
 				if (e->nx != 0)
 				{
@@ -241,22 +239,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 					}
 				}
-				if (e->obj->GetObjType() == ENEMY)
-				{
-					if (e->nx != 0)
-					{
-						x += dx;
-						e->obj->SetState(ENEMY_ATTACKED);
-						if (direction > 0)
-						{
-							ListEffect.push_back(new TailHitEffect(this->x+KOOPAS_BBOX_WIDTH,this->y));
-						}
-						if (direction < 0)
-						{
-							ListEffect.push_back(new TailHitEffect(this->x, this->y));
-						}
-					}
-				}
+
 				if (e->obj->GetType() == GOLD_BRICK)
 				{
 					GoldBrick* goldbrick = dynamic_cast<GoldBrick*>(e->obj);
@@ -294,6 +277,25 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							}
 							break;
 							}
+						}
+					}
+				}
+			}
+			if (state == KOOPAS_STATE_BALL || state == KOOPAS_STATE_UPSIDE_BALL || isHeld)
+			{
+				if (e->obj->GetObjType() == ENEMY)
+				{
+					if (e->nx != 0)
+					{
+						x += dx;
+						e->obj->SetState(ENEMY_ATTACKED);
+						if (direction > 0)
+						{
+							ListEffect.push_back(new TailHitEffect(this->x + KOOPAS_BBOX_WIDTH, this->y));
+						}
+						if (direction < 0)
+						{
+							ListEffect.push_back(new TailHitEffect(this->x, this->y));
 						}
 					}
 				}
@@ -378,6 +380,10 @@ void CKoopas::Render()
 		{
 			ani = KOOPAS_BASE_ANI_UPSIDE_BALL;
 		}
+		if (isFireAttack)
+		{
+			ani = KOOPAS_BASE_ANI_ATTACKED;
+		}
 	}
 	else if (model == KOOPAS_RED)
 	{
@@ -412,6 +418,10 @@ void CKoopas::Render()
 		if (state == KOOPAS_STATE_UPSIDE_BALL)
 		{
 			ani = KOOPAS_RED_ANI_UPSIDE_BALL;
+		}
+		if (isFireAttack)
+		{
+			ani = KOOPAS_RED_ANI_ATTACKED;
 		}
 
 	}
@@ -460,11 +470,15 @@ void CKoopas::Render()
 		{
 			ani = KOOPAS_RED_ANI_UPSIDE_BALL;
 		}
+		if (isFireAttack)
+		{
+			ani = KOOPAS_RED_ANI_ATTACKED;
+		}
 
 	}
 	else if (model == KOOPAS_FLY)
 	{
-		if ( Health == 4)
+		if (state==KOOPAS_STATE_FLY)
 		{
 			if (direction > 0)
 			{
@@ -501,6 +515,15 @@ void CKoopas::Render()
 		{
 			ani = KOOPAS_BASE_ANI_COME_BACK;
 		}
+		if (isFireAttack)
+		{
+			ani = KOOPAS_BASE_ANI_ATTACKED;
+		}
+		if (isAttacked)
+		{
+			ani = KOOPAS_BASE_ANI_ATTACKED;
+		}
+
 	}
 	for (UINT i = 0; i < ListEffect.size(); i++)
 	{
@@ -536,9 +559,19 @@ void CKoopas::SetState(int state)
 		vx = 0;
 		break;
 	case ENEMY_ATTACKED:
-		vx = direction*0.5f;
+		vx = direction*0.3f;
 		vy = -0.3f;
 		isAttacked = true;
+		break;
+	case ENEMY_STATE_FIRE_ATTACK:
+		vx = 0;
+		vy = -0.3f;
+		isFireAttack = true;
+		break;
+	case KOOPAS_STATE_FLY:
+		vx = direction * KOOPAS_FLY_SPEED_X;
+		isOnGround = false;
+		vy = -KOOPAS_FLY_SPEED_Y;
 		break;
 	}
 

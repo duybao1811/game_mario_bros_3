@@ -12,10 +12,12 @@
 #define BOX_ANI_MUSHROOM_UP 4
 #define BOX_ANI_FLOWER_UP 5
 #define BOX_ANI_STAR_UP 6
+#define BOX_SPEED_UP 0.065f
+#define NUMBER_OF_ITEM_IN_BOX 3
 class Box : public CGameObject
 {
 public:
-	CGame* game = CGame::GetInstance();
+	
 	int ani;
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

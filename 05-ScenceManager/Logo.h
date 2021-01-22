@@ -3,7 +3,7 @@
 #define POSITION_LOGO_IN_INTRO 24
 #define LOAD_LOGO_FROM_TXT 52
 #define LOGO_WIDTH 128
-#define LOGO_SPEED 0.3f
+#define LOGO_SPEED 0.4f
 class Logo : public CGameObject
 {
 public:

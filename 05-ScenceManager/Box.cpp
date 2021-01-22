@@ -10,23 +10,27 @@ void Box::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 	top = y;
 	right = x + BOX_BBOX_WIDTH;
 	bottom = y + BOX_BBOX_HEIGHT;
-	if (isFinish)
-		left = top = right = bottom = 0;
 }
 void Box::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt);
+	CGame* game = CGame::GetInstance();
+	CGameObject::Update(dt,coObjects);
 	y += dy;
-	if (((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->isGameDone)
+	if (((CPlayScene*)game->GetCurrentScene())->section == 1)
 	{
+		vy = -BOX_SPEED_UP;
+	}
+	if (((CPlayScene*)game->GetCurrentScene())->section == 2)
+	{
+		vy = 0;
 		x = 2740;
 		y = 290;
 	}
+
 }
 void Box::Render()
 {
-	if (isFinish)
-		return;
+	CGame* game = CGame::GetInstance();
 	int ani = BOX_ANI_RANDOM;
 	if (state == BOX_STATE_MUSHROOM)
 		ani = BOX_ANI_MUSHROOM_UP;
@@ -34,9 +38,9 @@ void Box::Render()
 		ani = BOX_ANI_FLOWER_UP;
 	if (state == BOX_STATE_STAR)
 		ani = BOX_ANI_STAR_UP;
-	if (((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->isGameDone)
+	if (((CPlayScene*)game->GetCurrentScene())->section == 2)
 	{
-		ani -= 3;
+		ani -= NUMBER_OF_ITEM_IN_BOX;
 	}
 	animation_set->at(ani)->Render(x, y);
 	//RenderBoundingBox();

@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Effect.h"
-#include "Camera.h"
+#include "EffectDisappear.h"
 #define FIRE_SPEED 0.006f
 #define FIRE_GRAVITY 0.0006f
 #define FIRE_BOUNCE_SPEED_Y  0.15f
@@ -13,6 +13,7 @@
 #define LOAD_FIRE_FROM_TXT 4
 class Fire : public CGameObject
 {
+	vector<LPGAMEOBJECT> ListEffect;
 public:
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

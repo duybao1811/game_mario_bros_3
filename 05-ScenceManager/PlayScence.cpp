@@ -485,7 +485,7 @@ void CPlayScene::GoldBrickDestroy(int model, float x, float y)
 void CPlayScene::CheckCollision()
 {
 	CheckCollistionMarioWithItem();
-	//CheckCollisionMarioWithEnemy();
+	CheckCollisionMarioWithEnemy();
 }
 void CPlayScene::Update(DWORD dt)
 {
@@ -493,15 +493,7 @@ void CPlayScene::Update(DWORD dt)
 	CGameObject* obj = NULL;
 
 	vector<LPGAMEOBJECT> coObjects;
-	if (((CPlayScene*)game->GetCurrentScene())->isGameDone == true)
-	{
-		player->vx = 0.1f;
-		player->SetState(MARIO_STATE_WALKING_RIGHT);
-		if (abs(player->BackupX - player->x)>114)
-		{
-			
-		}
-	}
+
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
@@ -616,6 +608,29 @@ void CPlayScene::Update(DWORD dt)
 		CheckCollision();
 	}
 
+	if (section == 1)
+	{
+		player->vx = 0.1f;
+		player->SetState(MARIO_STATE_WALKING_RIGHT);
+	}
+	if (section == 1)
+	{
+		if (abs(player->x-player->BackupX)>114)
+		{
+			section = 2;
+		}
+	}
+	if (section == 2)
+	{
+		player->vx = 0.1f;
+		TimeSwitchScene += dt;
+		if (TimeSwitchScene > 3000)
+		{
+			CGame::GetInstance()->SwitchScene(WORLD_MAP);
+			section = 0;
+			TimeSwitchScene = 0;
+		}
+	}
 	gametime->Update(dt);
 	if (gametime->GetTime() >= GAME_TIME_LIMIT || player->GetHealth() <= 0)
 	{
@@ -630,24 +645,24 @@ void CPlayScene::Update(DWORD dt)
 			player->SetState(MARIO_STATE_DIE);
 		}
 	}
-	if (CGame::GetInstance()->GetScene() == 2)
-	{
-		if (player->isSwitchScene)
-		{
-			player->SetPosition(2360, 381);
-		}
-	}
 	if (CGame::GetInstance()->GetScene() == WORLD_1_4)
 	{
-		CamX += 0.04 * dt;
-		CGame::GetInstance()->SetCamPos(CamX, CamY);
+		CamX += 0.05f*dt;
+		CGame::GetInstance()->SetCamPos(CamX,0);
 	}
-	if (CGame::GetInstance()->GetScene() ==WORLD_MAP)
+	if (CGame::GetInstance()->GetScene()==WORLD_MAP)
 	{
 		CGame::GetInstance()->SetCamPos(0, 0);
 		player->SetState(MARIO_STATE_WORLDMAP);
+		player->vy = 0;
 	}
-	else
+	if (CGame::GetInstance()->GetScene() == 5)
+	{
+
+		CGame::GetInstance()->SetCamPos(player->x-(SCREEN_WIDTH/2),16);
+		map->SetCamPos(player->x - (SCREEN_WIDTH / 2),16);
+	}
+	if(CGame::GetInstance()->GetScene() == WORLD_1_1 )
 	{
 		// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 		if (player == NULL) return;
@@ -670,7 +685,7 @@ void CPlayScene::Update(DWORD dt)
 			cx = 0;
 		else if (cx + sw / 2 > mw)
 			cx = mw - sw + 1;
-		if (CGame::GetInstance()->GetScene() == 3)
+		if (CGame::GetInstance()->GetScene() == WORLD_1_1_1)
 		{
 			cy = 0;
 		}
@@ -716,7 +731,7 @@ void CPlayScene::Render()
 	board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
 	board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
 	
-	if (((CPlayScene*)game->GetCurrentScene())->isGameDone == true)
+	if (((CPlayScene*)game->GetCurrentScene())->section ==2)
 	{
 		Text = new Font();
 		Text->Draw(2635, 275, "COURSE CLEAR !");
@@ -761,7 +776,7 @@ void CPlayScene::CheckCollisionMarioWithEnemy()
 						if (!(objects[i]->GetType()==KOOPAS && objects[i]->GetState()==KOOPAS_STATE_DEFEND))
 						{
 							player->SetHurt(e);
-							player->SetLevel(player->level -= 1);
+							player->SetLevel(player->level--);
 							isCollision = true;
 						}
 					}
@@ -788,51 +803,58 @@ void CPlayScene::CheckCollisionMarioWithEnemy()
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
-
-	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
-	if (mario->GetState() == MARIO_STATE_DIE)
-		return;
-	switch (KeyCode)
+	CGame* game = CGame::GetInstance();
+	if (((CPlayScene*)game->GetCurrentScene())->section == 0)
 	{
-
-	case DIK_R:
-		mario->Reset();
-		break;
-	case DIK_1:
-		mario->SetLevel(MARIO_LEVEL_SMALL);
-		break;
-	case DIK_2:
-		mario->SetLevel(MARIO_LEVEL_BIG);
-		break;
-	case DIK_3:
-		mario->SetLevel(MARIO_LEVEL_RACCOON);
-		break;
-	case DIK_4:
-		mario->SetLevel(MARIO_LEVEL_FIRE);
-		break;
-	case DIK_A:
-	{
-		if (mario->level == MARIO_LEVEL_RACCOON)
+		CMario* mario = ((CPlayScene*)scence)->GetPlayer();
+		if (mario->GetState() == MARIO_STATE_DIE)
+			return;
+		switch (KeyCode)
 		{
-			mario->isJumping = false;
-			mario->SetState(MARIO_STATE_RACCOON_ATTACK);
-			mario->TimeAttack = GetTickCount64();
+
+		case DIK_R:
+			mario->Reset();
 			break;
-
-		}
-		else if (mario->level == MARIO_LEVEL_FIRE)
+		case DIK_1:
+			mario->SetLevel(MARIO_LEVEL_SMALL);
+			break;
+		case DIK_2:
+			mario->SetLevel(MARIO_LEVEL_BIG);
+			break;
+		case DIK_3:
+			mario->SetLevel(MARIO_LEVEL_RACCOON);
+			break;
+		case DIK_4:
+			mario->SetLevel(MARIO_LEVEL_FIRE);
+			break;
+		case DIK_A:
 		{
-			mario->isJumping = false;
-			mario->SetState(MARIO_STATE_SHOOT_FIRE);
-			mario->TimeAttack = GetTickCount64();
+			if (mario->level == MARIO_LEVEL_RACCOON)
+			{
+				mario->isJumping = false;
+				mario->SetState(MARIO_STATE_RACCOON_ATTACK);
+				mario->TimeAttack = GetTickCount64();
+				break;
+
+			}
+			else if (mario->level == MARIO_LEVEL_FIRE)
+			{
+				mario->isJumping = false;
+				mario->SetState(MARIO_STATE_SHOOT_FIRE);
+				mario->TimeAttack = GetTickCount64();
+			}
+			break;
 		}
-		break;
-	}
-	case DIK_S:
-	{
-		mario->SetState(MARIO_STATE_JUMP);
-		break;
-	}
+		case DIK_S:
+		{
+			mario->SetState(MARIO_STATE_JUMP);
+			if (CGame::GetInstance()->GetScene() == WORLD_1_4)
+			{
+				mario->isIntoWorld = true;
+			}
+			break;
+		}
+		}
 	}
 }
 
@@ -840,188 +862,185 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
 	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
-	// disable control key when Mario die 
-	if (mario->GetState() == MARIO_STATE_DIE) return;
-	else if (game->IsKeyDown(DIK_A) && game->IsKeyDown(DIK_RIGHT))
+	if (((CPlayScene*)game->GetCurrentScene())->section == 0)
 	{
-		mario->isRunning = true;
-		mario->SetState(MARIO_STATE_RUN_RIGHT);
-	}
-	else if (game->IsKeyDown(DIK_A) && game->IsKeyDown(DIK_LEFT))
-	{
-		mario->isRunning = true;
-		mario->SetState(MARIO_STATE_RUN_LEFT);
-	}
-	else if (game->IsKeyDown(DIK_RIGHT) || (game->IsKeyDown(DIK_DOWN)&& game->IsKeyDown(DIK_RIGHT)))
-	{
-		mario->SetState(MARIO_STATE_WALKING_RIGHT);
-		if (mario->vx < 0)
+		// disable control key when Mario die 
+
+		if (mario->GetState() == MARIO_STATE_DIE) return;
+		else if (game->IsKeyDown(DIK_A) && game->IsKeyDown(DIK_RIGHT))
 		{
-			mario->SetState(MARIO_STATE_TURN);
+			mario->isRunning = true;
+			mario->SetState(MARIO_STATE_RUN_RIGHT);
 		}
-		mario->WalkRight();
-	}
-	else if (game->IsKeyDown(DIK_LEFT) || (game->IsKeyDown(DIK_DOWN) && game->IsKeyDown(DIK_LEFT)))
-	{
-		mario->SetState(MARIO_STATE_WALKING_LEFT);
-		if (mario->vx > 0)
+		else if (game->IsKeyDown(DIK_A) && game->IsKeyDown(DIK_LEFT))
 		{
-			mario->SetState(MARIO_STATE_TURN);
+			mario->isRunning = true;
+			mario->SetState(MARIO_STATE_RUN_LEFT);
 		}
-		mario->WalkLeft();
-	}
-	else if (game->IsKeyDown(DIK_DOWN) && mario->GetLevel()!=MARIO_LEVEL_SMALL)
-	{
+		else if (game->IsKeyDown(DIK_RIGHT) || (game->IsKeyDown(DIK_DOWN) && game->IsKeyDown(DIK_RIGHT)))
+		{
+			mario->SetState(MARIO_STATE_WALKING_RIGHT);
+			if (mario->vx < 0)
+			{
+				mario->SetState(MARIO_STATE_TURN);
+			}
+			mario->WalkRight();
+		}
+		else if (game->IsKeyDown(DIK_LEFT) || (game->IsKeyDown(DIK_DOWN) && game->IsKeyDown(DIK_LEFT)))
+		{
+			mario->SetState(MARIO_STATE_WALKING_LEFT);
+			if (mario->vx > 0)
+			{
+				mario->SetState(MARIO_STATE_TURN);
+			}
+			mario->WalkLeft();
+		}
+		else if (game->IsKeyDown(DIK_DOWN) && mario->GetLevel() != MARIO_LEVEL_SMALL)
+		{
 			mario->Sit();
-	}
+		}
 
-	else if (game->IsKeyDown(DIK_X))
-	{
-		if (mario->isOnGround)
+		else if (game->IsKeyDown(DIK_X))
 		{
-			mario->JumpSlow();
-		}
-		
-	}
-	else
-	{
-		if (mario->isOnGround)
-			mario->SetState(MARIO_STATE_IDLE);
-	}
-	if (CGame::GetInstance()->GetScene() == 1)
-	{
-		if (game->IsKeyDown(DIK_UP))
-		{
-			mario->vy = -0.05f;
-		}
-		if (game->IsKeyDown(DIK_DOWN))
-		{
-			mario->vy = 0.05f;
-		}
-	}
-	if (CGame::GetInstance()->GetScene() == WORLD_1_1)
-	{
-		if (game->IsKeyDown(DIK_5))
-		{
-			mario->SetPosition(687, 357);
-		}
-		if (game->IsKeyDown(DIK_6))
-		{
-			mario->SetPosition(1224, 377);
-		}
-		if (game->IsKeyDown(DIK_7))
-		{
-			mario->SetPosition(1419, 155);
-		}
-		if (game->IsKeyDown(DIK_8))
-		{
-			mario->SetPosition(2265, 72);
-		}
-		if (game->IsKeyDown(DIK_9))
-		{
-			mario->SetPosition(2627, 357);
-		}
-		if (game->IsKeyDown(DIK_0))
-		{
-			CGame::GetInstance()->SwitchScene(3);
-		}
-	}
-	if (CGame::GetInstance()->GetScene() == WORLD_1_1_1)
-	{
-		if (game->IsKeyDown(DIK_5))
-		{
-			CGame::GetInstance()->SwitchScene(2);
-			mario->SetPosition(2627, 357);
-		}
-	}
-	if (CGame::GetInstance()->GetScene() == WORLD_1_4)
-	{
-		if (game->IsKeyDown(DIK_5))
-		{
-			mario->SetPosition(649, 111);
-		}
-		if (game->IsKeyDown(DIK_6))
-		{
-			mario->SetPosition(985, 138);
-		}
-		if (game->IsKeyDown(DIK_7))
-		{
-			mario->SetPosition(1213, 35);
-		}
-		if (game->IsKeyDown(DIK_8))
-		{
-			mario->SetPosition(1567, 126);
-		}
-		if (game->IsKeyDown(DIK_9))
-		{
-			mario->SetPosition(1946, 63);
-		}
-		if (game->IsKeyDown(DIK_0))
-		{
-			CGame::GetInstance()->SwitchScene(WORLD_1_1);
-		}
-	}
+			if (mario->isOnGround)
+			{
+				mario->JumpSlow();
+			}
 
+		}
+		else
+		{
+			if (mario->isOnGround)
+				mario->SetState(MARIO_STATE_IDLE);
+		}
+		if (CGame::GetInstance()->GetScene() == WORLD_MAP)
+		{
+			if (game->IsKeyDown(DIK_UP))
+			{
+				mario->vy = -0.05f;
+			}
+			if (game->IsKeyDown(DIK_DOWN))
+			{
+				mario->vy = 0.05f;
+			}
+		}
+		if (CGame::GetInstance()->GetScene() == WORLD_1_1)
+		{
+			if (game->IsKeyDown(DIK_5))
+			{
+				mario->SetPosition(687, 357);
+			}
+			if (game->IsKeyDown(DIK_6))
+			{
+				mario->SetPosition(1224, 377);
+			}
+			if (game->IsKeyDown(DIK_7))
+			{
+				mario->SetPosition(1419, 155);
+			}
+			if (game->IsKeyDown(DIK_8))
+			{
+				mario->SetPosition(2265, 72);
+			}
+			if (game->IsKeyDown(DIK_9))
+			{
+				mario->SetPosition(2627, 357);
+			}
+			if (game->IsKeyDown(DIK_0))
+			{
+				CGame::GetInstance()->SwitchScene(3);
+			}
+		}
+		if (CGame::GetInstance()->GetScene() == WORLD_1_1_1)
+		{
+			if (game->IsKeyDown(DIK_5))
+			{
+				CGame::GetInstance()->SwitchScene(2);
+				mario->SetPosition(2627, 357);
+			}
+		}
+		if (CGame::GetInstance()->GetScene() == WORLD_1_4)
+		{
+			if (game->IsKeyDown(DIK_5))
+			{
+				CGame::GetInstance()->SwitchScene(WORLD_1_4_1);
+			}
+			if (game->IsKeyDown(DIK_0))
+			{
+				CGame::GetInstance()->SwitchScene(WORLD_1_1);
+			}
+		}
+		if (CGame::GetInstance()->GetScene() == WORLD_1_4)
+		{
+			if (game->IsKeyDown(DIK_S))
+			{
+				mario->isIntoWorld = true;
+			}
+		}
+	}
 }
 void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
-
-	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
-	switch (KeyCode)
+	CGame* game = CGame::GetInstance();
+	if (((CPlayScene*)game->GetCurrentScene())->section == 0)
 	{
-	case DIK_A:
-	{
-		mario->isRunning = false;
-		mario->isHoldTurtle = false;
-		break;
-	}
-	case DIK_DOWN:
-		if (mario->isSitting)
+		CMario* mario = ((CPlayScene*)scence)->GetPlayer();
+		switch (KeyCode)
 		{
-			mario->ResetSit();
-			float sx, sy;
-			mario->GetPosition(sx, sy);
-			mario->SetState(MARIO_STATE_IDLE);
-		}
-		if (CGame::GetInstance()->GetScene() == 1)
+		case DIK_A:
 		{
-			mario->vy = 0;
+			mario->isRunning = false;
+			mario->isHoldTurtle = false;
+			break;
 		}
-		break;
-	case DIK_S:
-
-		if (mario->level == MARIO_LEVEL_RACCOON) {
-			if (mario->isOnAir)
+		case DIK_DOWN:
+			if (mario->isSitting)
 			{
-				if (!mario->isFlying && mario->vy >= 0)
+				mario->ResetSit();
+				float sx, sy;
+				mario->GetPosition(sx, sy);
+				mario->SetState(MARIO_STATE_IDLE);
+			}
+			if (CGame::GetInstance()->GetScene() == 1)
+			{
+				mario->vy = 0;
+			}
+			break;
+		case DIK_S:
+
+			if (mario->level == MARIO_LEVEL_RACCOON) {
+				if (mario->isOnAir)
 				{
-					mario->FallSlow();
-					break;
-				}
-				if (mario->isFlying)
-				{
-					if (mario->isFlyup)
+					if (!mario->isFlying && mario->vy >= 0)
 					{
-						mario->Fly();
+						mario->FallSlow();
 						break;
+					}
+					if (mario->isFlying)
+					{
+						if (mario->isFlyup)
+						{
+							mario->Fly();
+							break;
+						}
 					}
 				}
 			}
+			break;
+		case DIK_UP:
+			if (CGame::GetInstance()->GetScene() == 1)
+			{
+				mario->vy = 0;
+			}
+			break;
+		case DIK_RIGHT:
+		case DIK_LEFT:
+			if (CGame::GetInstance()->GetScene() == 1)
+			{
+				mario->vx = 0;
+			}
+			break;
 		}
-		break;
-	case DIK_UP:
-		if (CGame::GetInstance()->GetScene() == 1)
-		{
-			mario->vy = 0;
-		}
-		break;
-	case DIK_RIGHT:
-	case DIK_LEFT:
-		if (CGame::GetInstance()->GetScene() == 1)
-		{
-			mario->vx = 0;
-		}
-		break;
 	}
 }

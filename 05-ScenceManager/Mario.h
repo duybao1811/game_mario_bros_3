@@ -215,6 +215,7 @@ public:
 	bool isHoldTurtle;
 	bool isOnAir;
 public:
+	bool isIntoWorld;
 	bool isGameDone;
 	bool isSwitchScene;
 	bool untouchable;

@@ -1,6 +1,5 @@
 ﻿#include "Fire.h"
 #include "define.h"
-#include "Camera.h"
 
 #include "Goomba.h"
 #include "Koopas.h"
@@ -18,6 +17,8 @@ Fire::Fire(float X,float Y)
 void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//set chuyển động của fire 
+	if (isFinish)
+		return;
 		vy += FIRE_GRAVITY * dt;
 		vx = direction*FIRE_SPEED*dt;
 
@@ -58,25 +59,16 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 
-			if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
+			if (e->nx != 0 || e->ny != 0)
 			{
-				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-
-				if (e->nx != 0)
+				if (e->obj->GetObjType() == ENEMY)
 				{
-					goomba->SetState(GOOMBA_STATE_ATTACKED);
+
+					e->obj->SetState(ENEMY_STATE_FIRE_ATTACK);
+					ListEffect.push_back(new EffectDisappear(e->obj->GetX(), e->obj->GetY() + FPLANT_RED_BBOX_HEIGHT / 2));
+					SetFinish(true);
 				}
 			}
-			else 
-				if (dynamic_cast<CKoopas*>(e->obj)) // if e->obj is Goomba 
-				{
-					CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
-
-					if (e->nx != 0)
-					{
-						koopas->SetState(ENEMY_STATE_FIRE_ATTACK);
-					}
-				}
 				if (e->obj->GetType()==BLOCK_COLOR)
 				{
 					if (e->nx != 0)
@@ -92,6 +84,19 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						SetFinish(true);
 					}
 				}
+
+		}
+	}
+	for (UINT i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->SetDirection(this->direction);
+		ListEffect[i]->Update(dt, coObjects);
+	}
+	for (UINT i = 0; i < ListEffect.size(); i++)
+	{
+		if (ListEffect[i]->GetFinish() == true)
+		{
+			ListEffect.erase(ListEffect.begin() + i);
 		}
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -103,8 +108,12 @@ void Fire::Render()
 	{
 		ani = SHOOT_FIRE_RIGHT;
 	}
+	for (UINT i = 0; i < ListEffect.size(); i++)
+	{
+		ListEffect[i]->Render();
+	}
 	animation_set->at(ani)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 void Fire::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {

@@ -47,6 +47,10 @@ void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& botto
 		{
 			left = top = right = bottom = 0;
 		}
+		if (isFireAttack)
+		{
+			left = top = right = bottom = 0;
+		}
 }
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
@@ -168,6 +172,10 @@ void CGoomba::Render()
 			{
 				ani = GOOMBA_ANI_ATTACKED;
 			}
+			if (isFireAttack)
+			{
+				ani = GOOMBA_ANI_ATTACKED;
+			}
 		}
 		if (model == GOOMBA_RED_PARA)
 		{
@@ -190,6 +198,14 @@ void CGoomba::Render()
 			if (state == GOOMBA_STATE_DIE)
 			{
 				ani = GOOMBA_RED_PARA_ANI_DIE;
+			}
+			if (isAttacked)
+			{
+				ani = GOOMBA_RED_PARA_ANI_ATTACKED;
+			}
+			if (isFireAttack)
+			{
+				ani = GOOMBA_RED_PARA_ANI_ATTACKED;
 			}
 		}
 	}
@@ -231,17 +247,17 @@ void CGoomba::SetState(int state)
 	}
 	case ENEMY_ATTACKED:
 	{
-		vx = direction*0.3f;
+     	vx = -0.3f;
 		vy = -0.3f;
 		isAttacked = true;
-		break;
 	}
+	break;
 	case ENEMY_STATE_FIRE_ATTACK:
 	{
-		vx = direction * 0.3f;
-		vy = -0.3f;
-		isAttacked = true;
-		break;
+		vx = 0;
+		vy = -0.1f;
+		isFireAttack = true;
 	}
+	break;
 	}
 }

@@ -27,6 +27,7 @@ private:
 	float CamX = 0, CamY = 0;
 	Font* Text;
 	bool isSwitchScene;
+	DWORD TimeSwitchScene =0;
 protected:
 	CMario* player;					// A play scene has to have player, right?
 	CGame* game = CGame::GetInstance();
@@ -45,7 +46,7 @@ protected:
 	void _ParseSection_TILEMAP(string line);
 
 public:
-	bool isGameDone;
+	int section;
 	CPlayScene(int id, LPCWSTR filePath);
 
 	virtual void Load();

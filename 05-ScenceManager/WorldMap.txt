@@ -888,7 +888,7 @@
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3=KOOPAS, 4=COIN, 5:Piranha fire plant 6:piranha plant 7:pipe
 # MARIO
 #0	0		1
-0	36	66	1
+
 #1	20	40	2	58	42
 #1	20	40	2	224	1
 #1	20	40	2	1	152
@@ -903,5 +903,8 @@
 13	20	40	51	
 #50	68	40	0	84	56	2
 50	68	40	0	84	56	2
+50	164	72	0	179	88	4
+
+0	36	66	1
 [TILEMAP]
 Resources\Tilemap\Worldmap.txt

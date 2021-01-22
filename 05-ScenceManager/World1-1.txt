@@ -16,6 +16,7 @@
 50	textures\effect.png	176	224	248
 55	textures\misc-4.png	255	216	154
 11	textures\misc-2.png	0	117	255
+12	textures\enemies5.png	255	255	255
 # id	left	top	right	bottom	texture_id
 [SPRITES]
 # BIG MARIO 
@@ -492,6 +493,8 @@
 92	169	176	185	192	11
 #============ FLOWER ===========
 93	309	121	325	137	15
+
+94	206	2355	226	2374	12
 #=================SCREEN INTRO ============
 #FLOOR
 201	23	19	255	213	55
@@ -913,6 +916,8 @@
 170	90	50	92	50	91	50
 #===================== FLOWER ==================
 171	93	100
+####################
+172	94	100
 #SCREEN INTRO
 2001	201	100
 #MARIO SCENE INTRO
@@ -928,7 +933,7 @@
 # BRICK 
 2	601
 # GOOMBA
-3	701	702	703	704	705	706	707	708
+3	701	702	703	704	705	706	707	708	172
 #FIRE
 4	805	806	807
 #KOOPAS
@@ -991,7 +996,7 @@
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3=KOOPAS, 4=COIN, 5:Piranha fire plant 6:piranha plant 7:pipe
 # MARIO
-0	1923	385	1
+0	76	385	1
 #0	120	384	1
 
 ######################KOOPAS################ 3 ani_set_id 6 ## model 1: base 2: red 3:base fly
@@ -1115,13 +1120,13 @@
 11	2096	400	20	1
 11	2112	400	20	1
 
-11	2112	384	20	1
+#11	2112	384	20	1
 #FLOOR
 #12	80	385	50
 14	2684	330	29
 #WOOD
 #15	2052	323	30
-#16	1996	316	32	-1
+
 #PORTAL
 50	2256	112	0	2287	305	3
 [TILEMAP]
