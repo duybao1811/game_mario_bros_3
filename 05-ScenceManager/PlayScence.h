@@ -17,19 +17,19 @@
 #include "FirePlant.h"
 #include "Boomerang.h"
 #include "GameTime.h"
-class CPlayScene: public CScene
+class CPlayScene : public CScene
 {
 private:
-	DWORD TimeTranform=0;
 	vector <Item*> ListItem;
 	bool isGameOver;
 	GameTime* gametime = new GameTime();
 	int CountEnemy;
-	float CamX = 0, CamY=0;
-	Font* Text = new Font();
+	float CamX = 0, CamY = 0;
+	Font* Text;
 	bool isSwitchScene;
-protected: 
-	CMario *player;					// A play scene has to have player, right? 
+protected:
+	CMario* player;					// A play scene has to have player, right?
+	CGame* game = CGame::GetInstance();
 	Map* map;
 	Board* board;
 	vector<LPGAMEOBJECT> objects;
@@ -43,8 +43,9 @@ protected:
 	void _ParseSection_ANIMATION_SETS(string line);
 	void _ParseSection_OBJECTS(string line);
 	void _ParseSection_TILEMAP(string line);
-	
-public: 
+
+public:
+	bool isGameDone;
 	CPlayScene(int id, LPCWSTR filePath);
 
 	virtual void Load();
@@ -52,25 +53,25 @@ public:
 	virtual void Render();
 	virtual void Unload();
 
-	CMario * GetPlayer() { return player; } 
-	
+	CMario* GetPlayer() { return player; }
+
 	//friend class CPlayScenceKeyHandler;
 
 
 	//Check collision
 	void CheckCollision();
 	void CheckCollistionMarioWithItem();
-	void QuestionBrickDropItem(int model,float x,float y);
+	void QuestionBrickDropItem(int model, float x, float y);
 	void GoldBrickDestroy(int model, float x, float y);
 	void CheckCollisionMarioWithEnemy();
 };
 
 class CPlayScenceKeyHandler : public CScenceKeyHandler
 {
-public: 
-	virtual void KeyState(BYTE *states);
+public:
+	virtual void KeyState(BYTE* states);
 	virtual void OnKeyDown(int KeyCode);
-	virtual void OnKeyUp(int KeyCode) ;
-	CPlayScenceKeyHandler(CScene *s) :CScenceKeyHandler(s) {};
+	virtual void OnKeyUp(int KeyCode);
+	CPlayScenceKeyHandler(CScene* s) :CScenceKeyHandler(s) {};
 };
 

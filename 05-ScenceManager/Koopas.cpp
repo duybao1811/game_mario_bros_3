@@ -209,8 +209,9 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if (e->ny < 0 && state == KOOPAS_STATE_WALKING && model == KOOPAS_RED)
 				{
-					if (x <= e->obj->GetX() -10|| x + KOOPAS_BBOX_WIDTH >= e->obj->GetX() + GB_BBOX_WIDTH + 10)
+					if (x <= e->obj->GetX() -10 || x + KOOPAS_BBOX_WIDTH >= e->obj->GetX() + GB_BBOX_WIDTH + 10 )
 					{
+						vy = 0;
 						direction *= -1;
 						vx *= -1;
 					}

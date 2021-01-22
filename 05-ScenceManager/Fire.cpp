@@ -27,8 +27,7 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		SetFinish(true);
 	}
 	CGameObject::Update(dt, coObjects);
-	//nảy lên khi va chạm đất
-	// chạm vào object thì kết thúc
+
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -51,6 +50,7 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y += min_ty * dy + ny * 0.1f;
 		if (ny != 0)
 		{
+			//nảy lên khi va chạm đất
 			this->vy = -FIRE_BOUNCE_SPEED_Y;
 		}
 
@@ -74,10 +74,7 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 					if (e->nx != 0)
 					{
-						if (koopas->GetState() == KOOPAS_STATE_WALKING) {
-							//koopas->SetState(GOOMBA_STATE_ATTACKED);
-							koopas->SubHealth(1);
-						}
+						koopas->SetState(ENEMY_STATE_FIRE_ATTACK);
 					}
 				}
 				if (e->obj->GetType()==BLOCK_COLOR)
@@ -89,6 +86,7 @@ void Fire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else
 				{
+					// chạm vào object thì kết thúc
 					if (e->nx != 0)
 					{
 						SetFinish(true);

@@ -14,6 +14,7 @@ using namespace std;
 #define TexID_BOARD 25
 enum Type {
 	// MARIO 
+	MARIO = 00,
 	MARIO_SMALL = 01,
 	MARIO_BIG = 02,
 	MARIO_RACCOON = 03,
@@ -29,7 +30,6 @@ enum Type {
 	EMEDIUM_PIPE = 27,
 	GOLD_BRICK = 28,
 	WOOD = 29,
-
 
 	//ENEMY 
 	GOOMBA = 30,
@@ -52,8 +52,16 @@ enum Type {
 	COIN = 53,
 	P_SWITCH=54,
 	BOX=55,
+	FLOWER = 56,
 	//EFFECT
 	COIN_EFFECT = 1,
+
+	// intro
+
+	FLOOR = 60,
+	LOGO = 99,
+	GROUND_INTRO = 100,
+	CURSOR = 101,
 };
 enum ObjectType
 {
@@ -165,7 +173,7 @@ enum Range
 #define GOOMBA_RED_PARA 2
 #define GOOMBA_GRAVITY 0.001f
 #define ENEMY_ATTACKED 10 // trạng thái của enemy khi bị bắn lửa, bị quẩy đuôi và bị đá rùa tấn công
-
+#define ENEMY_STATE_FIRE_ATTACK 20
 // ################### TAIL
 #define TAIL_BBOX_WIDTH 10
 #define TAIL_BBOX_HEIGHT 4

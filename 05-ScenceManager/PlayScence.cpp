@@ -31,6 +31,7 @@
 #include "Box.h"
 #include "wood.h"
 #include "BoomerangBrother.h"
+#include "Flower.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -256,11 +257,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new GoldBrick(x, y,model);
 		break;
 	}
-	case OBJECT_TYPE_FLOOR:
-	{
-		obj = new Floor(x, y);
-		break;
-	}
 	case OBJECT_TYPE_WORLD_MAP:
 	{
 		obj = new WorldMap(x, y);
@@ -413,6 +409,14 @@ void CPlayScene::CheckCollistionMarioWithItem()
 					ListEffect.push_back(new Effect_1_UP(player->GetX(), player->GetY()));
 					break;
 				}
+				case Type::FLOWER:
+				{
+					player->SetLevel(MARIO_LEVEL_FIRE);
+					ListEffect.push_back(new PointEffect(player->GetX(), player->GetY(), POINT_EFFECT_TYPE_ONE_THOUSAND));
+					player->SetScore(player->GetScore() + 1000);
+					ListItem[i]->SetFinish(true);
+					break;
+				}
 				}
 			}
 		}
@@ -433,9 +437,13 @@ void CPlayScene::QuestionBrickDropItem(int model, float x,float y)
 		{	
 			ListItem.push_back(new CMushRoom(x, y+10, MUSHROOM_RED));
 		}
-		else
+		if(player->level == MARIO_LEVEL_BIG)
 		{
 			ListItem.push_back(new Leaf(x, y));
+		}
+		if (player->level == MARIO_LEVEL_RACCOON || player->level == MARIO_LEVEL_FIRE)
+		{
+			ListItem.push_back(new Flower(x, y));
 		}
 	}
 	break;
@@ -461,9 +469,13 @@ void CPlayScene::GoldBrickDestroy(int model, float x, float y)
 		{
 			ListItem.push_back(new CMushRoom(x, y + 10, MUSHROOM_RED));
 		}
-		else
+		if (player->level == MARIO_LEVEL_BIG)
 		{
 			ListItem.push_back(new Leaf(x, y));
+		}
+		if (player->level == MARIO_LEVEL_RACCOON || player->level == MARIO_LEVEL_FIRE)
+		{
+			ListItem.push_back(new Flower(x, y));
 		}
 	}
 	break;
@@ -477,10 +489,19 @@ void CPlayScene::CheckCollision()
 }
 void CPlayScene::Update(DWORD dt)
 {
+
 	CGameObject* obj = NULL;
 
 	vector<LPGAMEOBJECT> coObjects;
-
+	if (((CPlayScene*)game->GetCurrentScene())->isGameDone == true)
+	{
+		player->vx = 0.1f;
+		player->SetState(MARIO_STATE_WALKING_RIGHT);
+		if (abs(player->BackupX - player->x)>114)
+		{
+			
+		}
+	}
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
@@ -590,8 +611,6 @@ void CPlayScene::Update(DWORD dt)
 			listBoomerangEnemy.erase(listBoomerangEnemy.begin() + i);
 		}
 	}
-
-
 	if (!player->GetIsDeadth())
 	{
 		CheckCollision();
@@ -618,11 +637,15 @@ void CPlayScene::Update(DWORD dt)
 			player->SetPosition(2360, 381);
 		}
 	}
-	if (CGame::GetInstance()->GetScene() ==WORLD_1_4)
+	if (CGame::GetInstance()->GetScene() == WORLD_1_4)
 	{
 		CamX += 0.04 * dt;
 		CGame::GetInstance()->SetCamPos(CamX, CamY);
-	//	player->SetState(MARIO_STATE_WORLDMAP);
+	}
+	if (CGame::GetInstance()->GetScene() ==WORLD_MAP)
+	{
+		CGame::GetInstance()->SetCamPos(0, 0);
+		player->SetState(MARIO_STATE_WORLDMAP);
 	}
 	else
 	{
@@ -692,6 +715,13 @@ void CPlayScene::Render()
 	}
 	board = new Board(CGame::GetInstance()->GetCamX(), CGame::GetInstance()->GetCamY() + SCREEN_HEIGHT - DISTANCE_FROM_BOTTOM_CAM_TO_TOP_BOARD);
 	board->Render(player, GAME_TIME_LIMIT - gametime->GetTime());
+	
+	if (((CPlayScene*)game->GetCurrentScene())->isGameDone == true)
+	{
+		Text = new Font();
+		Text->Draw(2635, 275, "COURSE CLEAR !");
+		Text->Draw(2615, 300, "YOU GOT A CARD");
+	}
 }
 
 /*

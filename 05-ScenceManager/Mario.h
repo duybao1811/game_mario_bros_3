@@ -190,6 +190,7 @@ class CMario : public CGameObject
 	int ani = -1;
 	Camera* camera;
 public:
+	float BackupX;
 	DWORD TimeJump;
 	DWORD TimeFly;
 	DWORD now;
@@ -214,6 +215,7 @@ public:
 	bool isHoldTurtle;
 	bool isOnAir;
 public:
+	bool isGameDone;
 	bool isSwitchScene;
 	bool untouchable;
 	DWORD untouchable_start;

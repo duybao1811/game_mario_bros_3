@@ -1,16 +1,15 @@
 #include "Floor.h"
+#include "define.h"
 Floor::Floor(float X, float Y)
 {
 	this->x = X;
 	this->y = Y;
-	vy = -FLOOR_SPEED_Y;
+	eType = Type::FLOOR;
 }
 void Floor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
 	y += dy;
-	if (checkObjInCamera(this) == false)
-		SetFinish(true);
 }
 void Floor::Render()
 {

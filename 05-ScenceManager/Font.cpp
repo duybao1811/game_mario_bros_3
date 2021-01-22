@@ -9,13 +9,18 @@ void Font::Draw(float x, float y, const string& s)
 	{
 		if (s[i] == ' ')
 			continue;
+		if (s[i] == '!')
+		{
+			LPSPRITE SpriteTile = new CSprite(99,208,0, 212,8, Tex);
+			SpriteTile->Draw(x + i * 8, y);
+		}
 		if (s[i] >= 'A' && s[i] <= 'Z')
 		{
 			int id = s[i] - 'A';
 			int left = id % 26 * TILE_FONT_WIDTH;
 			int top = id / 26 * TILE_FONT_A_HEIGHT;
 			int right = left + TILE_FONT_WIDTH;
-			int bottom = top + TILE_FONT_A_HEIGHT;
+			int bottom = top + TILE_FONT_A_HEIGHT-1;
 			LPSPRITE SpriteTile = new CSprite(id, left, top, right, bottom, Tex);
 			SpriteTile->Draw(x + i * 8, y);
 		}

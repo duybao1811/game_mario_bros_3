@@ -1,11 +1,10 @@
 #pragma once
 #include "GameObject.h"
-#define FLOOR_SPEED_Y 0.05f
-#define FLOOR_HEIGHT 183
-class Floor : public CGameObject
+#define LOAD_BACKGROUND_INTRO_FROM_TXT 53
+class BackGroundIntro : public CGameObject
 {
 public:
-	Floor(float X,float Y);
+	BackGroundIntro(float X, float Y);
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b) {}
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

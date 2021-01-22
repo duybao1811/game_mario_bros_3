@@ -20,7 +20,7 @@ void Board::Render(CMario * mario, int RemainingTime )
 	now = GetTickCount64();
 	Sprite->Draw(x, y);
 	font.Draw(x + 70, y + 20, FillNumber(std::to_string(mario->GetScore()), 7)); //score
-	if (CGame::GetInstance()->GetScene() != 1)
+	if (CGame::GetInstance()->GetScene() != WORLD_MAP)
 	{
 		font.Draw(x + 141, y + 20, FillNumber(std::to_string(RemainingTime), 3)); //remain time
 	}

@@ -125,6 +125,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animations.cpp" />
+    <ClCompile Include="BackGroundIntro.cpp" />
     <ClCompile Include="BlockColor.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Boomerang.cpp" />
@@ -134,6 +135,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="CoinEffect.cpp" />
+    <ClCompile Include="Cursor.cpp" />
     <ClCompile Include="define.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectDisappear.cpp" />
@@ -142,18 +144,21 @@
     <ClCompile Include="FirePiranhaPlant.cpp" />
     <ClCompile Include="FirePlant.cpp" />
     <ClCompile Include="Floor.cpp" />
-    <ClCompile Include="FlowerSymbol.cpp" />
+    <ClCompile Include="Flower.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FullPower.cpp" />
     <ClCompile Include="GameTime.cpp" />
     <ClCompile Include="GoldBrick.cpp" />
+    <ClCompile Include="GroundIntro.cpp" />
     <ClCompile Include="IceBrick.cpp" />
+    <ClCompile Include="IntroScene.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Leaf.cpp" />
+    <ClCompile Include="Logo.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MushRoom.cpp" />
-    <ClCompile Include="MushRoomSymbol.cpp" />
+    <ClCompile Include="Number3.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="PiranhaPlant.cpp" />
     <ClCompile Include="PlatForm.cpp" />
@@ -163,7 +168,6 @@
     <ClCompile Include="Power.cpp" />
     <ClCompile Include="P_Switch.cpp" />
     <ClCompile Include="QuestionBrick.cpp" />
-    <ClCompile Include="StarSymbol.cpp" />
     <ClCompile Include="Tail.cpp" />
     <ClCompile Include="TailHitEffect.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -181,6 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animations.h" />
+    <ClInclude Include="BackGroundIntro.h" />
     <ClInclude Include="BlockColor.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="Boomerang.h" />
@@ -190,6 +195,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Coin.h" />
     <ClInclude Include="CoinEffect.h" />
+    <ClInclude Include="Cursor.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectDisappear.h" />
@@ -198,18 +204,21 @@
     <ClInclude Include="FirePiranhaPlant.h" />
     <ClInclude Include="FirePlant.h" />
     <ClInclude Include="Floor.h" />
-    <ClInclude Include="FlowerSymbol.h" />
+    <ClInclude Include="Flower.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FullPower.h" />
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="GoldBrick.h" />
+    <ClInclude Include="GroundIntro.h" />
     <ClInclude Include="IceBrick.h" />
+    <ClInclude Include="IntroScene.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="Leaf.h" />
+    <ClInclude Include="Logo.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MushRoom.h" />
-    <ClInclude Include="MushRoomSymbol.h" />
+    <ClInclude Include="Number3.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="PiranhaPlant.h" />
     <ClInclude Include="PlatForm.h" />
@@ -219,7 +228,6 @@
     <ClInclude Include="Power.h" />
     <ClInclude Include="P_Switch.h" />
     <ClInclude Include="QuestionBrick.h" />
-    <ClInclude Include="StarSymbol.h" />
     <ClInclude Include="Tail.h" />
     <ClInclude Include="TailHitEffect.h" />
     <ClInclude Include="Utils.h" />

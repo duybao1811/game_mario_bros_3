@@ -25,6 +25,7 @@
 #include "Box.h"
 #include "wood.h"
 #include "CoinEffect.h"
+#include "PlayScence.h"
 CMario::CMario(float x, float y) : CGameObject()
 {
 	level = MARIO_LEVEL_RACCOON;
@@ -38,17 +39,22 @@ CMario::CMario(float x, float y) : CGameObject()
 	tail = new Tail();
 	isKick = false;
 	this->camera = camera;
+	eType = Type::MARIO;
 }
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (x < CGame::GetInstance()->GetCamX())
+	CGame* game = CGame::GetInstance();
+	if (((CPlayScene*)game->GetCurrentScene())->isGameDone == false)
 	{
-		x = CGame::GetInstance()->GetCamX();
-	}
-	if (x + MARIO_BIG_BBOX_WIDTH > CGame::GetInstance()->GetCamX() - 16+SCREEN_WIDTH)
-	{
-		x = (float)(CGame::GetInstance()->GetCamX() - 16 + SCREEN_WIDTH - MARIO_BIG_BBOX_WIDTH);
+		if (x < CGame::GetInstance()->GetCamX())
+		{
+			x = CGame::GetInstance()->GetCamX();
+		}
+		if (x + MARIO_BIG_BBOX_WIDTH > CGame::GetInstance()->GetCamX() - 16 + SCREEN_WIDTH)
+		{
+			x = (float)(CGame::GetInstance()->GetCamX() - 16 + SCREEN_WIDTH - MARIO_BIG_BBOX_WIDTH);
+		}
 	}
 	if (y < CGame::GetInstance()->GetCamY())
 	{
@@ -379,27 +385,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (e->obj->GetType() == BOX)
 			{
 				Box* box = dynamic_cast<Box*>(e->obj);
-				if (e->ny < 0)
+				if (e->ny != 0)
 				{
 					vy = last_vy;
 					y += dy;
 				}
 				if (e->nx != 0)
 				{
-					x += dx;
-					
-					if (box->ani == BOX_ANI_RANDOM)
-					{
-						LPANIMATION current_ani = animation_set->at(box->ani);
-						switch (current_ani->GetCurrentFrame())
-						{
-						case 0:
-
-							SetLevel(MARIO_LEVEL_FIRE);
-							break;
-						}
-						box->SetFinish(true);
-					}
+					int state1 = (rand() % 3 + 1) * 100;
+					box->vy = -0.1f;
+					box->SetState(state1);
+					((CPlayScene*)game->GetCurrentScene())->isGameDone = true;
+					BackupX = x;
 				}
 
 			}
