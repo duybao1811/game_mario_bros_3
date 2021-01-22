@@ -535,7 +535,7 @@ void CPlayScene::Update(DWORD dt)
 					if (objects[i]->GetType() == GOLD_BRICK)
 					{
 						GoldBrick* goldbrick = dynamic_cast<GoldBrick*>(objects[i]);
-						if (goldbrick->GetModel() == 1)
+						if (goldbrick->GetModel() == GB_CONTAIN_COIN)
 						{
 							if (goldbrick->checkObjInCamera(goldbrick))
 							{
@@ -634,21 +634,25 @@ void CPlayScene::Update(DWORD dt)
 	gametime->Update(dt);
 	if (gametime->GetTime() >= GAME_TIME_LIMIT || player->GetHealth() <= 0)
 	{
-		if (player->GetIsDeadth())
-		{
-			return;
-		}
-		else
-		{
 			isGameOver = true;
 			player->SetIsDeadth(true);
 			player->SetState(MARIO_STATE_DIE);
+			TimeSwitchScene1 += dt;
+	}
+	if (isGameOver)
+	{
+		if (TimeSwitchScene1 > 1000)
+		{
+			CGame::GetInstance()->SwitchScene(WORLD_MAP);
+			isGameOver = false;
+			TimeSwitchScene1 = 0;
 		}
 	}
 	if (CGame::GetInstance()->GetScene() == WORLD_1_4)
 	{
 		CamX += 0.05f*dt;
 		CGame::GetInstance()->SetCamPos(CamX,0);
+		map->SetCamPos(CamX,0);
 	}
 	if (CGame::GetInstance()->GetScene()==WORLD_MAP)
 	{
@@ -662,7 +666,7 @@ void CPlayScene::Update(DWORD dt)
 		CGame::GetInstance()->SetCamPos(player->x-(SCREEN_WIDTH/2),16);
 		map->SetCamPos(player->x - (SCREEN_WIDTH / 2),16);
 	}
-	if(CGame::GetInstance()->GetScene() == WORLD_1_1 )
+	if(CGame::GetInstance()->GetScene() == WORLD_1_1 || CGame::GetInstance()->GetScene() == WORLD_1_1_1)
 	{
 		// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 		if (player == NULL) return;
@@ -775,8 +779,19 @@ void CPlayScene::CheckCollisionMarioWithEnemy()
 					{
 						if (!(objects[i]->GetType()==KOOPAS && objects[i]->GetState()==KOOPAS_STATE_DEFEND))
 						{
-							player->SetHurt(e);
-							player->SetLevel(player->level--);
+							player->StartUntouchable();
+							if (player->level == MARIO_LEVEL_BIG || player->level == MARIO_LEVEL_RACCOON)
+							{
+								player->level--;
+							}
+							if (player->level == MARIO_LEVEL_FIRE)
+							{
+								player->level == MARIO_LEVEL_BIG;
+							}
+							if (player->level == MARIO_LEVEL_SMALL)
+							{
+								player->SubHealth(1);
+							}
 							isCollision = true;
 						}
 					}
@@ -784,8 +799,20 @@ void CPlayScene::CheckCollisionMarioWithEnemy()
 					{
 						if ((objects[i]->GetType() == PIRANHA_GREEN && objects[i]->GetState() != PLANT_STATE_HIDDING || objects[i]->GetType() == FIRE_PIRANHA && objects[i]->GetState() != PLANT_STATE_HIDDING))
 						{
-							player->SetHurt(e);
-							player->SetLevel(player->level -= 1);
+							player->StartUntouchable();
+
+							if (player->level == MARIO_LEVEL_BIG || player->level == MARIO_LEVEL_RACCOON)
+							{
+								player->level--;
+							}
+							if (player->level == MARIO_LEVEL_FIRE)
+							{
+								player->level == MARIO_LEVEL_BIG;
+							}
+							if (player->level == MARIO_LEVEL_SMALL)
+							{
+								player->SubHealth(1);
+							}
 							isCollision = true;
 						}
 					}

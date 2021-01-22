@@ -64,7 +64,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	now = GetTickCount64();
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
-	if (CGame::GetInstance()->GetScene() != 1)
+	if (CGame::GetInstance()->GetScene() != WORLD_MAP)
 	{
 		vy += MARIO_GRAVITY * dt;
 	}
@@ -410,21 +410,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else if (e->obj->GetType()==PORTAL)
 			{
 				CPortal* p = dynamic_cast<CPortal*>(e->obj);
-				if (CGame::GetInstance()->GetScene() == WORLD_MAP)
+				if (e->ny!=0)
 				{
-					if (e->ny != 0)
-					{
-			
-					}
-					if (e->nx != 0)
-					{
-
-					}
-					if (e->ny!=0)
-					{
-				
-							CGame::GetInstance()->SwitchScene(p->GetSceneId());
-					}
+					CGame::GetInstance()->SwitchScene(p->GetSceneId());
 				}
 			}
 		}

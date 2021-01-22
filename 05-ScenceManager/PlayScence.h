@@ -28,6 +28,7 @@ private:
 	Font* Text;
 	bool isSwitchScene;
 	DWORD TimeSwitchScene =0;
+	DWORD TimeSwitchScene1 = 0;
 protected:
 	CMario* player;					// A play scene has to have player, right?
 	CGame* game = CGame::GetInstance();
