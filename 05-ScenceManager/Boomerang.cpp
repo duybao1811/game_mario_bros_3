@@ -8,37 +8,40 @@ Boomerang::Boomerang(float X, float Y, Range marioRange)
 	this->MarioRange = marioRange;
 	this->startX = X;
 	SetAnimationSet(CAnimationSets::GetInstance()->Get(LOAD_BOOMERANG_FROM_TXT));
-	
+	SetDirection(1);
 }
 void Boomerang::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt,coObjects);
 	x += dx;
 	y += dy;
-	vx = direction*0.001f * dt;
-	//vy = -0.0005f*dt;
-	if (abs(startX - x) >= 100)
+	vx = direction*0.008f * dt;
+	vy = -0.0005f*dt;
+	if (abs(startX - x) >= 160)
 	{
+		isTurning = true;
 		vx *= -1;
 		direction *= -1;
+		vy = 0.046 * dt;
 	}
 	if (!(checkObjInCamera(this))) // RA KHỎI CAM THÌ XÓA
 	{
 		SetFinish(true);
 	}
-	SetBoomerangFly(MarioRange);
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		LPGAMEOBJECT e = coObjects->at(i);
+		if (e->GetType() == BOOM_BROTHER)
+		{
+			if (checkAABB(e) && isTurning == true)
+			{
+				SetFinish(true);
+			}
+		}
+	}
 }
 void Boomerang::SetBoomerangFly(Range marioRange)
 {
-	switch (marioRange)
-	{
-	case RIGHT_SIDE:
-		direction = 1;
-		break;
-	case LEFT_SIDE:
-		direction = -1;
-		break;
-	}
 }
 void Boomerang::Render()
 {

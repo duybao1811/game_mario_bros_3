@@ -4,7 +4,6 @@
 #include "define.h"
 #include "Coin.h"
 #include "Tail.h"
-#include "Camera.h"
 #define MARIO_WALKING_SPEED		0.00015f 
 #define MARIO_RUNNING_SPEED     0.00015f
 #define MARIO_DECELERATE_SPEED 0.0005f
@@ -188,7 +187,6 @@ class CMario : public CGameObject
 	CCoin* coin;
 	Tail* tail;
 	int ani = -1;
-	Camera* camera;
 public:
 	float BackupX;
 	DWORD TimeJump;

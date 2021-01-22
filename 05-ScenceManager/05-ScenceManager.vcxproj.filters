@@ -138,9 +138,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>FrameWork</Filter>
-    </ClCompile>
     <ClCompile Include="PointEffect.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
@@ -298,9 +295,6 @@
     </ClInclude>
     <ClInclude Include="CoinEffect.h">
       <Filter>Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="BlockColor.h">
       <Filter>Object</Filter>

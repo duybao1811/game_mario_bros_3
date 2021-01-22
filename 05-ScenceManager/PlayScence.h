@@ -6,7 +6,6 @@
 #include "Mario.h"
 #include "Goomba.h"
 #include "Koopas.h"
-#include "Camera.h"
 #include "Map.h"
 #include "Item.h"
 #include "MushRoom.h"

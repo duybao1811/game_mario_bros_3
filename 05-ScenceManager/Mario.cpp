@@ -38,7 +38,6 @@ CMario::CMario(float x, float y) : CGameObject()
 	SetHealth(1);
 	tail = new Tail();
 	isKick = false;
-	this->camera = camera;
 	eType = Type::MARIO;
 }
 

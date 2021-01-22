@@ -15,7 +15,7 @@ void BoomerangBrother::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt);
 	y += dy;
 	x += dx;
-	//vy += BOOM_BROTHER_GRAVITY * dt;
+	vy += BOOM_BROTHER_GRAVITY * dt;
 	TimeAttackDelay += dt;
 	TimeAttack += dt;
 	if (TimeAttackDelay > TIME_WALKING)
@@ -33,6 +33,33 @@ void BoomerangBrother::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		TimeAttack = 0;
 		SetState(BOOM_BROTHER_STATE_WALKING);
 		TimeAttackDelay += dt;
+	}
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
+
+	coEvents.clear();
+	CalcPotentialCollisions(coObjects, coEvents);
+
+	// No collision occured, proceed normally
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+	}
+	else
+	{
+		float min_tx, min_ty, nx = 0, ny;
+		float rdx = 0;
+		float rdy = 0;
+
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+		x += min_tx * dx + nx * 0.1f;
+		y += min_ty * dy + ny * 0.4f;
+		if (ny < 0)
+		{
+			vy = 0;
+		}
 	}
 }
 void BoomerangBrother::SetState(int state)
@@ -77,7 +104,7 @@ void BoomerangBrother::Render()
 		}
 	}
 	animation_set->at(ani)->Render(x, y);
-	
+	//RenderBoundingBox();
 }
 
 void BoomerangBrother::GetBoundingBox(float& left, float& top, float& right, float& bottom)

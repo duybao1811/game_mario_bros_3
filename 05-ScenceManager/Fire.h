@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.h"
-#include "Camera.h"
 #include "Effect.h"
 #include "EffectDisappear.h"
 #define FIRE_SPEED 0.006f

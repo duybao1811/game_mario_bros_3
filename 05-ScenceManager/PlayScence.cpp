@@ -7,7 +7,6 @@
 #include "Sprites.h"
 #include "Portal.h"
 #include "Mario.h"
-#include "Camera.h"
 #include "Map.h"
 #include "Scence.h"
 #include <string>
@@ -485,7 +484,7 @@ void CPlayScene::GoldBrickDestroy(int model, float x, float y)
 void CPlayScene::CheckCollision()
 {
 	CheckCollistionMarioWithItem();
-	CheckCollisionMarioWithEnemy();
+	//CheckCollisionMarioWithEnemy();
 }
 void CPlayScene::Update(DWORD dt)
 {

@@ -7,6 +7,7 @@
 class Boomerang : public CGameObject
 {
 public:
+	bool isTurning;
 	float startX, startY;
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

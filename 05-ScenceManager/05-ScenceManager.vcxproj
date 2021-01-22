@@ -132,7 +132,6 @@
     <ClCompile Include="BoomerangBrother.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="BrokenBrickEffect.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="CoinEffect.cpp" />
     <ClCompile Include="Cursor.cpp" />
@@ -192,7 +191,6 @@
     <ClInclude Include="BoomerangBrother.h" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="BrokenBrickEffect.h" />
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="Coin.h" />
     <ClInclude Include="CoinEffect.h" />
     <ClInclude Include="Cursor.h" />
