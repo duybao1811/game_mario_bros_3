@@ -49,6 +49,7 @@ void Tail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					e->SetDirection(direction);
 					e->SetState(ENEMY_ATTACKED);
+					ListEffect.push_back(new TailHitEffect(x, y - PULL_UP_EFFECT_TAIL_HIT));
 				}
 			}
 		}

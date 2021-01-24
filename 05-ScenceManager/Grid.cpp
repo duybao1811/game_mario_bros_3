@@ -31,10 +31,10 @@ void Grid::GetListObject(vector<LPGAMEOBJECT> ListObjects)
 	}
 }
 
-void Grid::Insert(LPGAMEOBJECT listobj)
+void Grid::Insert(LPGAMEOBJECT obj)
 {
 	float l, t, r, b;
-	listobj->GetBoundingBox(l, t, r, b);
+	obj->GetBoundingBox(l, t, r, b);
 	int top = (int)(t / GRID_CELL_HEIGHT);
 	int bottom = (ceil)(b / GRID_CELL_HEIGHT);
 	int left = (int)(l / GRID_CELL_WIDTH);
@@ -42,5 +42,5 @@ void Grid::Insert(LPGAMEOBJECT listobj)
 
 	for (int i = top; i <= bottom; i++)
 		for (int j = left; j <= right; j++)
-			cells[i][j].push_back(listobj);
+			cells[i][j].push_back(obj);
 }

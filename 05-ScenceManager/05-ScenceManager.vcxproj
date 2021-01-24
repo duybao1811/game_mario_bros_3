@@ -170,6 +170,7 @@
     <ClCompile Include="QuestionBrick.cpp" />
     <ClCompile Include="Tail.cpp" />
     <ClCompile Include="TailHitEffect.cpp" />
+    <ClCompile Include="TranformEffect.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="QuestionBrick.h" />
     <ClInclude Include="Tail.h" />
     <ClInclude Include="TailHitEffect.h" />
+    <ClInclude Include="TranformEffect.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />

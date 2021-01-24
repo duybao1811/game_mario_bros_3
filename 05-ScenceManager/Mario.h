@@ -29,11 +29,12 @@
 #define MARIO_STATE_RACCOON_ATTACK  900
 #define MARIO_STATE_SHOOT_FIRE      901
 #define MARIO_STATE_FLY             300
-#define MARIO_STATE_JUMP            350
+#define MARIO_STATE_JUMP           350
 #define MARIO_STATE_FLY_UP          450
 #define MARIO_STATE_FALLING         650
 #define MARIO_RACCOON_STATE_FALL_SLOW 550
 #define MARIO_STATE_WORLDMAP        850
+#define MARIO_STATE_TRANFORM       150
 #define MARIO_STATE_KICK            1
 #define MARIO_STATE_FALL_FLY         4
 #define MARIO_ANI_BIG_IDLE_RIGHT		0    //400
@@ -189,6 +190,7 @@ class CMario : public CGameObject
 	int ani = -1;
 public:
 	float BackupX;
+	DWORD TimeTranform;
 	DWORD TimeJump;
 	DWORD TimeFly;
 	DWORD now;
@@ -213,6 +215,7 @@ public:
 	bool isHoldTurtle;
 	bool isOnAir;
 public:
+	bool isTranForm;
 	bool isIntoWorld;
 	bool isGameDone;
 	bool isSwitchScene;

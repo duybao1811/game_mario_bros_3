@@ -12,7 +12,7 @@ class Grid
 public:
 	Grid();
 	vector<CGameObject*> cells[GRID_CELL_MAX_ROW][GRID_CELL_MAX_COLUMN];
-	void Insert(LPGAMEOBJECT listobj); //Thêm object vào grid
+	void Insert(LPGAMEOBJECT obj); //Thêm object vào grid
 	void GetListObject(vector<LPGAMEOBJECT>);
 };
 

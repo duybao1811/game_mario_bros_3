@@ -118,6 +118,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		state = MARIO_STATE_IDLE;
 		TimeAttack = now;
 	}
+	if (isTranForm)
+	{
+		TimeTranform += dt;
+		vx = 0;
+		vy = 0;
+	}
+	if (TimeTranform > 400)
+	{
+		isTranForm = false;
+		TimeTranform = 0;
+	}
 	if (GetTickCount64() - TimeKick > 230 && isKick)
 	{
 		isKick = false;
@@ -409,10 +420,24 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else if (e->obj->GetType()==PORTAL)
 			{
 				CPortal* p = dynamic_cast<CPortal*>(e->obj);
-				if (e->ny!=0)
-				{
-					CGame::GetInstance()->SwitchScene(p->GetSceneId());
-				}
+
+						if (CGame::GetInstance()->GetScene() == WORLD_MAP)
+						{
+							if (e->ny != 0 || e->nx != 0)
+							{
+								if (isIntoWorld)
+								{
+									CGame::GetInstance()->SwitchScene(p->GetSceneId());
+								}
+							}
+						}
+						else
+						{
+							if (e->ny != 0)
+							{
+								CGame::GetInstance()->SwitchScene(p->GetSceneId());
+							}
+						}
 			}
 		}
 	}
@@ -522,6 +547,7 @@ void CMario::Render()
 			}
 			if (state == MARIO_STATE_WORLDMAP)
 				ani = MARIO_SMALL_INTRO;
+
 		/*	if (state = MARIO_STATE_FALLING)
 			{
 				if (nx > 0)
@@ -536,11 +562,19 @@ void CMario::Render()
 				else if (nx < 0)
 					ani = MARIO_ANI_SMALL_FLY_LEFT;
 			}*/
+			if (state == MARIO_STATE_TRANFORM)
+			{
+				ani = MARIO_SMALL_INTRO;
+			}
 		}
 
 	//       MARIO BIG
 		else if (level == MARIO_LEVEL_BIG)
 		{
+			if (state == MARIO_STATE_TRANFORM)
+			{
+				ani = MARIO_SMALL_INTRO;
+			}
 			if (nx > 0)
 				ani = MARIO_ANI_BIG_IDLE_RIGHT;
 			else
@@ -913,7 +947,8 @@ void CMario::Render()
 					ani = MARIO_ANI_FIRE_FLY_LEFT;
 			}
 		}
-
+		if (isTranForm)
+			return;
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 
@@ -1004,7 +1039,7 @@ break;
 	{
 		if (isOnGround)
 		{
-			vy = -MARIO_JUMP_SPEED_Y;
+			vy -= MARIO_JUMP_SPEED_Y;
 			isJumping = true;
 			isOnGround = false;
 			if (abs(vx) >= MARIO_RUNNING_MAXSPEED)

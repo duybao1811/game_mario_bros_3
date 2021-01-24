@@ -12,7 +12,7 @@ void GameTime::Update(DWORD dt)
 	}
 	else
 	{
-		demkhac = (demkhac + dt) % 1000;
+		demkhac = 0;
 		Time++;
 	}
 }

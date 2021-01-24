@@ -6,7 +6,6 @@
 class EffectDisappear : public Effect
 {
 public:
-	DWORD Disappear;
 	EffectDisappear(float X=0, float Y=0);
 	~EffectDisappear() {};
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

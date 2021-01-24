@@ -31,6 +31,7 @@
 #include "wood.h"
 #include "BoomerangBrother.h"
 #include "Flower.h"
+#include "TranformEffect.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -291,7 +292,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj->SetAnimationSet(ani_set);
 
 		objects.push_back(obj);
-		grid->Insert(obj);
+	grid->Insert(obj);
 }
 void CPlayScene::_ParseSection_TILEMAP(string line)
 { 
@@ -381,9 +382,10 @@ void CPlayScene::CheckCollistionMarioWithItem()
 				{
 				case Type::MUSHROOM_POWER:
 				{
+					player->isTranForm = true;
 					player->SetLevel(MARIO_LEVEL_BIG);
+					ListEffect.push_back(new TranformEffect(player->x, player->y, player->direction));
 					ListEffect.push_back(new PointEffect(player->GetX(),player->GetY(), POINT_EFFECT_TYPE_ONE_THOUSAND));
-					player->SetHealth(player->GetHealth() + 1);
 					player->y -= 20;
 					player->SetScore(player->GetScore() + 1000);
 					ListItem[i]->SetFinish(true);
@@ -391,14 +393,11 @@ void CPlayScene::CheckCollistionMarioWithItem()
 				}
 				case Type::LEAF:
 				{
-					//player->GetLeaf();
+					player->isTranForm = true;
 					player->SetLevel(MARIO_LEVEL_RACCOON);
 					ListEffect.push_back(new PointEffect(player->GetX(), player->GetY(), POINT_EFFECT_TYPE_ONE_THOUSAND));
 					player->SetScore(player->GetScore() + 1000);
-					if (player->GetLevel() == MARIO_LEVEL_BIG)
-					{
-						player->SetHealth(player->GetHealth()+1);
-					}
+					ListEffect.push_back(new EffectDisappear(player->x, player->y));
 					ListItem[i]->SetFinish(true);
 					break;
 
@@ -490,7 +489,6 @@ void CPlayScene::CheckCollision()
 }
 void CPlayScene::Update(DWORD dt)
 {
-
 	CGameObject* obj = NULL;
 
 	vector<LPGAMEOBJECT> coObjects;
@@ -507,7 +505,7 @@ void CPlayScene::Update(DWORD dt)
 		{
 			objects[i]->Update(dt, &coObjects);
 		}
-	
+
 		if (e->GetType() == QUESTION_BRICK)
 		{
 			CQuestionBrick* questionbrick = dynamic_cast<CQuestionBrick*>(e);
@@ -778,6 +776,36 @@ void CPlayScene::CheckCollisionMarioWithEnemy()
 	}
 	if (player->untouchable == false)
 	{
+		for (UINT i = 0; i < listFireEnemy.size(); i++)
+		{
+			CGameObject* gameobj = dynamic_cast<CGameObject*>(listFireEnemy[i]);
+			if (gameobj->GetFinish()!=true)
+			{
+				LPCOLLISIONEVENT e = player->SweptAABBEx(gameobj);
+				if (e->nx != 0 || e->ny != 0)
+				{
+				player->StartUntouchable();
+				player->StartUntouchable();
+				if (player->level == MARIO_LEVEL_BIG)
+				{
+					player->level--;
+					player->SetHealth(2);
+				}
+				if (player->level == MARIO_LEVEL_RACCOON)
+				{
+					player->level -= 1;
+				}
+				if (player->level == MARIO_LEVEL_FIRE)
+				{
+					player->level == MARIO_LEVEL_BIG;
+				}
+				else if (player->level == MARIO_LEVEL_SMALL)
+				{
+					player->SubHealth(1);
+				}
+				}
+			}
+		}
 		for (UINT i = 0; i < objects.size(); i++)
 		{
 			if (objects[i]->GetObjType() == ENEMY)
@@ -792,15 +820,20 @@ void CPlayScene::CheckCollisionMarioWithEnemy()
 						if (!(objects[i]->GetType()==KOOPAS && objects[i]->GetState()==KOOPAS_STATE_DEFEND))
 						{
 							player->StartUntouchable();
-							if (player->level == MARIO_LEVEL_BIG || player->level == MARIO_LEVEL_RACCOON)
+							if (player->level == MARIO_LEVEL_BIG)
 							{
 								player->level--;
+								player->SetHealth(2);
+							}
+							if ( player->level == MARIO_LEVEL_RACCOON)
+							{
+								player->level-=1;
 							}
 							if (player->level == MARIO_LEVEL_FIRE)
 							{
 								player->level == MARIO_LEVEL_BIG;
 							}
-							if (player->level == MARIO_LEVEL_SMALL)
+							else if (player->level == MARIO_LEVEL_SMALL)
 							{
 								player->SubHealth(1);
 							}
@@ -811,28 +844,27 @@ void CPlayScene::CheckCollisionMarioWithEnemy()
 					{
 						if ((objects[i]->GetType() == PIRANHA_GREEN && objects[i]->GetState() != PLANT_STATE_HIDDING || objects[i]->GetType() == FIRE_PIRANHA && objects[i]->GetState() != PLANT_STATE_HIDDING))
 						{
-							player->StartUntouchable();
 
-							if (player->level == MARIO_LEVEL_BIG || player->level == MARIO_LEVEL_RACCOON)
+							player->StartUntouchable();
+							if (player->level == MARIO_LEVEL_BIG)
 							{
 								player->level--;
+								player->SetHealth(2);
+							}
+							if (player->level == MARIO_LEVEL_RACCOON)
+							{
+								player->level -= 1;
 							}
 							if (player->level == MARIO_LEVEL_FIRE)
 							{
 								player->level == MARIO_LEVEL_BIG;
 							}
-							if (player->level == MARIO_LEVEL_SMALL)
+							else if (player->level == MARIO_LEVEL_SMALL)
 							{
 								player->SubHealth(1);
 							}
 							isCollision = true;
 						}
-					}
-					if (isCollision == false && player->checkAABB(gameobj) == true)
-					{
-						//LPCOLLISIONEVENT e = new CCollisionEvent(1.0f, player->GetDirection(), 0.0f, 0.1f, 0.1f, NULL);
-						player->SetHurt(e);
-						isCollision = true;
 					}
 				}
 			}
@@ -962,6 +994,10 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 			{
 				mario->vy = 0.05f;
 			}
+			if (game->IsKeyDown(DIK_S))
+			{
+				mario->isIntoWorld = true;
+			}
 		}
 		if (CGame::GetInstance()->GetScene() == WORLD_1_1)
 		{
@@ -1009,13 +1045,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 				CGame::GetInstance()->SwitchScene(WORLD_1_1);
 			}
 		}
-		if (CGame::GetInstance()->GetScene() == WORLD_1_4)
-		{
-			if (game->IsKeyDown(DIK_S))
-			{
-				mario->isIntoWorld = true;
-			}
-		}
+
 	}
 }
 void  CPlayScenceKeyHandler::OnKeyUp(int KeyCode)

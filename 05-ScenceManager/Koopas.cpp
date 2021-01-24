@@ -559,7 +559,7 @@ void CKoopas::SetState(int state)
 		vx = 0;
 		break;
 	case ENEMY_ATTACKED:
-		vx = direction*0.3f;
+		vx = direction*0.5f;
 		vy = -0.3f;
 		isAttacked = true;
 		break;
