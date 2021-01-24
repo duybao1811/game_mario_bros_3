@@ -121,5 +121,5 @@ void CMushRoom::Render()
 		ani = MUSHROOM_GREEN_ANI;
 	}
 	animation_set->at(ani)->Render(x, y);
-	RenderBoundingBox();
+//	RenderBoundingBox();
 }

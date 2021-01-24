@@ -148,6 +148,7 @@
     <ClCompile Include="FullPower.cpp" />
     <ClCompile Include="GameTime.cpp" />
     <ClCompile Include="GoldBrick.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="GroundIntro.cpp" />
     <ClCompile Include="IceBrick.cpp" />
     <ClCompile Include="IntroScene.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="FullPower.h" />
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="GoldBrick.h" />
+    <ClInclude Include="Grid.h" />
     <ClInclude Include="GroundIntro.h" />
     <ClInclude Include="IceBrick.h" />
     <ClInclude Include="IntroScene.h" />

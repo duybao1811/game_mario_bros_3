@@ -15,6 +15,7 @@ private:
 protected:
 	Map* map;
 	CMario* player;					// A play scene has to have player, right? 
+	CMario* player1;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> listObjectsIntro;
 	void _ParseSection_TEXTURES(string line);

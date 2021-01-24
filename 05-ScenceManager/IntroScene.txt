@@ -19,6 +19,7 @@
 101	Resources\Tilemap\Map1-1-1.png	0	0	0
 67	textures\logo.png	185	214	198
 68	textures\background_intro.png	0	0	0
+80	textures\enemies4.png	255	255	255
 # id	left	top	right	bottom	texture_id
 [SPRITES]
 # BIG MARIO 
@@ -910,6 +911,12 @@
 # type	x	y	ani_set_id	extra_settings per object type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3=KOOPAS, 4=COIN, 5:Piranha fire plant 6:piranha plant 7:pipe
 # MARIO
+#0	0	180	1
+#0	240	152	1
+#KOOPAS
+3	200	100	6	1	-1
+
+
 18	0	184	55
 18	32	184	55
 18	64	184	55
@@ -926,6 +933,6 @@
 #logo
 17	0	-118	52
 #GROUND
-
+1	0	184	2	266	40
 [TILEMAP]
 Resources\Tilemap\Worldmap.txt

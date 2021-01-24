@@ -16,6 +16,7 @@
 #include "FirePlant.h"
 #include "Boomerang.h"
 #include "GameTime.h"
+#include "Grid.h"
 class CPlayScene : public CScene
 {
 private:
@@ -32,6 +33,7 @@ protected:
 	CMario* player;					// A play scene has to have player, right?
 	CGame* game = CGame::GetInstance();
 	Map* map;
+	Grid* grid;
 	Board* board;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> ListEffect;

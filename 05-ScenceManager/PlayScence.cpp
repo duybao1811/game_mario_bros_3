@@ -38,6 +38,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 {
 	key_handler = new CPlayScenceKeyHandler(this);
 	CountEnemy = 0;
+	grid = new Grid;
 }
 
 /*
@@ -282,14 +283,15 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		return;
 	}
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-
-
+	
+	
 		// General object setup
 		obj->SetPosition(x, y);
 
 		obj->SetAnimationSet(ani_set);
 
 		objects.push_back(obj);
+		grid->Insert(obj);
 }
 void CPlayScene::_ParseSection_TILEMAP(string line)
 { 
@@ -493,6 +495,7 @@ void CPlayScene::Update(DWORD dt)
 
 	vector<LPGAMEOBJECT> coObjects;
 
+	grid->GetListObject(objects);
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
@@ -649,9 +652,18 @@ void CPlayScene::Update(DWORD dt)
 	}
 	if (CGame::GetInstance()->GetScene() == WORLD_1_4)
 	{
-		CamX += 0.05f*dt;
-		CGame::GetInstance()->SetCamPos(CamX,0);
-		map->SetCamPos(CamX,0);
+		float CamVx;
+		if (CGame::GetInstance()->GetCamX() + SCREEN_WIDTH< map->GetMapWidth() + 16)
+		{
+			CamVx = 0.05f;
+		}
+		else
+		{
+			CamVx = 0;
+		}
+		CamX += CamVx * dt;
+		CGame::GetInstance()->SetCamPos(CamX, 0);
+		map->SetCamPos(CamX, 0);
 	}
 	if (CGame::GetInstance()->GetScene()==WORLD_MAP)
 	{
@@ -705,6 +717,7 @@ void CPlayScene::Update(DWORD dt)
 		CGame::GetInstance()->SetCamPos((int)cx, (int)cy);
 		map->SetCamPos((int)cx, (int)cy);
 	}
+
 }
 
 void CPlayScene::Render()

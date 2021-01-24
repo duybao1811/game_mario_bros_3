@@ -15,6 +15,8 @@
 #include "Number3.h"
 #include "GroundIntro.h"
 #include "Cursor.h"
+#include "PlatForm.h"
+#include "Koopas.h"
 using namespace std;
 
 IntroScene::IntroScene(int id, LPCWSTR filePath) :
@@ -166,15 +168,27 @@ void IntroScene::_ParseSection_OBJECTS(string line)
 			}*/
 		obj = new CMario(x, y);
 		player = (CMario*)obj;
-
 		DebugOut(L"[INFO] Player object created!\n");
 		break;
 
-
+	case OBJECT_TYPE_KOOPAS:
+	{
+		int model = atof(tokens[4].c_str());
+		int d = atof(tokens[5].c_str());
+		obj = new CKoopas(x, y, player, model, d);
+		break;
+	}
 
 	case OBJECT_TYPE_FLOOR:
 	{
 		obj = new Floor(x, y);
+		break;
+	}
+	case OBJECT_TYPE_PLATFORM:
+	{
+		float w = atof(tokens[4].c_str());
+		float h = atof(tokens[5].c_str());
+		obj = new CPlatform(w, h);
 		break;
 	}
 	case 17:
@@ -299,7 +313,14 @@ void IntroScene::Update(DWORD dt)
 	{
 		listObjectsIntro[i]->Update(dt, &coObjects);
 	}
-
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		if (objects[i]->GetType() == KOOPAS)
+		{
+			CKoopas* koopas = dynamic_cast<CKoopas*>(objects[i]);
+			//koopas->SetState(KOOPAS_STATE_DEFEND);
+		}
+	}
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		if (objects[i]->GetType() == FLOOR)
@@ -308,6 +329,10 @@ void IntroScene::Update(DWORD dt)
 			if (floor->y + FLOOR_HEIGHT >= CGame::GetInstance()->GetCamY())
 			{
 				floor->vy = -FLOOR_SPEED_Y;
+
+				player->SetLevel(MARIO_LEVEL_BIG);
+				player->SetState(MARIO_STATE_WALKING_RIGHT);
+				player->vx = 0.1f;
 			}
 			else
 				section = 2;
@@ -354,10 +379,10 @@ void IntroScene::Render()
 
 	for (int i = 0; i < objects.size(); i++)
 	{
-		if (objects[i]->GetType() != MARIO)
-		{
+		//if (objects[i]->GetType() != MARIO)
+		//{
 			objects[i]->Render();
-		}
+		//}
 	}
 	for (int i = 0; i < listObjectsIntro.size(); i++)
 	{
@@ -371,7 +396,7 @@ void IntroScene::Render()
 void IntroScene::Unload()
 {
 	objects.clear();
-
+	listObjectsIntro.clear();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 void CIntroSceneKeyHandler::OnKeyDown(int KeyCode)
